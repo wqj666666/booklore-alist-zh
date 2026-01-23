@@ -2,10 +2,10 @@
   <div class="settings-header">
     <h2 class="settings-title">
       <i class="pi pi-book"></i>
-      Reader Preferences
+      {{ 'settings.readerPreferences.title' | translate }}
     </h2>
     <p class="settings-description">
-      Configure reader settings scope and customize reading experience for different book formats including PDF, EPUB, and CBX files.
+      {{ 'settings.readerPreferences.description' | translate }}
     </p>
   </div>
 
@@ -14,10 +14,10 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-cog"></i>
-          Reader Settings Scope
+          {{ 'settings.readerPreferences.scope.title' | translate }}
         </h3>
         <p class="section-description">
-          Select whether to apply the same reader settings (font, theme, spread, zoom, etc.) globally for all books or individually per book.
+          {{ 'settings.readerPreferences.scope.description' | translate }}
         </p>
       </div>
 
@@ -25,7 +25,7 @@
         <div class="setting-item">
           <div class="setting-info">
             <div class="setting-label-row">
-              <label class="setting-label">PDF Reader Settings</label>
+              <label class="setting-label">{{ 'settings.readerPreferences.scope.pdf.label' | translate }}</label>
               <div class="button-group">
                 @for (item of scopeOptions; track item) {
                   <button
@@ -33,16 +33,16 @@
                     class="option-button"
                     [class.selected]="selectedPdfScope === item.key"
                     (click)="selectedPdfScope = item.key; onPdfScopeChange()"
-                    [pTooltip]="item.name"
+                    [pTooltip]="item.name | translate"
                     tooltipPosition="bottom">
                     <i [class]="item.icon"></i>
-                    <span class="option-text">{{ item.name }}</span>
+                    <span class="option-text">{{ item.name | translate }}</span>
                   </button>
                 }
               </div>
             </div>
             <p class="setting-description">
-              Choose how PDF reader settings are applied across your library.
+              {{ 'settings.readerPreferences.scope.pdf.description' | translate }}
             </p>
           </div>
         </div>
@@ -50,7 +50,7 @@
         <div class="setting-item">
           <div class="setting-info">
             <div class="setting-label-row">
-              <label class="setting-label">EPUB Reader Settings</label>
+              <label class="setting-label">{{ 'settings.readerPreferences.scope.epub.label' | translate }}</label>
               <div class="button-group">
                 @for (item of scopeOptions; track item) {
                   <button
@@ -58,16 +58,16 @@
                     class="option-button"
                     [class.selected]="selectedEpubScope === item.key"
                     (click)="selectedEpubScope = item.key; onEpubScopeChange()"
-                    [pTooltip]="item.name"
+                    [pTooltip]="item.name | translate"
                     tooltipPosition="bottom">
                     <i [class]="item.icon"></i>
-                    <span class="option-text">{{ item.name }}</span>
+                    <span class="option-text">{{ item.name | translate }}</span>
                   </button>
                 }
               </div>
             </div>
             <p class="setting-description">
-              Choose how EPUB reader settings are applied across your library.
+              {{ 'settings.readerPreferences.scope.epub.description' | translate }}
             </p>
           </div>
         </div>
@@ -75,7 +75,7 @@
         <div class="setting-item">
           <div class="setting-info">
             <div class="setting-label-row">
-              <label class="setting-label">CBX Reader Settings</label>
+              <label class="setting-label">{{ 'settings.readerPreferences.scope.cbx.label' | translate }}</label>
               <div class="button-group">
                 @for (item of scopeOptions; track item) {
                   <button
@@ -83,16 +83,16 @@
                     class="option-button"
                     [class.selected]="selectedCbxScope === item.key"
                     (click)="selectedCbxScope = item.key; onCbxScopeChange()"
-                    [pTooltip]="item.name"
+                    [pTooltip]="item.name | translate"
                     tooltipPosition="bottom">
                     <i [class]="item.icon"></i>
-                    <span class="option-text">{{ item.name }}</span>
+                    <span class="option-text">{{ item.name | translate }}</span>
                   </button>
                 }
               </div>
             </div>
             <p class="setting-description">
-              Choose how CBX (comic book) reader settings are applied across your library.
+              {{ 'settings.readerPreferences.scope.cbx.description' | translate }}
             </p>
           </div>
         </div>
@@ -103,10 +103,10 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-book"></i>
-          EPUB Preferences: Global
+          {{ 'settings.readerPreferences.section.epubGlobal.title' | translate }}
         </h3>
         <p class="section-description">
-          Set default reading options that will apply to all EPUB books in your library, including font, theme, text flow, and layout preferences.
+          {{ 'settings.readerPreferences.section.epubGlobal.description' | translate }}
         </p>
       </div>
 
@@ -121,10 +121,10 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-file-pdf"></i>
-          PDF Preferences: Global
+          {{ 'settings.readerPreferences.section.pdfGlobal.title' | translate }}
         </h3>
         <p class="section-description">
-          Set default reading options that apply to all PDF books in your library, including zoom level, page layout, and navigation behavior.
+          {{ 'settings.readerPreferences.section.pdfGlobal.description' | translate }}
         </p>
       </div>
 
@@ -139,10 +139,10 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-images"></i>
-          CBX Preferences: Global
+          {{ 'settings.readerPreferences.section.cbxGlobal.title' | translate }}
         </h3>
         <p class="section-description">
-          Configure default reading settings for all comic books in your library, including page layout, reading direction, and image scaling.
+          {{ 'settings.readerPreferences.section.cbxGlobal.description' | translate }}
         </p>
       </div>
 
@@ -158,10 +158,10 @@
         <div class="section-header">
           <h3 class="section-title">
             <i class="pi pi-palette"></i>
-            Custom Fonts Management
+            {{ 'settings.readerPreferences.section.customFonts.title' | translate }}
           </h3>
           <p class="section-description">
-            Upload and manage up to 10 custom fonts for a personalized reading experience in the EPUB reader. Each font can then be selected in the EPUB reader settings.
+            {{ 'settings.readerPreferences.section.customFonts.description' | translate }}
           </p>
         </div>
         <div class="settings-card">

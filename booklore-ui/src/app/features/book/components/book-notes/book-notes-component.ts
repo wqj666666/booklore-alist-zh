@@ -11,6 +11,7 @@ import {ProgressSpinner} from 'primeng/progressspinner';
 import {Tooltip} from 'primeng/tooltip';
 import {ConfirmationService, MessageService} from 'primeng/api';
 import {BookNote, BookNoteService, CreateBookNoteRequest} from '../../../../shared/service/book-note.service';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-book-notes-component',
@@ -24,7 +25,8 @@ import {BookNote, BookNoteService, CreateBookNoteRequest} from '../../../../shar
     Textarea,
     ConfirmDialog,
     ProgressSpinner,
-    Tooltip
+    Tooltip,
+    TranslateModule
   ],
   templateUrl: './book-notes-component.html',
   styleUrl: './book-notes-component.scss'

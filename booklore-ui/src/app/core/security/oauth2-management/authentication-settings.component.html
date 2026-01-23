@@ -2,11 +2,10 @@
   <div class="settings-header">
     <h2 class="settings-title">
       <i class="pi pi-lock"></i>
-      Authentication Settings
+      {{ 'settings.authentication.title' | translate }}
     </h2>
     <p class="settings-description">
-      Configure authentication methods for your Booklore instance. Internal authentication is always enabled,
-      and you can optionally enable OIDC for external authentication providers.
+      {{ 'settings.authentication.description' | translate }}
     </p>
   </div>
 
@@ -15,17 +14,17 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-shield"></i>
-          Internal Authentication
+          {{ 'settings.authentication.internal.title' | translate }}
         </h3>
         <p class="section-description">
-          Internal authentication is always enabled and cannot be disabled. However, OIDC can be used alongside internal authentication if OIDC is enabled.
+          {{ 'settings.authentication.internal.description' | translate }}
         </p>
       </div>
 
       <div class="settings-card">
         <div class="auth-option">
           <div class="auth-control">
-            <label class="auth-label">Internal Authentication Enabled</label>
+            <label class="auth-label">{{ 'settings.authentication.internal.enabledLabel' | translate }}</label>
             <p-checkbox
               [(ngModel)]="internalAuthEnabled"
               [binary]="true"
@@ -40,18 +39,18 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-key"></i>
-          OIDC Authentication (Experimental)
+          {{ 'settings.authentication.oidc.title' | translate }}
           <app-external-doc-link docType="authentication"></app-external-doc-link>
         </h3>
         <p class="section-description">
-          Configure external authentication providers using OpenID Connect (OIDC) protocol for seamless single sign-on integration.
+          {{ 'settings.authentication.oidc.description' | translate }}
         </p>
       </div>
 
       <div class="settings-card">
         <div class="auth-option">
           <div class="auth-control">
-            <label class="auth-label">OIDC Enabled</label>
+            <label class="auth-label">{{ 'settings.authentication.oidc.enabledLabel' | translate }}</label>
             <p-toggleswitch
               [(ngModel)]="oidcEnabled"
               [disabled]="!isOidcFormComplete()"
@@ -59,36 +58,36 @@
             </p-toggleswitch>
             @if (!isOidcFormComplete()) {
               <div class="auth-status">
-                (Fill all required fields to enable)
+                ({{ 'settings.authentication.oidc.formIncompleteHint' | translate }})
               </div>
             }
           </div>
         </div>
 
         <div class="provider-section">
-          <h4 class="subsection-title">OIDC Provider Settings</h4>
+          <h4 class="subsection-title">{{ 'settings.authentication.provider.title' | translate }}</h4>
           <div class="provider-form">
             <div class="form-grid">
               <div class="form-field">
-                <label for="providerName">Provider Name</label>
+                <label for="providerName">{{ 'settings.authentication.provider.field.providerName.label' | translate }}</label>
                 <input
                   pInputText
                   id="providerName"
                   [(ngModel)]="oidcProvider.providerName"
-                  placeholder="e.g. Authentik"
+                  [placeholder]="'settings.authentication.provider.field.providerName.placeholder' | translate"
                   class="w-full"/>
               </div>
               <div class="form-field">
-                <label for="clientId">Client ID</label>
+                <label for="clientId">{{ 'settings.authentication.provider.field.clientId.label' | translate }}</label>
                 <input
                   pInputText
                   id="clientId"
                   [(ngModel)]="oidcProvider.clientId"
-                  placeholder="e.g. my-client-id"
+                  [placeholder]="'settings.authentication.provider.field.clientId.placeholder' | translate"
                   class="w-full"/>
               </div>
               <div class="form-field form-field-full">
-                <label for="scope">Scope</label>
+                <label for="scope">{{ 'settings.authentication.provider.field.scope.label' | translate }}</label>
                 <input
                   pInputText
                   id="scope"
@@ -99,53 +98,53 @@
                 <div class="field-info">
                   <i class="pi pi-info-circle text-blue-500"></i>
                   <span>
-                    Required scopes for OIDC login and token exchange. Must be supported and advertised in the provider's discovery metadata.
+                    {{ 'settings.authentication.provider.field.scope.requiredInfo' | translate }}
                   </span>
                 </div>
               </div>
               <div class="form-field form-field-full">
-                <label for="issuerUri">Issuer URI</label>
+                <label for="issuerUri">{{ 'settings.authentication.provider.field.issuerUri.label' | translate }}</label>
                 <input
                   pInputText
                   id="issuerUri"
                   [(ngModel)]="oidcProvider.issuerUri"
-                  placeholder="e.g. https://authentik.domain.com/application/o/booklore/  or  https://pocket-id.domain.com"
+                  [placeholder]="'settings.authentication.provider.field.issuerUri.placeholder' | translate"
                   class="w-full"/>
               </div>
               <div class="form-field form-field-full">
                 <div class="claims-grid">
                   <div class="form-field">
-                    <label for="claimUsername">Username Claim</label>
+                    <label for="claimUsername">{{ 'settings.authentication.provider.claims.username.label' | translate }}</label>
                     <input
                       pInputText
                       id="claimUsername"
                       [(ngModel)]="oidcProvider.claimMapping.username"
-                      placeholder="e.g. preferred_username"
+                      [placeholder]="'settings.authentication.provider.claims.username.placeholder' | translate"
                       class="w-full"/>
                   </div>
                   <div class="form-field">
-                    <label for="claimEmail">Email Claim</label>
+                    <label for="claimEmail">{{ 'settings.authentication.provider.claims.email.label' | translate }}</label>
                     <input
                       pInputText
                       id="claimEmail"
                       [(ngModel)]="oidcProvider.claimMapping.email"
-                      placeholder="e.g. email"
+                      [placeholder]="'settings.authentication.provider.claims.email.placeholder' | translate"
                       class="w-full"/>
                   </div>
                   <div class="form-field">
-                    <label for="claimName">Display Name Claim</label>
+                    <label for="claimName">{{ 'settings.authentication.provider.claims.name.label' | translate }}</label>
                     <input
                       pInputText
                       id="claimName"
                       [(ngModel)]="oidcProvider.claimMapping.name"
-                      placeholder="e.g. name or given_name"
+                      [placeholder]="'settings.authentication.provider.claims.name.placeholder' | translate"
                       class="w-full"/>
                   </div>
                 </div>
                 <div class="field-info">
                   <i class="pi pi-info-circle text-blue-500"></i>
                   <span>
-                    These claims are used by Booklore to provision new OIDC users with their name, username, and email. Ensure they match the claims provided by your OIDC provider.
+                    {{ 'settings.authentication.provider.claims.info' | translate }}
                   </span>
                 </div>
               </div>
@@ -153,7 +152,7 @@
                 <p-button
                   [outlined]="true"
                   type="button"
-                  label="Save Settings"
+                  [label]="'settings.authentication.action.saveSettings' | translate"
                   icon="pi pi-save"
                   severity="success"
                   (click)="saveOidcProvider()"
@@ -166,11 +165,11 @@
 
         @if (oidcEnabled) {
           <div class="provisioning-section">
-            <h4 class="subsection-title">OIDC User Provisioning</h4>
+            <h4 class="subsection-title">{{ 'settings.authentication.provisioning.title' | translate }}</h4>
             <div class="provisioning-form">
               <div class="auth-option">
                 <div class="auth-control">
-                  <label class="auth-label">Automatic user provisioning</label>
+                  <label class="auth-label">{{ 'settings.authentication.provisioning.autoProvision.label' | translate }}</label>
                   <p-toggleswitch
                     [(ngModel)]="autoUserProvisioningEnabled"
                     inputId="autoProvision"
@@ -180,14 +179,14 @@
                 <div class="auth-info">
                   <i class="pi pi-info-circle text-blue-500"></i>
                   <span>
-                    Enabling auto-provisioning ensures that new users are automatically created with the selected default permissions. If turned off, users must be manually created in Booklore before they can log in.
+                    {{ 'settings.authentication.provisioning.autoProvision.info' | translate }}
                   </span>
                 </div>
               </div>
 
               @if (autoUserProvisioningEnabled) {
                 <div class="permissions-section">
-                  <h5 class="permissions-title">Default permissions for auto-provisioned users</h5>
+                  <h5 class="permissions-title">{{ 'settings.authentication.provisioning.permissions.title' | translate }}</h5>
                   <div class="permissions-list">
                     <div class="permission-item">
                       <p-checkbox
@@ -196,7 +195,7 @@
                         [ngModel]="true"
                         inputId="permissionRead">
                       </p-checkbox>
-                      <label for="permissionRead">Read Books</label>
+                      <label for="permissionRead">{{ 'settings.authentication.provisioning.permissions.readBooks' | translate }}</label>
                     </div>
                     @for (perm of availablePermissions; track perm) {
                       <div class="permission-item">
@@ -205,19 +204,19 @@
                           [binary]="true"
                           [inputId]="perm.value">
                         </p-checkbox>
-                        <label [for]="perm.value">{{ perm.label }}</label>
+                        <label [for]="perm.value">{{ perm.labelKey | translate }}</label>
                       </div>
                     }
                   </div>
 
-                  <h5 class="permissions-title">Default libraries for auto-provisioned users</h5>
+                  <h5 class="permissions-title">{{ 'settings.authentication.provisioning.libraries.title' | translate }}</h5>
                   <div class="libraries-section">
                     <p-multiSelect
                       [options]="allLibraries"
                       optionLabel="name"
                       optionValue="id"
                       [(ngModel)]="editingLibraryIds"
-                      placeholder="Select Libraries"
+                      [placeholder]="'settings.authentication.provisioning.libraries.placeholder' | translate"
                       appendTo="body">
                     </p-multiSelect>
                   </div>
@@ -225,7 +224,7 @@
                   <div class="form-actions">
                     <p-button
                       icon="pi pi-save"
-                      label="Save Settings"
+                      [label]="'settings.authentication.action.saveSettings' | translate"
                       [outlined]="true"
                       severity="success"
                       (click)="saveOidcAutoProvisionSettings()">

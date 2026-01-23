@@ -5,9 +5,11 @@
     </div>
     <div class="main-header-content">
       <h1 class="main-header-title">
-        {{ mode === 'edit' ? 'Edit Library' : 'Create New Library' }}
+        {{ mode === 'edit'
+          ? ('libraryCreator.header.editTitle' | translate)
+          : ('libraryCreator.header.createTitle' | translate) }}
       </h1>
-      <p class="main-header-subtitle">Set up a new library to organize and manage your book collection</p>
+      <p class="main-header-subtitle">{{ 'libraryCreator.header.subtitle' | translate }}</p>
     </div>
     <p-button
       icon="pi pi-times"
@@ -24,14 +26,14 @@
       <p-step [value]="1">
         <div class="step-content">
           <div class="step-labels">
-            <span class="step-title">Library Details</span>
+            <span class="step-title">{{ 'libraryCreator.stepper.libraryDetails' | translate }}</span>
           </div>
         </div>
       </p-step>
       <p-step [value]="2">
         <div class="step-content">
           <div class="step-labels">
-            <span class="step-title">Select Directories</span>
+            <span class="step-title">{{ 'libraryCreator.stepper.selectDirectories' | translate }}</span>
           </div>
         </div>
       </p-step>
@@ -47,8 +49,8 @@
                   <i class="pi pi-bookmark header-icon"></i>
                 </div>
                 <div class="header-text">
-                  <h2 class="panel-title">Step 1: Library Information</h2>
-                  <p class="panel-description">Set up your library name, icon, and import preferences</p>
+                  <h2 class="panel-title">{{ 'libraryCreator.step1.title' | translate }}</h2>
+                  <p class="panel-description">{{ 'libraryCreator.step1.description' | translate }}</p>
                 </div>
               </div>
 
@@ -57,7 +59,7 @@
                   <div class="form-group highlight-group">
                     <label class="form-label">
                       <i class="pi pi-tag label-icon"></i>
-                      1. Library Name
+                      1. {{ 'libraryCreator.step1.form.libraryName.label' | translate }}
                       <span class="required-indicator">*</span>
                     </label>
                     <div class="input-wrapper">
@@ -65,7 +67,7 @@
                         pInputText
                         fluid
                         [(ngModel)]="chosenLibraryName"
-                        placeholder="e.g., My Personal Library"
+                        [placeholder]="'libraryCreator.step1.form.libraryName.placeholder' | translate"
                         [class.filled]="chosenLibraryName.trim()"
                         class="input-full"
                       />
@@ -80,15 +82,15 @@
                   <div class="form-group highlight-group">
                     <label class="form-label">
                       <i class="pi pi-palette label-icon"></i>
-                      2. Library Icon
+                      2. {{ 'libraryCreator.step1.form.libraryIcon.label' | translate }}
                       <span class="required-indicator">*</span>
                     </label>
                     @if (!selectedIcon) {
                       <button class="icon-select-btn" (click)="openIconPicker()" type="button">
                         <i class="pi pi-plus"></i>
                         <div class="btn-content">
-                          <span class="btn-title">Choose an Icon</span>
-                          <span class="btn-subtitle">Select from available icons</span>
+                          <span class="btn-title">{{ 'libraryCreator.step1.form.libraryIcon.chooseTitle' | translate }}</span>
+                          <span class="btn-subtitle">{{ 'libraryCreator.step1.form.libraryIcon.chooseSubtitle' | translate }}</span>
                         </div>
                       </button>
                     } @else {
@@ -100,12 +102,12 @@
                           />
                         </div>
                         <div class="icon-info">
-                          <span class="icon-label">Selected Icon</span>
+                          <span class="icon-label">{{ 'libraryCreator.step1.form.libraryIcon.selectedLabel' | translate }}</span>
                           <span class="icon-name">
                             @if (selectedIcon.type === 'PRIME_NG') {
                               {{ selectedIcon.value }}
                             } @else {
-                              {{ selectedIcon.value }} (Custom)
+                              {{ selectedIcon.value }}{{ 'libraryCreator.step1.form.libraryIcon.customSuffix' | translate }}
                             }
                           </span>
                         </div>
@@ -116,7 +118,7 @@
                           [rounded]="true"
                           size="small"
                           (onClick)="clearSelectedIcon()"
-                          pTooltip="Remove icon"
+                          [pTooltip]="'libraryCreator.tooltip.removeIcon' | translate"
                           tooltipPosition="left"
                         />
                       </div>
@@ -130,7 +132,7 @@
                   <div class="form-group">
                     <label class="form-label">
                       <i class="pi pi-cog label-icon"></i>
-                      3. Import Mode
+                      3. {{ 'libraryCreator.step1.form.importMode.label' | translate }}
                     </label>
                     <div class="input-with-info">
                       <p-select
@@ -138,14 +140,14 @@
                         [options]="scanModeOptions"
                         optionLabel="label"
                         optionValue="value"
-                        placeholder="Choose scan mode"
+                        [placeholder]="'libraryCreator.step1.form.importMode.placeholder' | translate"
                         class="w-full"
                         [showClear]="false"
                       />
                       <div class="info-tooltip large">
                         <i
                           class="pi pi-question-circle"
-                          pTooltip="File as Book: Each file becomes a separate book.&#10;Folder as Book: Each folder is treated as one book with multiple formats."
+                            [pTooltip]="'libraryCreator.tooltip.scanModeInfo' | translate"
                           [escape]="false"
                           tooltipPosition="right"
                         ></i>
@@ -157,7 +159,7 @@
                     <div class="form-group nested-group">
                       <label class="form-label">
                         <i class="pi pi-file label-icon"></i>
-                        Preferred Format
+                        {{ 'libraryCreator.step1.form.preferredFormat.label' | translate }}
                       </label>
                       <div class="input-with-info">
                         <p-select
@@ -165,14 +167,14 @@
                           [options]="bookFormatOptions"
                           optionLabel="label"
                           optionValue="value"
-                          placeholder="Select preferred format"
+                          [placeholder]="'libraryCreator.step1.form.preferredFormat.placeholder' | translate"
                           class="w-full"
                           appendTo="body"
                         />
                         <div class="info-tooltip">
                           <i
                             class="pi pi-question-circle"
-                            pTooltip="If a folder has multiple formats, this determines the primary format to use"
+                            [pTooltip]="'libraryCreator.tooltip.preferredFormatInfo' | translate"
                             tooltipPosition="right"
                           ></i>
                         </div>
@@ -187,23 +189,23 @@
                   <div class="form-group">
                     <label class="form-label">
                       <i class="pi pi-eye label-icon"></i>
-                      4. Monitor Folders
+                      4. {{ 'libraryCreator.step1.form.monitorFolders.label' | translate }}
                     </label>
                     <div class="toggle-group">
                       <div class="toggle-wrapper">
                         <p-toggleswitch [(ngModel)]="watch" inputId="watch-toggle"/>
                         <label for="watch-toggle" class="toggle-label">
                           @if (watch) {
-                            <span class="toggle-status active">Enabled</span>
+                            <span class="toggle-status active">{{ 'libraryCreator.step1.form.monitorFolders.enabled' | translate }}</span>
                           } @else {
-                            <span class="toggle-status inactive">Disabled</span>
+                            <span class="toggle-status inactive">{{ 'libraryCreator.step1.form.monitorFolders.disabled' | translate }}</span>
                           }
                         </label>
                       </div>
                       <div class="info-tooltip large">
                         <i
                           class="pi pi-question-circle"
-                          pTooltip="Automatically detect and import new books when files are added to watched folders"
+                          [pTooltip]="'libraryCreator.tooltip.watchFoldersInfo' | translate"
                           [escape]="false"
                           tooltipPosition="right"
                         ></i>
@@ -219,17 +221,17 @@
                 @if (!isLibraryDetailsValid()) {
                   <div class="validation-message error">
                     <i class="pi pi-exclamation-circle"></i>
-                    <span>Please complete all required fields</span>
+                    <span>{{ 'libraryCreator.step1.validation.incomplete' | translate }}</span>
                   </div>
                 } @else {
                   <div class="validation-message success">
                     <i class="pi pi-check-circle"></i>
-                    <span>Ready to proceed</span>
+                    <span>{{ 'libraryCreator.step1.validation.ready' | translate }}</span>
                   </div>
                 }
               </div>
               <p-button
-                label="Continue to Directories"
+                [label]="'libraryCreator.step1.actions.continue' | translate"
                 icon="pi pi-arrow-right"
                 iconPos="right"
                 severity="success"
@@ -250,8 +252,8 @@
                   <i class="pi pi-folder-open header-icon"></i>
                 </div>
                 <div class="header-text">
-                  <h2 class="panel-title">Step 2: Book Directories</h2>
-                  <p class="panel-description">Add folders containing your book files</p>
+                  <h2 class="panel-title">{{ 'libraryCreator.step2.title' | translate }}</h2>
+                  <p class="panel-description">{{ 'libraryCreator.step2.description' | translate }}</p>
                 </div>
               </div>
 
@@ -265,8 +267,8 @@
                   >
                     <i class="pi pi-plus-circle"></i>
                     <div class="btn-content">
-                      <span class="btn-title">Add Book Folder</span>
-                      <span class="btn-subtitle">Browse for directories</span>
+                      <span class="btn-title">{{ 'libraryCreator.step2.addFolder.title' | translate }}</span>
+                      <span class="btn-subtitle">{{ 'libraryCreator.step2.addFolder.subtitle' | translate }}</span>
                     </div>
                   </p-button>
                 </div>
@@ -276,10 +278,10 @@
                     <div class="empty-icon-wrapper">
                       <i class="pi pi-folder-open empty-icon"></i>
                     </div>
-                    <h3 class="empty-title">No Folders Added Yet</h3>
+                    <h3 class="empty-title">{{ 'libraryCreator.step2.empty.title' | translate }}</h3>
                     <p class="empty-description">
-                      Click the button above to add folders containing your books.<br/>
-                      You can add multiple folders from different locations.
+                      {{ 'libraryCreator.step2.empty.descriptionLine1' | translate }}<br/>
+                      {{ 'libraryCreator.step2.empty.descriptionLine2' | translate }}
                     </p>
                   </div>
                 } @else {
@@ -287,38 +289,83 @@
                     <div class="list-header">
                       <span class="folder-count">
                         <i class="pi pi-folder"></i>
-                        {{ folders.length }} {{ folders.length === 1 ? 'folder' : 'folders' }} added
+                        {{ folders.length === 1
+                          ? ('libraryCreator.step2.folders.countAdded.one' | translate:{count: folders.length})
+                          : ('libraryCreator.step2.folders.countAdded.other' | translate:{count: folders.length}) }}
                       </span>
                     </div>
 
                     <div class="folders-grid">
-                      @for (folder of folders; track folder; let i = $index) {
-                        <div class="folder-card">
-                          <div class="folder-icon-section">
-                            <div class="folder-icon-wrapper">
-                              <i class="pi pi-folder folder-icon"></i>
+                      @for (folder of folders; track folder.path; let i = $index) {
+                        <div class="folder-card" [class.alist-enabled]="folder.alistEnabled">
+                          <div class="folder-card-main">
+                            <div class="folder-icon-section">
+                              <div class="folder-icon-wrapper">
+                                <i class="pi pi-folder folder-icon"></i>
+                              </div>
+                              <div class="folder-number">{{ i + 1 }}</div>
                             </div>
-                            <div class="folder-number">{{ i + 1 }}</div>
+                            <div class="folder-details">
+                              <div class="folder-path" [pTooltip]="folder.path" tooltipPosition="top">
+                                {{ folder.path }}
+                              </div>
+                              <div class="folder-meta">
+                                <i class="pi pi-map-marker"></i>
+                                <span>{{ getFolderName(folder.path) }}</span>
+                              </div>
+                            </div>
+                            <p-button
+                              icon="pi pi-times"
+                              severity="danger"
+                              outlined="true"
+                              rounded
+                              size="small"
+                              (onClick)="removeFolder(i)"
+                              [pTooltip]="'libraryCreator.tooltip.removeFolder' | translate"
+                              tooltipPosition="left"
+                            />
                           </div>
-                          <div class="folder-details">
-                            <div class="folder-path" [pTooltip]="folder" tooltipPosition="top">
-                              {{ folder }}
+
+                          <div class="folder-storage-config">
+                            <div class="storage-type-toggle">
+                              <span class="storage-label">{{ 'libraryCreator.step2.storage.label' | translate }}</span>
+                              <div class="storage-options">
+                                <button
+                                  type="button"
+                                  class="storage-option"
+                                  [class.active]="!folder.alistEnabled"
+                                  (click)="folder.alistEnabled && toggleAlistEnabled(folder)"
+                                >
+                                  <i class="pi pi-folder"></i>
+                                  <span>{{ 'libraryCreator.step2.storage.local' | translate }}</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  class="storage-option"
+                                  [class.active]="folder.alistEnabled"
+                                  (click)="!folder.alistEnabled && toggleAlistEnabled(folder)"
+                                >
+                                  <i class="pi pi-cloud"></i>
+                                  <span>{{ 'libraryCreator.step2.storage.alist' | translate }}</span>
+                                </button>
+                              </div>
                             </div>
-                            <div class="folder-meta">
-                              <i class="pi pi-map-marker"></i>
-                              <span>{{ getFolderName(folder) }}</span>
-                            </div>
+
+                            @if (folder.alistEnabled) {
+                              <div class="alist-path-input">
+                                <label class="alist-path-label">
+                                  <i class="pi pi-link"></i>
+                                  {{ 'libraryCreator.step2.storage.alistPath' | translate }}
+                                </label>
+                                <input
+                                  pInputText
+                                  [(ngModel)]="folder.alistPath"
+                                  [placeholder]="'libraryCreator.step2.storage.alistPathPlaceholder' | translate"
+                                  class="alist-path-field"
+                                />
+                              </div>
+                            }
                           </div>
-                          <p-button
-                            icon="pi pi-times"
-                            severity="danger"
-                            outlined="true"
-                            rounded
-                            size="small"
-                            (onClick)="removeFolder(i)"
-                            pTooltip="Remove folder"
-                            tooltipPosition="left"
-                          />
                         </div>
                       }
                     </div>
@@ -329,7 +376,7 @@
 
             <div class="panel-footer">
               <p-button
-                label="Back"
+                [label]="'libraryCreator.step2.actions.back' | translate"
                 icon="pi pi-arrow-left"
                 iconPos="left"
                 severity="warn"
@@ -339,11 +386,13 @@
                 @if (!isDirectorySelectionValid()) {
                   <div class="validation-message error">
                     <i class="pi pi-exclamation-circle"></i>
-                    <span>Add at least one folder</span>
+                    <span>{{ 'libraryCreator.step2.validation.needFolder' | translate }}</span>
                   </div>
                 }
                 <p-button
-                  [label]="mode === 'edit' ? 'Update Library' : 'Create Library'"
+                  [label]="mode === 'edit'
+                    ? ('libraryCreator.step2.actions.update' | translate)
+                    : ('libraryCreator.step2.actions.create' | translate)"
                   [icon]="mode === 'edit' ? 'pi pi-save' : 'pi pi-check'"
                   severity="success"
                   [disabled]="!isDirectorySelectionValid()"

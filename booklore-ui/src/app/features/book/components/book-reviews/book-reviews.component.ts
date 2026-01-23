@@ -12,11 +12,12 @@ import {FormsModule} from '@angular/forms';
 import {Tooltip} from 'primeng/tooltip';
 import {BookService} from '../../service/book.service';
 import {AppSettingsService} from '../../../../shared/service/app-settings.service';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-book-reviews',
   standalone: true,
-  imports: [ProgressSpinner, Rating, Tag, Button, FormsModule, Tooltip],
+  imports: [ProgressSpinner, Rating, Tag, Button, FormsModule, Tooltip, TranslateModule],
   templateUrl: './book-reviews.component.html',
   styleUrl: './book-reviews.component.scss'
 })

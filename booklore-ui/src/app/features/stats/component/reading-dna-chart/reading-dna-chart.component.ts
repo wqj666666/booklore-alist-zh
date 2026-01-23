@@ -1,4 +1,4 @@
-import {Component, inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {BaseChartDirective} from 'ng2-charts';
 import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
@@ -7,6 +7,7 @@ import {ChartConfiguration, ChartData} from 'chart.js';
 import {BookService} from '../../../book/service/book.service';
 import {Book, ReadStatus} from '../../../book/model/book.model';
 import {BookState} from '../../../book/model/state/book-state.model';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 interface ReadingDNAProfile {
   adventurous: number;
@@ -31,13 +32,15 @@ type ReadingDNAChartData = ChartData<'radar', number[], string>;
 @Component({
   selector: 'app-reading-dna-chart',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective],
+  imports: [CommonModule, TranslateModule, BaseChartDirective],
   templateUrl: './reading-dna-chart.component.html',
   styleUrls: ['./reading-dna-chart.component.scss']
 })
 export class ReadingDNAChartComponent implements OnInit, OnDestroy {
   private readonly bookService = inject(BookService);
+  private readonly translate = inject(TranslateService);
   private readonly destroy$ = new Subject<void>();
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
   public readonly chartType = 'radar' as const;
 
@@ -76,18 +79,19 @@ export class ReadingDNAChartComponent implements OnInit, OnDestroy {
             size: 12
           },
           padding: 25,
-          callback: function (label: string) {
+          callback: (label: string) => {
             const icons: Record<string, string> = {
-              'Adventurous': '🌟',
-              'Perfectionist': '💎',
-              'Intellectual': '🧠',
-              'Emotional': '💖',
-              'Patient': '🕰️',
-              'Social': '👥',
-              'Nostalgic': '📚',
-              'Ambitious': '🚀'
+              'stats.user.readingDna.trait.adventurous': '🌟',
+              'stats.user.readingDna.trait.perfectionist': '💎',
+              'stats.user.readingDna.trait.intellectual': '🧠',
+              'stats.user.readingDna.trait.emotional': '💖',
+              'stats.user.readingDna.trait.patient': '🕰️',
+              'stats.user.readingDna.trait.social': '👥',
+              'stats.user.readingDna.trait.nostalgic': '📚',
+              'stats.user.readingDna.trait.ambitious': '🚀'
             };
-            return [icons[label] || '', label];
+            const translated = this.translate.instant(label);
+            return [icons[label] || '', translated];
           }
         }
       }
@@ -110,16 +114,16 @@ export class ReadingDNAChartComponent implements OnInit, OnDestroy {
         callbacks: {
           title: (context) => {
             const label = context[0]?.label || '';
-            return `${label} Personality`;
+            return this.translate.instant('stats.user.readingDna.tooltip.title', {trait: label});
           },
           label: (context) => {
             const score = context.parsed.r;
             const insight = this.personalityInsights.find(i => i.trait === context.label);
 
             return [
-              `Score: ${score.toFixed(1)}/100`,
+              this.translate.instant('stats.user.readingDna.tooltip.score', {score: score.toFixed(1)}),
               '',
-              insight ? insight.description : 'Your reading personality trait'
+              insight ? this.translate.instant(insight.description) : this.translate.instant('stats.user.readingDna.tooltip.fallbackDescription')
             ];
           }
         }
@@ -145,8 +149,14 @@ export class ReadingDNAChartComponent implements OnInit, OnDestroy {
 
   private readonly chartDataSubject = new BehaviorSubject<ReadingDNAChartData>({
     labels: [
-      'Adventurous', 'Perfectionist', 'Intellectual', 'Emotional',
-      'Patient', 'Social', 'Nostalgic', 'Ambitious'
+      'stats.user.readingDna.trait.adventurous',
+      'stats.user.readingDna.trait.perfectionist',
+      'stats.user.readingDna.trait.intellectual',
+      'stats.user.readingDna.trait.emotional',
+      'stats.user.readingDna.trait.patient',
+      'stats.user.readingDna.trait.social',
+      'stats.user.readingDna.trait.nostalgic',
+      'stats.user.readingDna.trait.ambitious'
     ],
     datasets: []
   });
@@ -168,6 +178,12 @@ export class ReadingDNAChartComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         const profile = this.calculateReadingDNAData();
         this.updateChartData(profile);
+      });
+
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.chart?.chart?.update();
       });
   }
 
@@ -205,11 +221,17 @@ export class ReadingDNAChartComponent implements OnInit, OnDestroy {
 
       this.chartDataSubject.next({
         labels: [
-          'Adventurous', 'Perfectionist', 'Intellectual', 'Emotional',
-          'Patient', 'Social', 'Nostalgic', 'Ambitious'
+          'stats.user.readingDna.trait.adventurous',
+          'stats.user.readingDna.trait.perfectionist',
+          'stats.user.readingDna.trait.intellectual',
+          'stats.user.readingDna.trait.emotional',
+          'stats.user.readingDna.trait.patient',
+          'stats.user.readingDna.trait.social',
+          'stats.user.readingDna.trait.nostalgic',
+          'stats.user.readingDna.trait.ambitious'
         ],
         datasets: [{
-          label: 'Reading DNA Profile',
+          label: this.translate.instant('stats.user.readingDna.datasetLabel'),
           data,
           backgroundColor: 'rgba(79, 195, 247, 0.2)',
           borderColor: '#4fc3f7',
@@ -511,51 +533,51 @@ export class ReadingDNAChartComponent implements OnInit, OnDestroy {
   private convertToPersonalityInsights(profile: ReadingDNAProfile): PersonalityInsight[] {
     return [
       {
-        trait: 'Adventurous',
+        trait: 'stats.user.readingDna.trait.adventurous',
         score: profile.adventurous,
-        description: 'You explore diverse genres and experimental content',
+        description: 'stats.user.readingDna.description.adventurous',
         color: '#ff6b9d'
       },
       {
-        trait: 'Perfectionist',
+        trait: 'stats.user.readingDna.trait.perfectionist',
         score: profile.perfectionist,
-        description: 'You prefer high-quality books and finish what you start',
+        description: 'stats.user.readingDna.description.perfectionist',
         color: '#45aaf2'
       },
       {
-        trait: 'Intellectual',
+        trait: 'stats.user.readingDna.trait.intellectual',
         score: profile.intellectual,
-        description: 'You gravitate toward complex, educational material',
+        description: 'stats.user.readingDna.description.intellectual',
         color: '#96f7d2'
       },
       {
-        trait: 'Emotional',
+        trait: 'stats.user.readingDna.trait.emotional',
         score: profile.emotional,
-        description: 'You connect emotionally with fiction and personal stories',
+        description: 'stats.user.readingDna.description.emotional',
         color: '#feca57'
       },
       {
-        trait: 'Patient',
+        trait: 'stats.user.readingDna.trait.patient',
         score: profile.patient,
-        description: 'You tackle long books and complete series',
+        description: 'stats.user.readingDna.description.patient',
         color: '#ff9ff3'
       },
       {
-        trait: 'Social',
+        trait: 'stats.user.readingDna.trait.social',
         score: profile.social,
-        description: 'You enjoy popular, widely-discussed books',
+        description: 'stats.user.readingDna.description.social',
         color: '#54a0ff'
       },
       {
-        trait: 'Nostalgic',
+        trait: 'stats.user.readingDna.trait.nostalgic',
         score: profile.nostalgic,
-        description: 'You appreciate classic literature and older works',
+        description: 'stats.user.readingDna.description.nostalgic',
         color: '#5f27cd'
       },
       {
-        trait: 'Ambitious',
+        trait: 'stats.user.readingDna.trait.ambitious',
         score: profile.ambitious,
-        description: 'You challenge yourself with volume and difficulty',
+        description: 'stats.user.readingDna.description.ambitious',
         color: '#00d2d3'
       }
     ];

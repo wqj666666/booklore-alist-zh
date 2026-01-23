@@ -5,9 +5,9 @@
         <i class="pi pi-cloud-upload header-icon"></i>
       </div>
       <div class="header-text">
-        <h2 class="panel-title">Upload Books</h2>
+        <h2 class="panel-title">{{ 'shared.bookUploader.title' | translate }}</h2>
         <p class="panel-description">
-          Upload your books to library or bookdrop folder
+          {{ 'shared.bookUploader.description' | translate }}
         </p>
       </div>
       <p-button
@@ -24,7 +24,7 @@
         <div class="section-header">
           <span class="section-title">
             <i class="pi pi-map-marker"></i>
-            Upload Destination
+            {{ 'shared.bookUploader.section.uploadDestination' | translate }}
           </span>
         </div>
         <div class="destination-selector">
@@ -44,28 +44,28 @@
           <div class="section-header">
             <span class="section-title">
               <i class="pi pi-building"></i>
-              Library Selection
+              {{ 'shared.bookUploader.section.librarySelection' | translate }}
             </span>
           </div>
           <div class="selection-fields">
             <div class="field-group">
-              <label for="library-select" class="field-label">Library</label>
+              <label for="library-select" class="field-label">{{ 'shared.bookUploader.field.library.label' | translate }}</label>
               <p-select
                 inputId="library-select"
                 [options]="libraries"
                 optionLabel="name"
-                placeholder="Select Library"
+                [placeholder]="'shared.bookUploader.field.library.placeholder' | translate"
                 [(ngModel)]="selectedLibrary"
                 class="w-full">
               </p-select>
             </div>
             <div class="field-group">
-              <label for="subpath-select" class="field-label">Subpath</label>
+              <label for="subpath-select" class="field-label">{{ 'shared.bookUploader.field.subpath.label' | translate }}</label>
               <p-select
                 inputId="subpath-select"
                 [options]="selectedLibrary?.paths"
                 optionLabel="path"
-                placeholder="Select Subpath"
+                [placeholder]="'shared.bookUploader.field.subpath.placeholder' | translate"
                 [(ngModel)]="selectedPath"
                 [disabled]="!selectedLibrary"
                 class="w-full">
@@ -81,7 +81,7 @@
         <div class="section-header">
           <span class="section-title">
             <i class="pi pi-file"></i>
-            Select Files
+            {{ 'shared.bookUploader.section.selectFiles' | translate }}
           </span>
         </div>
         <p-fileupload
@@ -90,7 +90,7 @@
           [multiple]="true"
           accept=".pdf,.epub,.cbz,.cbr,.cb7,.fb2"
           (onSelect)="onFilesSelect($event)"
-          (uploadHandler)="uploadFiles($event)"
+          (uploadHandler)="uploadFiles()"
           [disabled]="value === 'library' ? (!selectedLibrary || !selectedPath) : false">
           <ng-template #header let-files let-chooseCallback="chooseCallback" let-clearCallback="clearCallback" let-uploadCallback="uploadCallback">
             <div class="upload-actions">
@@ -99,30 +99,32 @@
                   severity="info"
                   (onClick)="choose($event, chooseCallback)"
                   icon="pi pi-images"
-                  label="Choose"
+                  [label]="'shared.bookUploader.action.choose' | translate"
                   [outlined]="true"
                   [disabled]="isChooseDisabled()"
-                  pTooltip="Choose files to upload"
+                  [pTooltip]="'shared.bookUploader.tooltip.chooseFilesToUpload' | translate"
                   tooltipPosition="top"/>
                 <p-button
                   (onClick)="uploadEvent(uploadCallback)"
                   icon="pi pi-cloud-upload"
-                  label="Upload"
+                  [label]="'shared.bookUploader.action.upload' | translate"
                   severity="success"
                   [disabled]="isUploadDisabled()"
-                  pTooltip="Start uploading selected files"
+                  [pTooltip]="'shared.bookUploader.tooltip.startUploadingSelectedFiles' | translate"
                   tooltipPosition="top"/>
                 <p-button
                   (onClick)="onClear(clearCallback)"
                   icon="pi pi-times"
-                  label="Clear"
+                  [label]="'shared.bookUploader.action.clear' | translate"
                   severity="danger"
                   [outlined]="true"
                   [disabled]="!filesPresent() || isUploading"
-                  pTooltip="Clear selected files"
+                  [pTooltip]="'shared.bookUploader.tooltip.clearSelectedFiles' | translate"
                   tooltipPosition="top"/>
               </div>
-              <small class="upload-hint">Click "Choose" to select files or drag and drop them below</small>
+              <small class="upload-hint">
+                {{ 'shared.bookUploader.hint.chooseOrDrag' | translate:{chooseLabel: ('shared.bookUploader.action.choose' | translate)} }}
+              </small>
             </div>
           </ng-template>
           <ng-template #content let-files let-removeFileCallback="removeFileCallback">
@@ -154,11 +156,11 @@
                           <i class="pi pi-check status-icon success"></i>
                         }
                         @case ('Failed') {
-                          @if (uploadFile.errorMessage?.includes('exceeds maximum size')) {
+                          @if (uploadFile.errorCode === 'MAX_FILE_SIZE') {
                             @if (hasUploadCompleted()) {
                               <i
                                 class="pi pi-exclamation-triangle status-icon warning"
-                                [pTooltip]="uploadFile.errorMessage || 'File too large'"
+                                [pTooltip]="uploadFile.errorMessage || ('shared.bookUploader.tooltip.fileTooLarge' | translate)"
                                 tooltipPosition="top">
                               </i>
                             } @else {
@@ -172,7 +174,7 @@
                           } @else {
                             <i
                               class="pi pi-exclamation-triangle status-icon error"
-                              [pTooltip]="uploadFile.errorMessage || 'Upload failed'"
+                              [pTooltip]="uploadFile.errorMessage || ('shared.bookUploader.tooltip.uploadFailed' | translate)"
                               tooltipPosition="top">
                             </i>
                           }
@@ -190,11 +192,11 @@
               <div class="empty-icon-wrapper">
                 <i class="pi pi-cloud-upload empty-icon" [class.active]="isUploadZoneActive()"></i>
               </div>
-              <h3 class="empty-title">Drag and Drop Files</h3>
+              <h3 class="empty-title">{{ 'shared.bookUploader.empty.title' | translate }}</h3>
               <p class="empty-description">
-                Supported formats: <strong>.pdf</strong>, <strong>.epub</strong>, <strong>.cbz</strong>, <strong>.cbr</strong>, <strong>.cb7</strong>, <strong>.fb2</strong>
+                {{ 'shared.bookUploader.empty.supportedFormats' | translate }}: <strong>.pdf</strong>, <strong>.epub</strong>, <strong>.cbz</strong>, <strong>.cbr</strong>, <strong>.cb7</strong>, <strong>.fb2</strong>
                 <br/>
-                Maximum file size: {{ maxFileSizeDisplay }} per file
+                {{ 'shared.bookUploader.empty.maxFileSize' | translate:{size: maxFileSizeDisplay} }}
               </p>
             </div>
           </ng-template>

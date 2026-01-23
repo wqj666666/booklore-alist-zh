@@ -5,6 +5,7 @@ import {BookdropFileNotification, BookdropFileService} from '../../service/bookd
 import {DatePipe} from '@angular/common';
 import {Router} from '@angular/router';
 import {Button} from 'primeng/button';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bookdrop-files-widget-component',
@@ -13,7 +14,8 @@ import {Button} from 'primeng/button';
   styleUrl: './bookdrop-files-widget.component.scss',
   imports: [
     DatePipe,
-    Button
+    Button,
+    TranslateModule
   ]
 })
 export class BookdropFilesWidgetComponent implements OnInit, OnDestroy {

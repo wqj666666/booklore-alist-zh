@@ -33,7 +33,7 @@
         <pdf-shy-button
           [cssClass]="'lg' | responsiveCSSClass"
           class="newTab"
-          title="Close PDF Reader"
+          [title]="'readers.pdf.title.closePdfReader' | translate"
           primaryToolbarId="closePdfReaderButton"
           [action]="closeReader"
           [order]="5"

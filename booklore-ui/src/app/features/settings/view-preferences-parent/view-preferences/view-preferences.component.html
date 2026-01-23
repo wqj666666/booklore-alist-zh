@@ -2,10 +2,10 @@
   <div class="settings-header">
     <h2 class="settings-title">
       <i class="pi pi-table"></i>
-      Library and Shelf View & Sort Preferences
+      {{ 'settings.viewPreferences.title' | translate }}
     </h2>
     <p class="settings-description">
-      Configure default and per-library/shelf preferences for sorting and view mode (grid or table) in the browser.
+      {{ 'settings.viewPreferences.description' | translate }}
     </p>
   </div>
 
@@ -14,10 +14,10 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-cog"></i>
-          Default Settings
+          {{ 'settings.viewPreferences.section.default.title' | translate }}
         </h3>
         <p class="section-description">
-          Set the default sorting and view preferences that will apply to all libraries and shelves unless overridden.
+          {{ 'settings.viewPreferences.section.default.description' | translate }}
         </p>
       </div>
 
@@ -25,18 +25,18 @@
         <div class="setting-item">
           <div class="setting-info">
             <div class="setting-label-row">
-              <label class="setting-label">Default Preferences</label>
+              <label class="setting-label">{{ 'settings.viewPreferences.label.defaultPreferences' | translate }}</label>
               <div class="select-group">
                 <p-select size="small" [options]="sortOptions" optionLabel="label" optionValue="field"
-                          [(ngModel)]="selectedSort" placeholder="Sort By" class="select-item" appendTo="body"></p-select>
+                          [(ngModel)]="selectedSort" [placeholder]="'settings.viewPreferences.placeholder.sortBy' | translate" class="select-item" appendTo="body"></p-select>
                 <p-select size="small" [options]="sortDirectionOptions" [(ngModel)]="selectedSortDir"
-                          placeholder="Direction" class="select-item" appendTo="body"></p-select>
+                          [placeholder]="'settings.viewPreferences.placeholder.direction' | translate" class="select-item" appendTo="body"></p-select>
                 <p-select size="small" [options]="viewModeOptions" [(ngModel)]="selectedView"
-                          placeholder="View Mode" class="select-item" appendTo="body"></p-select>
+                          [placeholder]="'settings.viewPreferences.placeholder.viewMode' | translate" class="select-item" appendTo="body"></p-select>
               </div>
             </div>
             <p class="setting-description">
-              Configure the default sorting field, direction, and view mode for all libraries and shelves.
+              {{ 'settings.viewPreferences.description.defaultPreferences' | translate }}
             </p>
           </div>
         </div>
@@ -47,23 +47,23 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-list"></i>
-          Specific Overrides
+          {{ 'settings.viewPreferences.section.overrides.title' | translate }}
         </h3>
         <p class="section-description">
-          Create specific sorting and view preferences for individual libraries or shelves that override the default settings.
+          {{ 'settings.viewPreferences.section.overrides.description' | translate }}
         </p>
       </div>
 
       <div class="settings-card">
         <div class="setting-item no-border">
           <div class="setting-info">
-            <label class="setting-label">Override Management</label>
+            <label class="setting-label">{{ 'settings.viewPreferences.label.overrideManagement' | translate }}</label>
             <p class="setting-description">
-              Add custom preferences for specific libraries or shelves. These will override your default settings.
+              {{ 'settings.viewPreferences.description.overrideManagement' | translate }}
             </p>
           </div>
           <div class="setting-control">
-            <p-button label="Add Override" outlined size="small" (onClick)="addOverride()"
+            <p-button [label]="'settings.viewPreferences.button.addOverride' | translate" outlined size="small" (onClick)="addOverride()"
                       severity="success" icon="pi pi-plus" [disabled]="availableLibraries.length === 0"></p-button>
           </div>
         </div>
@@ -73,12 +73,12 @@
             <p-table [value]="overrides" [tableStyle]="{'width': '100%'}">
               <ng-template pTemplate="header">
                 <tr>
-                  <th style="min-width: 150px; max-width: 220px;">Type</th>
-                  <th style="min-width: 220px; max-width: 280px;">Name</th>
-                  <th style="min-width: 190px; max-width: 250px;">Sort By</th>
-                  <th style="min-width: 125px;">Direction</th>
-                  <th style="min-width: 125px;">View Mode</th>
-                  <th style="width: 75px; text-align: center;">Actions</th>
+                  <th style="min-width: 150px; max-width: 220px;">{{ 'settings.viewPreferences.table.header.type' | translate }}</th>
+                  <th style="min-width: 220px; max-width: 280px;">{{ 'settings.viewPreferences.table.header.name' | translate }}</th>
+                  <th style="min-width: 190px; max-width: 250px;">{{ 'settings.viewPreferences.table.header.sortBy' | translate }}</th>
+                  <th style="min-width: 125px;">{{ 'settings.viewPreferences.table.header.direction' | translate }}</th>
+                  <th style="min-width: 125px;">{{ 'settings.viewPreferences.table.header.viewMode' | translate }}</th>
+                  <th style="width: 75px; text-align: center;">{{ 'settings.viewPreferences.table.header.actions' | translate }}</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-override let-rowIndex="rowIndex">
@@ -110,7 +110,7 @@
                   </td>
                   <td style="text-align: center;">
                     <p-button icon="pi pi-trash" severity="danger" size="small" [outlined]="true"
-                              (onClick)="removeOverride(rowIndex)" [pTooltip]="'Remove override'" tooltipPosition="left"></p-button>
+                              (onClick)="removeOverride(rowIndex)" [pTooltip]="'settings.viewPreferences.tooltip.removeOverride' | translate" tooltipPosition="left"></p-button>
                   </td>
                 </tr>
               </ng-template>
@@ -121,7 +121,7 @@
     </div>
 
     <div class="save-section">
-      <p-button label="Save Settings" icon="pi pi-save" severity="success" (onClick)="saveSettings()"></p-button>
+      <p-button [label]="'settings.viewPreferences.button.saveSettings' | translate" icon="pi pi-save" severity="success" (onClick)="saveSettings()"></p-button>
     </div>
   </div>
 </div>

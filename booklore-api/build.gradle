@@ -16,6 +16,8 @@ java {
 }
 
 repositories {
+    maven { url 'https://maven.aliyun.com/repository/public' }
+    maven { url 'https://repo.huaweicloud.com/repository/maven' }
     mavenCentral()
 }
 
@@ -29,6 +31,7 @@ dependencies {
     // --- Spring Boot ---
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -37,11 +40,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-    // --- Reactive Streams ---
-    implementation 'io.projectreactor:reactor-core'
-
     // --- Database & Migration ---
     implementation 'org.mariadb.jdbc:mariadb-java-client:3.5.6'
+    implementation 'mysql:mysql-connector-java:8.0.33'
     implementation 'org.flywaydb:flyway-mysql:11.19.0'
 
     // --- Security & Authentication ---
@@ -55,19 +56,10 @@ dependencies {
 
     // --- Book & Image Processing ---
     implementation 'org.apache.pdfbox:pdfbox:3.0.6'
-    implementation 'org.apache.pdfbox:pdfbox-io:3.0.6'
     implementation 'org.apache.pdfbox:xmpbox:3.0.6'
     implementation 'org.apache.pdfbox:jbig2-imageio:3.0.4'
-    // Required for JPEG2000 support in PDFBox (not covered by TwelveMonkeys)
     implementation 'com.github.jai-imageio:jai-imageio-core:1.4.0'
     implementation 'com.github.jai-imageio:jai-imageio-jpeg2000:1.4.0'
-    
-    // --- TwelveMonkeys ImageIO ---
-    implementation 'com.twelvemonkeys.imageio:imageio-jpeg:3.13.0'
-    implementation 'com.twelvemonkeys.imageio:imageio-tiff:3.13.0'
-    implementation 'com.twelvemonkeys.imageio:imageio-webp:3.13.0'
-    implementation 'com.twelvemonkeys.imageio:imageio-bmp:3.13.0'
-    
     implementation 'io.documentnode:epub4j-core:4.2.2'
 
     // --- UNRAR Support ---
@@ -94,7 +86,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.assertj:assertj-core:3.27.6'
     testImplementation "org.mockito:mockito-inline:5.2.0"
-    testRuntimeOnly 'com.h2database:h2'
 }
 
 hibernate {

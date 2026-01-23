@@ -3,11 +3,14 @@ package com.adityachandel.booklore.service.book;
 import com.adityachandel.booklore.exception.ApiError;
 import com.adityachandel.booklore.model.dto.settings.KoboSettings;
 import com.adityachandel.booklore.model.entity.BookEntity;
+import com.adityachandel.booklore.model.entity.BookFileEntity;
 import com.adityachandel.booklore.model.enums.BookFileType;
 import com.adityachandel.booklore.repository.BookRepository;
 import com.adityachandel.booklore.service.appsettings.AppSettingService;
 import com.adityachandel.booklore.service.kobo.KepubConversionService;
 import com.adityachandel.booklore.service.kobo.CbxConversionService;
+import com.adityachandel.booklore.service.storage.StorageBackend;
+import com.adityachandel.booklore.service.storage.StorageBackendSelector;
 import com.adityachandel.booklore.util.FileUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -15,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -42,39 +47,72 @@ public class BookDownloadService {
     private final KepubConversionService kepubConversionService;
     private final CbxConversionService cbxConversionService;
     private final AppSettingService appSettingService;
+    private final StorageBackendSelector storageBackendSelector;
 
     public ResponseEntity<Resource> downloadBook(Long bookId) {
         try {
             BookEntity bookEntity = bookRepository.findById(bookId)
                     .orElseThrow(() -> ApiError.BOOK_NOT_FOUND.createException(bookId));
 
-            Path file = Paths.get(FileUtils.getBookFullPath(bookEntity)).toAbsolutePath().normalize();
-            File bookFile = file.toFile();
-
-            if (!bookFile.exists()) {
-                throw ApiError.FAILED_TO_DOWNLOAD_FILE.createException(bookId);
+            BookFileEntity primaryFile = bookEntity.getPrimaryBookFile();
+            
+            // 尝试使用存储后端的下载方式（支持 AList 302 直链）
+            StorageBackend backend = storageBackendSelector.getBackend(bookEntity);
+            String relativePath = storageBackendSelector.getRelativePath(primaryFile);
+            StorageBackend.DownloadAccess downloadAccess = backend.getDownloadAccess(relativePath);
+            
+            // 根据下载方式返回不同响应
+            switch (downloadAccess) {
+                case StorageBackend.DownloadAccess.Redirect redirect -> {
+                    log.debug("Redirecting download for book {} to: {}", bookId, redirect.url());
+                    return ResponseEntity.status(HttpStatus.FOUND)
+                            .location(URI.create(redirect.url()))
+                            .build();
+                }
+                case StorageBackend.DownloadAccess.LocalFile localFile -> {
+                    return downloadLocalFile(localFile.filePath(), primaryFile.getFileName());
+                }
+                case StorageBackend.DownloadAccess.NotFound notFound -> {
+                    // 尝试回退到本地文件路径
+                    Path file = Paths.get(FileUtils.getBookFullPath(bookEntity)).toAbsolutePath().normalize();
+                    if (Files.exists(file)) {
+                        return downloadLocalFile(file, primaryFile.getFileName());
+                    }
+                    log.error("Book file not found: {}", notFound.message());
+                    throw ApiError.FAILED_TO_DOWNLOAD_FILE.createException(bookId);
+                }
             }
-
-            // Use FileSystemResource which properly handles file resources and closing
-            Resource resource = new FileSystemResource(bookFile);
-
-            String encodedFilename = URLEncoder.encode(file.getFileName().toString(), StandardCharsets.UTF_8)
-                    .replace("+", "%20");
-            String fallbackFilename = NON_ASCII_PATTERN.matcher(file.getFileName().toString()).replaceAll("_");
-            String contentDisposition = String.format("attachment; filename=\"%s\"; filename*=UTF-8''%s",
-                    fallbackFilename, encodedFilename);
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .contentLength(bookFile.length())
-                    .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
-                    .header(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate")
-                    .header(HttpHeaders.PRAGMA, "no-cache")
-                    .header(HttpHeaders.EXPIRES, "0")
-                    .body(resource);
         } catch (Exception e) {
             log.error("Failed to download book {}: {}", bookId, e.getMessage(), e);
             throw ApiError.FAILED_TO_DOWNLOAD_FILE.createException(bookId);
         }
+    }
+
+    /**
+     * 下载本地文件
+     */
+    private ResponseEntity<Resource> downloadLocalFile(Path filePath, String fileName) {
+        File bookFile = filePath.toFile();
+        
+        if (!bookFile.exists()) {
+            throw new IllegalStateException("File not found: " + filePath);
+        }
+
+        Resource resource = new FileSystemResource(bookFile);
+
+        String encodedFilename = URLEncoder.encode(fileName, StandardCharsets.UTF_8)
+                .replace("+", "%20");
+        String fallbackFilename = NON_ASCII_PATTERN.matcher(fileName).replaceAll("_");
+        String contentDisposition = String.format("attachment; filename=\"%s\"; filename*=UTF-8''%s",
+                fallbackFilename, encodedFilename);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(bookFile.length())
+                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
+                .header(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate")
+                .header(HttpHeaders.PRAGMA, "no-cache")
+                .header(HttpHeaders.EXPIRES, "0")
+                .body(resource);
     }
 
     public void downloadKoboBook(Long bookId, HttpServletResponse response) {

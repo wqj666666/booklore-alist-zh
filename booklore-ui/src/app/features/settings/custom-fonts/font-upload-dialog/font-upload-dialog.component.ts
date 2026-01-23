@@ -7,11 +7,12 @@ import {formatFileSize} from '../../../../shared/model/custom-font.model';
 import {InputText} from 'primeng/inputtext';
 import {FormsModule} from '@angular/forms';
 import {DynamicDialogRef} from 'primeng/dynamicdialog';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-font-upload-dialog',
   standalone: true,
-  imports: [CommonModule, Button, InputText, FormsModule],
+  imports: [CommonModule, Button, InputText, FormsModule, TranslateModule],
   templateUrl: './font-upload-dialog.component.html',
   styleUrls: ['./font-upload-dialog.component.scss']
 })
@@ -33,7 +34,8 @@ export class FontUploadDialogComponent implements OnDestroy {
   constructor(
     private customFontService: CustomFontService,
     private messageService: MessageService,
-    private dialogRef: DynamicDialogRef
+    private dialogRef: DynamicDialogRef,
+    private translateService: TranslateService
   ) {}
 
   onUploadZoneClick(): void {
@@ -96,8 +98,8 @@ export class FontUploadDialogComponent implements OnDestroy {
         this.previewFontFamily = null;
         this.messageService.add({
           severity: 'warn',
-          summary: 'Preview Failed',
-          detail: 'Unable to preview font, but you can still upload it'
+          summary: this.translateService.instant('settings.customFonts.uploadDialog.toast.previewFailed.summary'),
+          detail: this.translateService.instant('settings.customFonts.uploadDialog.toast.previewFailed.detail')
         });
       }
     } finally {
@@ -111,8 +113,8 @@ export class FontUploadDialogComponent implements OnDestroy {
     if (!this.selectedFile) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'No File Selected',
-        detail: 'Please select a font file to upload'
+        summary: this.translateService.instant('settings.customFonts.uploadDialog.toast.noFileSelected.summary'),
+        detail: this.translateService.instant('settings.customFonts.uploadDialog.toast.noFileSelected.detail')
       });
       return;
     }
@@ -122,21 +124,21 @@ export class FontUploadDialogComponent implements OnDestroy {
       next: (font) => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: `Font "${font.fontName}" uploaded successfully`
+          summary: this.translateService.instant('settings.customFonts.uploadDialog.toast.uploadSuccess.summary'),
+          detail: this.translateService.instant('settings.customFonts.uploadDialog.toast.uploadSuccess.detail', {fontName: font.fontName})
         });
         this.isUploading = false;
         this.dialogRef.close(font); // Return the uploaded font
       },
       error: (error) => {
         console.error('Failed to upload font:', error);
-        let errorMessage = 'Failed to upload font';
+        let errorMessage = this.translateService.instant('settings.customFonts.uploadDialog.toast.uploadFailed.detail.generic');
         if (error.status === 400) {
-          errorMessage = 'Invalid file format or quota exceeded';
+          errorMessage = this.translateService.instant('settings.customFonts.uploadDialog.toast.uploadFailed.detail.badRequest');
         }
         this.messageService.add({
           severity: 'error',
-          summary: 'Upload Failed',
+          summary: this.translateService.instant('settings.customFonts.uploadDialog.toast.uploadFailed.summary'),
           detail: errorMessage
         });
 
@@ -193,8 +195,8 @@ export class FontUploadDialogComponent implements OnDestroy {
     if (!isValidFormat) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Invalid File Type',
-        detail: 'Please upload a TTF, OTF, WOFF, or WOFF2 font file'
+        summary: this.translateService.instant('settings.customFonts.uploadDialog.error.invalidType.summary'),
+        detail: this.translateService.instant('settings.customFonts.uploadDialog.error.invalidType.detail')
       });
       return false;
     }
@@ -202,8 +204,8 @@ export class FontUploadDialogComponent implements OnDestroy {
     if (file.size > this.maxFileSize) {
       this.messageService.add({
         severity: 'error',
-        summary: 'File Too Large',
-        detail: `File size must not exceed ${this.formatFileSize(this.maxFileSize)}`
+        summary: this.translateService.instant('settings.customFonts.uploadDialog.error.fileTooLarge.summary'),
+        detail: this.translateService.instant('settings.customFonts.uploadDialog.error.fileTooLarge.detail', {size: this.formatFileSize(this.maxFileSize)})
       });
       return false;
     }

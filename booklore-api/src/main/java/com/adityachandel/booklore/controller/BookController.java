@@ -32,7 +32,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -103,7 +102,7 @@ public class BookController {
     @GetMapping("/{bookId}/content")
     @CheckBookAccess(bookIdParam = "bookId")
     public ResponseEntity<ByteArrayResource> getBookContent(
-            @Parameter(description = "ID of the book") @PathVariable long bookId) throws IOException {
+            @Parameter(description = "ID of the book") @PathVariable long bookId) {
         return bookService.getBookContent(bookId);
     }
 

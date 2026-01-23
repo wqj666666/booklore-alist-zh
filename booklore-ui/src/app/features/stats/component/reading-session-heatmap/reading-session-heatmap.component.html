@@ -3,22 +3,22 @@
     <div class="chart-title">
       <h3>
         <i class="pi pi-calendar heatmap-title-icon"></i>
-        Reading Session Activity
+        {{ 'stats.user.heatmap.title' | translate }}
       </h3>
-      <p class="chart-description">Daily overview of your reading sessions across the year</p>
+      <p class="chart-description">{{ 'stats.user.heatmap.subtitle' | translate }}</p>
     </div>
     <div class="year-selector">
       <button type="button"
               class="year-nav-btn"
               (click)="changeYear(-1)"
-              title="Previous year">
+              [title]="'stats.user.heatmap.actions.previousYear' | translate">
         <i class="pi pi-chevron-left"></i>
       </button>
       <span class="current-year">{{ currentYear }}</span>
       <button type="button"
               class="year-nav-btn"
               (click)="changeYear(1)"
-              title="Next year">
+              [title]="'stats.user.heatmap.actions.nextYear' | translate">
         <i class="pi pi-chevron-right"></i>
       </button>
     </div>

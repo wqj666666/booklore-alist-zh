@@ -1,4 +1,4 @@
-import {Component, inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {BaseChartDirective} from 'ng2-charts';
 import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
@@ -7,11 +7,12 @@ import {ChartConfiguration, ChartData} from 'chart.js';
 import {BookService} from '../../../book/service/book.service';
 import {BookState} from '../../../book/model/state/book-state.model';
 import {Book} from '../../../book/model/book.model';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 interface ReadingProgressStats {
   progressRange: string;
   count: number;
-  description: string;
+  descriptionKey: string;
 }
 
 const CHART_COLORS = [
@@ -31,12 +32,12 @@ const CHART_DEFAULTS = {
 } as const;
 
 const PROGRESS_RANGES = [
-  {range: '0%', min: 0, max: 0, desc: 'Not Started'},
-  {range: '1-25%', min: 0.1, max: 25, desc: 'Just Started'},
-  {range: '26-50%', min: 26, max: 50, desc: 'Getting Into It'},
-  {range: '51-75%', min: 51, max: 75, desc: 'Halfway Through'},
-  {range: '76-99%', min: 76, max: 99, desc: 'Almost Finished'},
-  {range: '100%', min: 100, max: 100, desc: 'Completed'}
+  {range: '0%', min: 0, max: 0, descKey: 'stats.user.readingProgress.range.notStarted'},
+  {range: '1-25%', min: 0.1, max: 25, descKey: 'stats.user.readingProgress.range.justStarted'},
+  {range: '26-50%', min: 26, max: 50, descKey: 'stats.user.readingProgress.range.gettingIntoIt'},
+  {range: '51-75%', min: 51, max: 75, descKey: 'stats.user.readingProgress.range.halfwayThrough'},
+  {range: '76-99%', min: 76, max: 99, descKey: 'stats.user.readingProgress.range.almostFinished'},
+  {range: '100%', min: 100, max: 100, descKey: 'stats.user.readingProgress.range.completed'}
 ] as const;
 
 type ProgressChartData = ChartData<'doughnut', number[], string>;
@@ -44,13 +45,15 @@ type ProgressChartData = ChartData<'doughnut', number[], string>;
 @Component({
   selector: 'app-reading-progress-chart',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective],
+  imports: [CommonModule, TranslateModule, BaseChartDirective],
   templateUrl: './reading-progress-chart.component.html',
   styleUrls: ['./reading-progress-chart.component.scss']
 })
 export class ReadingProgressChartComponent implements OnInit, OnDestroy {
   private readonly bookService = inject(BookService);
+  private readonly translate = inject(TranslateService);
   private readonly destroy$ = new Subject<void>();
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
   public readonly chartType = 'doughnut' as const;
 
@@ -117,8 +120,17 @@ export class ReadingProgressChartComponent implements OnInit, OnDestroy {
             const percentage = ((value / total) * 100).toFixed(1);
             const label = context.label;
             const rangeInfo = PROGRESS_RANGES.find(r => r.range === label);
-            const description = rangeInfo ? ` (${rangeInfo.desc})` : '';
-            return `${value} book${value === 1 ? '' : 's'}${description} - ${percentage}%`;
+            const bookCount = value === 1
+              ? this.translate.instant('stats.user.units.bookCountOne', {count: value})
+              : this.translate.instant('stats.user.units.bookCountMany', {count: value});
+            const description = rangeInfo
+              ? this.translate.instant('stats.user.readingProgress.tooltip.descriptionWrapper', {desc: this.translate.instant(rangeInfo.descKey)})
+              : '';
+            return this.translate.instant('stats.user.readingProgress.tooltip.label', {
+              bookCount,
+              description,
+              percentage
+            });
           }
         }
       },
@@ -133,7 +145,7 @@ export class ReadingProgressChartComponent implements OnInit, OnDestroy {
   private readonly chartDataSubject = new BehaviorSubject<ProgressChartData>({
     labels: [],
     datasets: [{
-      label: 'Books by Progress',
+      label: this.translate.instant('stats.user.readingProgress.datasetLabel'),
       data: [],
       backgroundColor: [...CHART_COLORS],
       ...CHART_DEFAULTS
@@ -157,6 +169,18 @@ export class ReadingProgressChartComponent implements OnInit, OnDestroy {
         const stats = this.calculateReadingProgressStats();
         this.updateChartData(stats);
       });
+
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        const current = this.chartDataSubject.value;
+        const dataset = current.datasets?.[0];
+        this.chartDataSubject.next({
+          ...current,
+          datasets: dataset ? [{...dataset, label: this.translate.instant('stats.user.readingProgress.datasetLabel')}] : []
+        });
+        this.chart?.chart?.update();
+      });
   }
 
   ngOnDestroy(): void {
@@ -172,7 +196,7 @@ export class ReadingProgressChartComponent implements OnInit, OnDestroy {
       this.chartDataSubject.next({
         labels,
         datasets: [{
-          label: 'Books by Progress',
+          label: this.translate.instant('stats.user.readingProgress.datasetLabel'),
           data: dataValues,
           backgroundColor: [...CHART_COLORS],
           borderColor: '#ffffff',
@@ -226,7 +250,7 @@ export class ReadingProgressChartComponent implements OnInit, OnDestroy {
     return PROGRESS_RANGES.map(range => ({
       progressRange: range.range,
       count: rangeCounts.get(range.range) || 0,
-      description: range.desc
+      descriptionKey: range.descKey
     }));
   }
 

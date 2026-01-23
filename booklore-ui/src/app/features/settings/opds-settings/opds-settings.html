@@ -2,12 +2,16 @@
   <div class="settings-header">
     <h2 class="settings-title">
       <i class="pi pi-server"></i>
-      OPDS Configuration
-      <app-external-doc-link docType="opds"></app-external-doc-link>
+      {{ 'settings.opds.title' | translate }}
+      <app-external-doc-link
+        docType="opds"
+        [tooltip]="'shared.externalDocLink.tooltip.viewDocumentation' | translate">
+      </app-external-doc-link>
     </h2>
     <p class="settings-description">
-      Manage your OPDS credentials and control how your book collection is shared with reading apps.
-      By default, all libraries you have access to will be included in the OPDS feed.
+      {{ 'settings.opds.description.line1' | translate }}
+      <br>
+      {{ 'settings.opds.description.line2' | translate }}
     </p>
   </div>
 
@@ -17,7 +21,7 @@
         <div class="section-header">
           <h3 class="section-title">
             <i class="pi pi-power-off"></i>
-            Server Control
+            {{ 'settings.opds.serverControl.title' | translate }}
           </h3>
         </div>
 
@@ -25,7 +29,7 @@
           <div class="setting-item">
             <div class="setting-info">
               <div class="setting-label-row">
-                <label class="setting-label">OPDS Server Enabled</label>
+                <label class="setting-label">{{ 'settings.opds.serverEnabled.label' | translate }}</label>
                 <p-toggleswitch
                   [(ngModel)]="opdsEnabled"
                   (onChange)="toggleOpdsServer()">
@@ -33,7 +37,7 @@
               </div>
               <p class="setting-description">
                 <i class="pi pi-info-circle"></i>
-                Enable or disable the OPDS server to control access to your book collection through reading apps.
+                {{ 'settings.opds.serverEnabled.description' | translate }}
               </p>
             </div>
           </div>
@@ -45,7 +49,7 @@
           <div class="section-header">
             <h3 class="section-title">
               <i class="pi pi-link"></i>
-              OPDS Endpoint
+              {{ 'settings.opds.endpoint.title' | translate }}
             </h3>
           </div>
 
@@ -53,7 +57,7 @@
             <div class="setting-item">
               <div class="setting-info">
                 <div class="setting-label-row">
-                  <label class="setting-label">OPDS Catalog URL</label>
+                  <label class="setting-label">{{ 'settings.opds.endpoint.label' | translate }}</label>
                   <div class="input-group">
                     <input
                       id="endpoint-url"
@@ -68,13 +72,14 @@
                       severity="info"
                       outlined
                       size="small"
+                      [pTooltip]="'settings.opds.tooltip.copyEndpoint' | translate"
                       (onClick)="copyEndpoint()">
                     </p-button>
                   </div>
                 </div>
                 <p class="setting-description">
                   <i class="pi pi-info-circle"></i>
-                  Use this URL to access your book collection through OPDS-compatible reading apps.
+                  {{ 'settings.opds.endpoint.description' | translate }}
                 </p>
               </div>
             </div>
@@ -86,11 +91,11 @@
             <div class="section-header-content">
               <h3 class="section-title">
                 <i class="pi pi-users"></i>
-                OPDS Users
+                {{ 'settings.opds.users.title' | translate }}
               </h3>
               <p-button
                 icon="pi pi-plus"
-                label="Add User"
+                [label]="'settings.opds.users.addUser' | translate"
                 severity="success"
                 size="small"
                 (onClick)="showCreateUserDialog = true">
@@ -104,31 +109,31 @@
               [paginator]="users.length > 10"
               [rows]="10"
               [showCurrentPageReport]="true"
-              currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users">
+              [currentPageReportTemplate]="'settings.opds.table.paginatorReport' | translate">
               <ng-template pTemplate="header">
                 <tr>
                   <th>
                     <div class="header-content">
                       <i class="pi pi-user"></i>
-                      <span>Username</span>
+                      <span>{{ 'settings.opds.table.header.username' | translate }}</span>
                     </div>
                   </th>
                   <th>
                     <div class="header-content">
                       <i class="pi pi-sort-alt"></i>
-                      <span>Sort Order</span>
+                      <span>{{ 'settings.opds.table.header.sortOrder' | translate }}</span>
                     </div>
                   </th>
                   <th>
                     <div class="header-content">
                       <i class="pi pi-key"></i>
-                      <span>Password</span>
+                      <span>{{ 'settings.opds.table.header.password' | translate }}</span>
                     </div>
                   </th>
                   <th class="actions-header">
                     <div class="header-content">
                       <i class="pi pi-cog"></i>
-                      <span>Actions</span>
+                      <span>{{ 'settings.opds.table.header.actions' | translate }}</span>
                     </div>
                   </th>
                 </tr>
@@ -179,7 +184,7 @@
                           size="small"
                           [text]="true"
                           (onClick)="startEdit(user)"
-                          pTooltip="Edit sort order">
+                          [pTooltip]="'settings.opds.tooltip.editSortOrder' | translate">
                         </p-button>
                       </div>
                     }
@@ -197,7 +202,7 @@
                       </p-password>
                       <i
                         class="pi pi-info-circle text-gray-400"
-                        pTooltip="Passwords are hidden for security reasons. To change, delete the user and create a new one with a new password."
+                        [pTooltip]="'settings.opds.tooltip.passwordHiddenInfo' | translate"
                         tooltipPosition="right"
                         style="cursor: pointer;">
                       </i>
@@ -211,7 +216,7 @@
                       [outlined]="true"
                       [rounded]="true"
                       (onClick)="confirmDelete(user)"
-                      pTooltip="Delete user">
+                      [pTooltip]="'settings.opds.tooltip.deleteUser' | translate">
                     </p-button>
                   </td>
                 </tr>
@@ -221,8 +226,8 @@
                   <td colspan="4">
                     <div class="empty-message">
                       <i class="pi pi-users"></i>
-                      <p class="empty-title">No users found</p>
-                      <p class="empty-subtitle">Create your first OPDS user to get started</p>
+                      <p class="empty-title">{{ 'settings.opds.table.empty.title' | translate }}</p>
+                      <p class="empty-subtitle">{{ 'settings.opds.table.empty.subtitle' | translate }}</p>
                     </div>
                   </td>
                 </tr>
@@ -234,32 +239,32 @@
     </div>
 
     <p-dialog
-      header="Create OPDS User"
+      [header]="'settings.opds.dialog.createUser.header' | translate"
       [(visible)]="showCreateUserDialog"
       [modal]="true"
       styleClass="user-dialog"
       [style]="{width: '400px'}">
       <div class="dialog-form">
         <div class="form-field">
-          <label for="username">Username</label>
+          <label for="username">{{ 'settings.opds.dialog.field.username.label' | translate }}</label>
           <input
             id="username"
             type="text"
             pInputText
             [(ngModel)]="newUser.username"
-            placeholder="Enter username"/>
+            [placeholder]="'settings.opds.dialog.field.username.placeholder' | translate"/>
         </div>
         <div class="form-field">
-          <label for="password">Password</label>
+          <label for="password">{{ 'settings.opds.dialog.field.password.label' | translate }}</label>
           <input
             id="password"
             type="password"
             pInputText
             [(ngModel)]="newUser.password"
-            placeholder="Enter password"/>
+            [placeholder]="'settings.opds.dialog.field.password.placeholder' | translate"/>
         </div>
         <div class="form-field">
-          <label for="sortOrder">Default Sort Order</label>
+          <label for="sortOrder">{{ 'settings.opds.dialog.field.sortOrder.label' | translate }}</label>
           <p-select
             id="sortOrder"
             [options]="sortOrderOptions"
@@ -267,25 +272,25 @@
             optionLabel="label"
             optionValue="value"
             [style]="{width: '100%'}"
-            placeholder="Select sort order"
+            [placeholder]="'settings.opds.dialog.field.sortOrder.placeholder' | translate"
             [appendTo]="'body'">
           </p-select>
           <small class="form-hint">
             <i class="pi pi-info-circle"></i>
-            This will determine how books appear in the OPDS feed for this user
+            {{ 'settings.opds.dialog.field.sortOrder.hint' | translate }}
           </small>
         </div>
       </div>
       <ng-template pTemplate="footer">
         <div class="dialog-actions">
           <p-button
-            label="Cancel"
+            [label]="'common.cancel' | translate"
             severity="secondary"
             outlined="true"
             (onClick)="cancelCreateUser()">
           </p-button>
           <p-button
-            label="Create"
+            [label]="'settings.opds.dialog.action.create' | translate"
             severity="success"
             [disabled]="!newUser.username || !newUser.password"
             (onClick)="createUser()">
@@ -300,11 +305,11 @@
       <div class="access-denied-card">
         <i class="pi pi-lock"></i>
         <div class="access-denied-content">
-          <h3>Access Restricted</h3>
+          <h3>{{ 'settings.opds.accessDenied.title' | translate }}</h3>
           <p>
-            Access to OPDS is restricted.
+            {{ 'settings.opds.accessDenied.line1' | translate }}
             <br>
-            Please contact your administrator to request permission.
+            {{ 'settings.opds.accessDenied.line2' | translate }}
           </p>
         </div>
       </div>

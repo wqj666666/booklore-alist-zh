@@ -16,7 +16,7 @@
     <div class="flex justify-between items-center flex-wrap gap-2 pt-4">
 
       <div class="flex items-center gap-2 pl-1 group"
-           pTooltip="{{ currentIndex + 1 }} of {{ proposals.length }} processed ({{ ((currentIndex + 1) / proposals.length * 100) | number: '1.0-0' }}%)"
+           [pTooltip]="'metadata.reviewDialog.tooltip.progress' | translate:{ current: currentIndex + 1, total: proposals.length, percent: (((currentIndex + 1) / proposals.length * 100) | number: '1.0-0') }"
            tooltipPosition="top">
         <p-progressBar
           [value]="((currentIndex + 1) / proposals.length) * 100"
@@ -24,14 +24,14 @@
           showValue="false">
         </p-progressBar>
         <span class="text-sm text-gray-300 font-medium tabular-nums whitespace-nowrap">
-          Book {{ currentIndex + 1 }} / {{ proposals.length }}
+          {{ 'metadata.reviewDialog.progress.book' | translate:{ current: currentIndex + 1, total: proposals.length } }}
         </span>
       </div>
 
       <div class="flex flex-wrap gap-2 justify-end">
 
         <p-button
-          label="Close"
+          [label]="'common.close' | translate"
           icon="pi pi-times-circle"
           severity="secondary"
           [outlined]="true"
@@ -41,7 +41,7 @@
         <p-divider layout="vertical"/>
 
         <p-button
-          label="Lock All"
+          [label]="'metadata.reviewDialog.button.lockAll' | translate"
           icon="pi pi-lock"
           severity="warn"
           [outlined]="true"
@@ -49,7 +49,7 @@
         </p-button>
 
         <p-button
-          label="Unlock All"
+          [label]="'metadata.reviewDialog.button.unlockAll' | translate"
           icon="pi pi-lock-open"
           severity="success"
           [outlined]="true"
@@ -59,7 +59,7 @@
         <p-divider layout="vertical"/>
 
         <p-button
-          label="Accept & Save"
+          [label]="'metadata.reviewDialog.button.acceptAndSave' | translate"
           icon="pi pi-check-circle"
           iconPos="right"
           severity="success"
@@ -70,7 +70,7 @@
         <p-divider layout="vertical"/>
 
         <p-button
-          [label]="isLast ? 'Finish & Close' : 'Next'"
+          [label]="isLast ? ('metadata.reviewDialog.button.finishAndClose' | translate) : ('metadata.reviewDialog.button.next' | translate)"
           [icon]="isLast ? 'pi pi-check-circle' : 'pi pi-angle-right'"
           iconPos="right"
           severity="info"

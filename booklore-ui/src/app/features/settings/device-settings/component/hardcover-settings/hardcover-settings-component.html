@@ -4,11 +4,11 @@
   <div class="settings-header">
     <h2 class="settings-title">
       <i class="pi pi-book"></i>
-      Hardcover Integration
+      {{ 'settings.device.hardcover.title' | translate }}
       <app-external-doc-link docType="hardcover"></app-external-doc-link>
     </h2>
     <p class="settings-description">
-      Sync your reading progress from Booklore to your Hardcover account.
+      {{ 'settings.device.hardcover.description' | translate }}
     </p>
   </div>
 
@@ -18,10 +18,10 @@
         <div class="section-header">
           <h3 class="section-title">
             <i class="pi pi-sync"></i>
-            Sync Configuration
+            {{ 'settings.device.hardcover.section.sync.title' | translate }}
           </h3>
           <p class="section-description">
-            Enable and configure synchronization between Booklore and Hardcover.
+            {{ 'settings.device.hardcover.section.sync.description' | translate }}
           </p>
         </div>
 
@@ -30,7 +30,7 @@
             <div class="setting-info">
               <div class="setting-label-row">
                 <label class="setting-label">
-                  Sync KOReader Reading Progress to Hardcover</label>
+                  {{ 'settings.device.hardcover.syncEnabled.label' | translate }}</label>
                 <p-toggle-switch
                   id="hardcoverSyncEnabled"
                   name="hardcoverSyncEnabled"
@@ -39,7 +39,7 @@
                 </p-toggle-switch>
               </div>
               <p class="setting-description">
-                When enabled, your KOReader reading progress will be automatically synced to your Hardcover account.
+                {{ 'settings.device.hardcover.syncEnabled.description' | translate }}
               </p>
             </div>
           </div>
@@ -48,7 +48,7 @@
             <div class="setting-item">
               <div class="setting-info">
                 <div class="setting-label-row">
-                  <label class="setting-label">Hardcover API Key</label>
+                  <label class="setting-label">{{ 'settings.device.hardcover.apiKey.label' | translate }}</label>
                   <div class="token-input-group">
                     <input
                       pInputText
@@ -57,7 +57,7 @@
                       [type]="showHardcoverApiKey ? 'text' : 'password'"
                       name="hardcoverApiKey"
                       class="token-input"
-                      placeholder="Enter your Hardcover API key"
+                      [placeholder]="'settings.device.hardcover.apiKey.placeholder' | translate"
                       (blur)="onHardcoverApiKeyChange()"
                     />
                     <p-button
@@ -65,7 +65,7 @@
                       outlined="true"
                       severity="info"
                       size="small"
-                      (onClick)="copyText(hardcoverApiKey, 'API Key')"
+                      (onClick)="copyText(hardcoverApiKey, 'settings.device.clipboard.label.apiKey')"
                       [disabled]="!hardcoverApiKey">
                     </p-button>
                     <p-button
@@ -78,9 +78,9 @@
                   </div>
                 </div>
                 <p class="setting-description">
-                  Your personal Hardcover API key. Get it from
+                  {{ 'settings.device.hardcover.apiKey.description.line1' | translate }}
                   <a href="https://hardcover.app/account/api" target="_blank" rel="noopener">hardcover.app/account/api</a>.
-                  This key is used only for syncing your reading progress and is not shared with other users.
+                  {{ 'settings.device.hardcover.apiKey.description.line2' | translate }}
                 </p>
               </div>
             </div>
@@ -93,11 +93,11 @@
       <div class="access-denied-card">
         <i class="pi pi-lock"></i>
         <div class="access-denied-content">
-          <h3>Access Restricted</h3>
+          <h3>{{ 'settings.device.hardcover.accessDenied.title' | translate }}</h3>
           <p>
-            Access to Hardcover sync is restricted.
+            {{ 'settings.device.hardcover.accessDenied.line1' | translate }}
             <br>
-            Please contact your administrator to request permission.
+            {{ 'settings.device.hardcover.accessDenied.line2' | translate }}
           </p>
         </div>
       </div>

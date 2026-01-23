@@ -2,20 +2,20 @@
   <div class="library-loader-content">
     <div class="library-loader-header">
       <i class="pi pi-book"></i>
-      <h2>Loading Library</h2>
+      <h2>{{ 'libraryCreator.loading.title' | translate }}</h2>
     </div>
 
     <div class="library-loader-body">
       <div class="book-title">
         @if (!isComplete) {
           <ng-container>
-            Processing: <strong>{{ truncatedTitle }}</strong>
+            {{ 'libraryCreator.loading.processingPrefix' | translate }} <strong>{{ truncatedTitle }}</strong>
           </ng-container>
         }
         @if (isComplete) {
           <strong class="complete-message">
             <i class="pi pi-check-circle"></i>
-            Library Loading Complete!
+            {{ 'libraryCreator.loading.complete' | translate }}
           </strong>
         }
       </div>
@@ -42,7 +42,7 @@
       <div class="library-loader-footer">
         <button class="reload-button" (click)="onReload()">
           <i class="pi pi-bookmark"></i>
-          Open Library
+          {{ 'libraryCreator.loading.openLibrary' | translate }}
         </button>
       </div>
     }

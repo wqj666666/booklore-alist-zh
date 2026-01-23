@@ -2,6 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {MessageService} from 'primeng/api';
 import {TableColumnPreference, UserService} from '../../../settings/user-management/user.service';
+import {TranslateService} from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root'
@@ -9,32 +10,33 @@ import {TableColumnPreference, UserService} from '../../../settings/user-managem
 export class TableColumnPreferenceService {
   private readonly userService = inject(UserService);
   private readonly messageService = inject(MessageService);
+  private readonly translateService = inject(TranslateService);
 
   private readonly preferencesSubject = new BehaviorSubject<TableColumnPreference[]>([]);
   readonly preferences$ = this.preferencesSubject.asObservable();
 
   private readonly allAvailableColumns = [
-    {field: 'readStatus', header: 'Read'},
-    {field: 'title', header: 'Title'},
-    {field: 'authors', header: 'Authors'},
-    {field: 'publisher', header: 'Publisher'},
-    {field: 'seriesName', header: 'Series'},
-    {field: 'seriesNumber', header: 'Series #'},
-    {field: 'categories', header: 'Genres'},
-    {field: 'publishedDate', header: 'Published'},
-    {field: 'lastReadTime', header: 'Last Read'},
-    {field: 'addedOn', header: 'Added'},
-    {field: 'fileSizeKb', header: 'File Size'},
-    {field: 'language', header: 'Language'},
-    {field: 'isbn', header: 'ISBN'},
-    {field: 'pageCount', header: 'Pages'},
-    {field: 'amazonRating', header: 'Amazon'},
-    {field: 'amazonReviewCount', header: 'AZ #'},
-    {field: 'goodreadsRating', header: 'Goodreads'},
-    {field: 'goodreadsReviewCount', header: 'GR #'},
-    {field: 'hardcoverRating', header: 'Hardcover'},
-    {field: 'hardcoverReviewCount', header: 'HC #'},
-    {field: 'ranobedbRating', header: 'Ranobedb'},
+    {field: 'readStatus', headerKey: 'book.table.column.readStatus'},
+    {field: 'title', headerKey: 'book.table.column.title'},
+    {field: 'authors', headerKey: 'book.table.column.authors'},
+    {field: 'publisher', headerKey: 'book.table.column.publisher'},
+    {field: 'seriesName', headerKey: 'book.table.column.seriesName'},
+    {field: 'seriesNumber', headerKey: 'book.table.column.seriesNumber'},
+    {field: 'categories', headerKey: 'book.table.column.categories'},
+    {field: 'publishedDate', headerKey: 'book.table.column.publishedDate'},
+    {field: 'lastReadTime', headerKey: 'book.table.column.lastReadTime'},
+    {field: 'addedOn', headerKey: 'book.table.column.addedOn'},
+    {field: 'fileSizeKb', headerKey: 'book.table.column.fileSizeKb'},
+    {field: 'language', headerKey: 'book.table.column.language'},
+    {field: 'isbn', headerKey: 'book.table.column.isbn'},
+    {field: 'pageCount', headerKey: 'book.table.column.pageCount'},
+    {field: 'amazonRating', headerKey: 'book.table.column.amazonRating'},
+    {field: 'amazonReviewCount', headerKey: 'book.table.column.amazonReviewCount'},
+    {field: 'goodreadsRating', headerKey: 'book.table.column.goodreadsRating'},
+    {field: 'goodreadsReviewCount', headerKey: 'book.table.column.goodreadsReviewCount'},
+    {field: 'hardcoverRating', headerKey: 'book.table.column.hardcoverRating'},
+    {field: 'hardcoverReviewCount', headerKey: 'book.table.column.hardcoverReviewCount'},
+    {field: 'ranobedbRating', headerKey: 'book.table.column.ranobedbRating'},
   ];
 
   private readonly fallbackPreferences: TableColumnPreference[] = this.allAvailableColumns.map((col, index) => ({
@@ -49,7 +51,10 @@ export class TableColumnPreferenceService {
   }
 
   get allColumns(): { field: string; header: string }[] {
-    return this.allAvailableColumns;
+    return this.allAvailableColumns.map(col => ({
+      field: col.field,
+      header: this.translateService.instant(col.headerKey)
+    }));
   }
 
   get visibleColumns(): { field: string; header: string }[] {
@@ -87,14 +92,15 @@ export class TableColumnPreferenceService {
 
     this.messageService.add({
       severity: 'success',
-      summary: 'Preferences Saved',
-      detail: 'Your column layout has been saved.',
+      summary: this.translateService.instant('book.browser.columns.toast.preferencesSaved.summary'),
+      detail: this.translateService.instant('book.browser.columns.toast.preferencesSaved.detail'),
       life: 1500
     });
   }
 
   private getColumnHeader(field: string): string {
-    return this.allAvailableColumns.find(col => col.field === field)?.header ?? field;
+    const headerKey = this.allAvailableColumns.find(col => col.field === field)?.headerKey;
+    return headerKey ? this.translateService.instant(headerKey) : field;
   }
 
   private mergeWithAllColumns(savedPrefs: TableColumnPreference[]): TableColumnPreference[] {

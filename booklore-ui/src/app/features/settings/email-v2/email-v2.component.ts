@@ -8,6 +8,7 @@ import {ExternalDocLinkComponent} from '../../../shared/components/external-doc-
 import {UserService} from '../user-management/user.service';
 import {Subject} from 'rxjs';
 import {filter, takeUntil, tap} from 'rxjs/operators';
+import {TranslateModule} from '@ngx-translate/core';
 
 
 @Component({
@@ -18,7 +19,8 @@ import {filter, takeUntil, tap} from 'rxjs/operators';
     Divider,
     EmailV2ProviderComponent,
     EmailV2RecipientComponent,
-    ExternalDocLinkComponent
+    ExternalDocLinkComponent,
+    TranslateModule
 ],
   templateUrl: './email-v2.component.html',
   styleUrls: ['./email-v2.component.scss'],

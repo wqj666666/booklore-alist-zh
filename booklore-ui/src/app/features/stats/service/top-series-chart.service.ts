@@ -1,5 +1,5 @@
 import {inject, Injectable, OnDestroy} from '@angular/core';
-import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, EMPTY, Observable, Subject} from 'rxjs';
 import {map, takeUntil, catchError, filter, first, switchMap} from 'rxjs/operators';
 import {ChartConfiguration, ChartData, TooltipItem} from 'chart.js';
 
@@ -7,6 +7,8 @@ import {LibraryFilterService} from './library-filter.service';
 import {BookService} from '../../book/service/book.service';
 import {Book} from '../../book/model/book.model';
 import {BookState} from '../../book/model/state/book-state.model';
+import {TranslateService} from '@ngx-translate/core';
+import {LanguageService} from '../../../core/i18n/language.service';
 
 interface SeriesStats {
   seriesName: string;
@@ -35,94 +37,13 @@ type SeriesChartData = ChartData<'bar', number[], string>;
 export class TopSeriesChartService implements OnDestroy {
   private readonly bookService = inject(BookService);
   private readonly libraryFilterService = inject(LibraryFilterService);
+  private readonly translateService = inject(TranslateService);
+  private readonly languageService = inject(LanguageService);
   private readonly destroy$ = new Subject<void>();
 
   public readonly seriesChartType = 'bar' as const;
 
-  public readonly seriesChartOptions: ChartConfiguration<'bar'>['options'] = {
-    responsive: true,
-    maintainAspectRatio: false,
-    indexAxis: 'y',
-    scales: {
-      x: {
-        beginAtZero: true,
-        ticks: {
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11.5
-          },
-          precision: 0
-        },
-        grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
-        },
-        title: {
-          display: true,
-          text: 'Number of Books',
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 12
-          }
-        }
-      },
-      y: {
-        ticks: {
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11
-          },
-          maxTicksLimit: 20
-        },
-        grid: {
-          color: 'rgba(255, 255, 255, 0.05)'
-        }
-      }
-    },
-    plugins: {
-      legend: {
-        display: false
-      },
-      tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.9)',
-        titleColor: '#ffffff',
-        bodyColor: '#ffffff',
-        borderColor: '#ffffff',
-        borderWidth: 1,
-        cornerRadius: 6,
-        displayColors: true,
-        padding: 12,
-        titleFont: {size: 14, weight: 'bold'},
-        bodyFont: {size: 12},
-        callbacks: {
-          title: (context) => {
-            const dataIndex = context[0].dataIndex;
-            const stats = this.getLastCalculatedStats();
-            return stats[dataIndex]?.seriesName || 'Unknown Series';
-          },
-          label: this.formatTooltipLabel.bind(this)
-        }
-      },
-      datalabels: {
-        display: true,
-        color: '#ffffff',
-        font: {
-          size: 10,
-          family: "'Inter', sans-serif",
-          weight: 'bold'
-        },
-        align: 'center',
-        offset: 8,
-        formatter: (value: number) => value.toString()
-      }
-    },
-    interaction: {
-      intersect: false,
-      mode: 'point'
-    }
-  };
+  public seriesChartOptions: ChartConfiguration<'bar'>['options'] = this.buildOptions();
 
   private readonly seriesChartDataSubject = new BehaviorSubject<SeriesChartData>({
     labels: [],
@@ -137,9 +58,10 @@ export class TopSeriesChartService implements OnDestroy {
         filter(state => state.loaded),
         first(),
         switchMap(() =>
-          this.libraryFilterService.selectedLibrary$.pipe(
-            takeUntil(this.destroy$)
-          )
+          combineLatest([
+            this.libraryFilterService.selectedLibrary$,
+            this.languageService.language$
+          ]).pipe(takeUntil(this.destroy$))
         ),
         catchError((error) => {
           console.error('Error processing top series stats:', error);
@@ -147,6 +69,7 @@ export class TopSeriesChartService implements OnDestroy {
         })
       )
       .subscribe(() => {
+        this.seriesChartOptions = this.buildOptions();
         const stats = this.calculateTopSeriesStats();
         this.updateChartData(stats);
       });
@@ -167,7 +90,7 @@ export class TopSeriesChartService implements OnDestroy {
       this.seriesChartDataSubject.next({
         labels,
         datasets: [{
-          label: 'Books',
+          label: this.translateService.instant('stats.library.chart.topSeries.datasetLabel'),
           data: dataValues,
           backgroundColor: colors,
           borderColor: colors,
@@ -255,14 +178,18 @@ export class TopSeriesChartService implements OnDestroy {
     const stats = this.getLastCalculatedStats();
 
     if (!stats || dataIndex >= stats.length) {
-      return `${context.parsed.x} books`;
+      return this.translateService.instant(
+        context.parsed.x === 1 ? 'stats.library.units.bookCountOne' : 'stats.library.units.bookCountMany',
+        {count: context.parsed.x}
+      );
     }
 
     const series = stats[dataIndex];
     const bookCount = series.bookCount;
-    const bookText = bookCount === 1 ? 'book' : 'books';
-
-    return `${bookCount} ${bookText}`;
+    return this.translateService.instant(
+      bookCount === 1 ? 'stats.library.units.bookCountOne' : 'stats.library.units.bookCountMany',
+      {count: bookCount}
+    );
   }
 
   private lastCalculatedStats: SeriesStats[] = [];
@@ -273,5 +200,92 @@ export class TopSeriesChartService implements OnDestroy {
 
   private truncateTitle(title: string, maxLength: number): string {
     return title.length > maxLength ? title.substring(0, maxLength) + '...' : title;
+  }
+
+  private buildOptions(): ChartConfiguration<'bar'>['options'] {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: 'y',
+      scales: {
+        x: {
+          beginAtZero: true,
+          ticks: {
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11.5
+            },
+            precision: 0
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.1)'
+          },
+          title: {
+            display: true,
+            text: this.translateService.instant('stats.library.chart.topSeries.axis.xTitle'),
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 12
+            }
+          }
+        },
+        y: {
+          ticks: {
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11
+            },
+            maxTicksLimit: 20
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.05)'
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.9)',
+          titleColor: '#ffffff',
+          bodyColor: '#ffffff',
+          borderColor: '#ffffff',
+          borderWidth: 1,
+          cornerRadius: 6,
+          displayColors: true,
+          padding: 12,
+          titleFont: {size: 14, weight: 'bold'},
+          bodyFont: {size: 12},
+          callbacks: {
+            title: (context) => {
+              const dataIndex = context[0].dataIndex;
+              const stats = this.getLastCalculatedStats();
+              return stats[dataIndex]?.seriesName || this.translateService.instant('stats.library.chart.common.unknownSeries');
+            },
+            label: this.formatTooltipLabel.bind(this)
+          }
+        },
+        datalabels: {
+          display: true,
+          color: '#ffffff',
+          font: {
+            size: 10,
+            family: "'Inter', sans-serif",
+            weight: 'bold'
+          },
+          align: 'center',
+          offset: 8,
+          formatter: (value: number) => value.toString()
+        }
+      },
+      interaction: {
+        intersect: false,
+        mode: 'point'
+      }
+    };
   }
 }

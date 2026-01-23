@@ -1,24 +1,22 @@
 import {inject, Injectable, OnDestroy} from '@angular/core';
-import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
-import {map, takeUntil, catchError, filter, first, switchMap} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, EMPTY, Observable, Subject} from 'rxjs';
+import {takeUntil, catchError, filter, first, switchMap} from 'rxjs/operators';
 import {ChartConfiguration, ChartData, Chart, TooltipItem} from 'chart.js';
 
 import {LibraryFilterService} from './library-filter.service';
 import {BookService} from '../../book/service/book.service';
 import {Book} from '../../book/model/book.model';
 import {BookState} from '../../book/model/state/book-state.model';
+import {TranslateService} from '@ngx-translate/core';
+import {LanguageService} from '../../../core/i18n/language.service';
 
 interface QualityScoreStats {
-  category: string;
+  categoryId: QualityCategoryId;
+  categoryLabel: string;
   count: number;
   averageScore: number;
   scoreRange: string;
 }
-
-const CHART_COLORS = [
-  '#e74c3c', '#e67e22', '#f39c12', '#f1c40f', '#2ecc71',
-  '#27ae60', '#3498db', '#9b59b6', '#8e44ad', '#34495e'
-] as const;
 
 const CHART_DEFAULTS = {
   borderColor: '#ffffff',
@@ -27,14 +25,22 @@ const CHART_DEFAULTS = {
   hoverBorderColor: '#ffffff'
 } as const;
 
-const QUALITY_COLORS = {
-  'Excellent (9+)': '#2ecc71',     // Green
-  'Very Good (8-9)': '#27ae60',    // Dark Green
-  'Good (6-8)': '#3498db',         // Blue
-  'Average (4-6)': '#f39c12',      // Orange
-  'Poor (2-4)': '#e67e22',         // Dark Orange
-  'Very Poor (0-2)': '#e74c3c'     // Red
-} as const;
+type QualityCategoryId = 'excellent' | 'veryGood' | 'good' | 'average' | 'poor' | 'veryPoor';
+
+const QUALITY_CATEGORIES: Array<{
+  id: QualityCategoryId;
+  minScoreInclusive: number;
+  labelKey: string;
+  color: string;
+  scoreRange: string;
+}> = [
+  {id: 'excellent', minScoreInclusive: 9, labelKey: 'stats.library.chart.bookMetadataScore.categories.excellent', color: '#2ecc71', scoreRange: '90-100%'},
+  {id: 'veryGood', minScoreInclusive: 8, labelKey: 'stats.library.chart.bookMetadataScore.categories.veryGood', color: '#27ae60', scoreRange: '80-89%'},
+  {id: 'good', minScoreInclusive: 6, labelKey: 'stats.library.chart.bookMetadataScore.categories.good', color: '#3498db', scoreRange: '60-79%'},
+  {id: 'average', minScoreInclusive: 4, labelKey: 'stats.library.chart.bookMetadataScore.categories.average', color: '#f39c12', scoreRange: '40-59%'},
+  {id: 'poor', minScoreInclusive: 2, labelKey: 'stats.library.chart.bookMetadataScore.categories.poor', color: '#e67e22', scoreRange: '20-39%'},
+  {id: 'veryPoor', minScoreInclusive: 0, labelKey: 'stats.library.chart.bookMetadataScore.categories.veryPoor', color: '#e74c3c', scoreRange: '0-19%'}
+] as const;
 
 type QualityChartData = ChartData<'doughnut', number[], string>;
 
@@ -44,54 +50,19 @@ type QualityChartData = ChartData<'doughnut', number[], string>;
 export class BookQualityScoreChartService implements OnDestroy {
   private readonly bookService = inject(BookService);
   private readonly libraryFilterService = inject(LibraryFilterService);
+  private readonly translateService = inject(TranslateService);
+  private readonly languageService = inject(LanguageService);
   private readonly destroy$ = new Subject<void>();
 
   public readonly qualityChartType = 'doughnut' as const;
 
-  public readonly qualityChartOptions: ChartConfiguration<'doughnut'>['options'] = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: true,
-        position: 'bottom',
-        labels: {
-          padding: 12,
-          usePointStyle: true,
-          generateLabels: this.generateLegendLabels.bind(this)
-        }
-      },
-      tooltip: {
-        enabled: true,
-        backgroundColor: 'rgba(0, 0, 0, 0.9)',
-        titleColor: '#ffffff',
-        bodyColor: '#ffffff',
-        borderColor: '#ffffff',
-        borderWidth: 1,
-        cornerRadius: 6,
-        displayColors: true,
-        padding: 12,
-        titleFont: {size: 14, weight: 'bold'},
-        bodyFont: {size: 12},
-        position: 'nearest',
-        callbacks: {
-          title: (context) => context[0]?.label || '',
-          label: this.formatTooltipLabel.bind(this)
-        }
-      }
-    },
-    interaction: {
-      intersect: false,
-      mode: 'point'
-    },
-    cutout: '45%'
-  };
+  public qualityChartOptions: ChartConfiguration<'doughnut'>['options'] = this.buildOptions();
 
   private readonly qualityChartDataSubject = new BehaviorSubject<QualityChartData>({
     labels: [],
     datasets: [{
       data: [],
-      backgroundColor: [...CHART_COLORS],
+      backgroundColor: QUALITY_CATEGORIES.map(c => c.color),
       ...CHART_DEFAULTS
     }]
   });
@@ -104,9 +75,10 @@ export class BookQualityScoreChartService implements OnDestroy {
         filter(state => state.loaded),
         first(),
         switchMap(() =>
-          this.libraryFilterService.selectedLibrary$.pipe(
-            takeUntil(this.destroy$)
-          )
+          combineLatest([
+            this.libraryFilterService.selectedLibrary$,
+            this.languageService.language$
+          ]).pipe(takeUntil(this.destroy$))
         ),
         catchError((error) => {
           console.error('Error processing quality score stats:', error);
@@ -114,6 +86,7 @@ export class BookQualityScoreChartService implements OnDestroy {
         })
       )
       .subscribe(() => {
+        this.qualityChartOptions = this.buildOptions();
         const stats = this.calculateQualityScoreStats();
         this.updateChartData(stats);
       });
@@ -127,7 +100,7 @@ export class BookQualityScoreChartService implements OnDestroy {
   private updateChartData(stats: QualityScoreStats[]): void {
     try {
       this.lastCalculatedStats = stats;
-      const labels = stats.map(s => s.category);
+      const labels = stats.map(s => s.categoryLabel);
       const dataValues = stats.map(s => s.count);
       const colors = this.getColorsForQualityData(stats);
 
@@ -145,7 +118,11 @@ export class BookQualityScoreChartService implements OnDestroy {
   }
 
   private getColorsForQualityData(stats: QualityScoreStats[]): string[] {
-    return stats.map(stat => QUALITY_COLORS[stat.category as keyof typeof QUALITY_COLORS] || '#34495e');
+    const colorsById = QUALITY_CATEGORIES.reduce((acc, c) => {
+      acc[c.id] = c.color;
+      return acc;
+    }, {} as Record<QualityCategoryId, string>);
+    return stats.map(stat => colorsById[stat.categoryId] || '#34495e');
   }
 
   private calculateQualityScoreStats(): QualityScoreStats[] {
@@ -187,23 +164,17 @@ export class BookQualityScoreChartService implements OnDestroy {
     return this.convertToQualityStats(qualityCategories);
   }
 
-  private categorizeByQualityScore(books: Book[]): Map<string, { books: Book[], scores: number[] }> {
-    const categories = new Map<string, { books: Book[], scores: number[] }>();
-
-    // Initialize 6 categories
-    categories.set('Excellent (9+)', {books: [], scores: []});
-    categories.set('Very Good (8-9)', {books: [], scores: []});
-    categories.set('Good (6-8)', {books: [], scores: []});
-    categories.set('Average (4-6)', {books: [], scores: []});
-    categories.set('Poor (2-4)', {books: [], scores: []});
-    categories.set('Very Poor (0-2)', {books: [], scores: []});
+  private categorizeByQualityScore(books: Book[]): Map<QualityCategoryId, { books: Book[], scores: number[] }> {
+    const categories = new Map<QualityCategoryId, { books: Book[], scores: number[] }>();
+    for (const category of QUALITY_CATEGORIES) {
+      categories.set(category.id, {books: [], scores: []});
+    }
 
     for (const book of books) {
       const qualityScore = this.calculateQualityScore(book);
-      const category = this.getQualityCategory(qualityScore);
-
-      categories.get(category)!.books.push(book);
-      categories.get(category)!.scores.push(qualityScore);
+      const categoryId = this.getQualityCategoryId(qualityScore);
+      categories.get(categoryId)!.books.push(book);
+      categories.get(categoryId)!.scores.push(qualityScore);
     }
 
     return categories;
@@ -217,35 +188,32 @@ export class BookQualityScoreChartService implements OnDestroy {
     return 0;
   }
 
-  private getQualityCategory(score: number): string {
-    if (score >= 9) return 'Excellent (9+)';
-    if (score >= 8) return 'Very Good (8-9)';
-    if (score >= 6) return 'Good (6-8)';
-    if (score >= 4) return 'Average (4-6)';
-    if (score >= 2) return 'Poor (2-4)';
-    return 'Very Poor (0-2)';
+  private getQualityCategoryId(score: number): QualityCategoryId {
+    for (const category of QUALITY_CATEGORIES) {
+      if (score >= category.minScoreInclusive) {
+        return category.id;
+      }
+    }
+    return 'veryPoor';
   }
 
-  private convertToQualityStats(categoriesMap: Map<string, { books: Book[], scores: number[] }>): QualityScoreStats[] {
-    const scoreRanges: Record<string, string> = {
-      'Excellent (9+)': '90-100%',
-      'Very Good (8-9)': '80-89%',
-      'Good (6-8)': '60-79%',
-      'Average (4-6)': '40-59%',
-      'Poor (2-4)': '20-39%',
-      'Very Poor (0-2)': '0-19%'
-    };
+  private convertToQualityStats(categoriesMap: Map<QualityCategoryId, { books: Book[], scores: number[] }>): QualityScoreStats[] {
+    const categoriesById = QUALITY_CATEGORIES.reduce((acc, c) => {
+      acc[c.id] = c;
+      return acc;
+    }, {} as Record<QualityCategoryId, (typeof QUALITY_CATEGORIES)[number]>);
 
     return Array.from(categoriesMap.entries())
       .filter(([_, data]) => data.books.length > 0)
-      .map(([category, data]) => {
+      .map(([categoryId, data]) => {
         const averageScore = data.scores.reduce((sum, score) => sum + score, 0) / data.scores.length;
-
+        const category = categoriesById[categoryId];
         return {
-          category,
+          categoryId,
+          categoryLabel: this.translateService.instant(category.labelKey),
           count: data.books.length,
           averageScore: Number(averageScore.toFixed(1)),
-          scoreRange: scoreRanges[category] || 'Unknown'
+          scoreRange: category.scoreRange
         };
       })
       .sort((a, b) => b.averageScore - a.averageScore);
@@ -281,7 +249,11 @@ export class BookQualityScoreChartService implements OnDestroy {
     const qualityStats = this.getLastCalculatedStats();
 
     if (!qualityStats || dataIndex >= qualityStats.length) {
-      return `${context.parsed} books`;
+      const count = Number(context.parsed) || 0;
+      return this.translateService.instant(
+        count === 1 ? 'stats.library.units.bookCountOne' : 'stats.library.units.bookCountMany',
+        {count}
+      );
     }
 
     const stats = qualityStats[dataIndex];
@@ -289,13 +261,62 @@ export class BookQualityScoreChartService implements OnDestroy {
     const dataArr = (context.chart.data.datasets[0].data as (number | null | undefined)[]).filter((v): v is number => typeof v === 'number');
     const total = dataArr.reduce((a, b) => a + b, 0);
     const percentage = total > 0 ? ((stats.count / total) * 100).toFixed(1) : '0.0';
-
-    return `${stats.count} books (${percentage}%) | Average Score: ${stats.averageScore}/10 (${stats.scoreRange})`;
+    const countLabel = this.translateService.instant(
+      stats.count === 1 ? 'stats.library.units.bookCountOne' : 'stats.library.units.bookCountMany',
+      {count: stats.count}
+    );
+    return this.translateService.instant('stats.library.chart.bookMetadataScore.tooltipLabel', {
+      countLabel,
+      percentage,
+      averageScore: stats.averageScore.toFixed(1),
+      scoreRange: stats.scoreRange
+    });
   }
 
   private lastCalculatedStats: QualityScoreStats[] = [];
 
   private getLastCalculatedStats(): QualityScoreStats[] {
     return this.lastCalculatedStats;
+  }
+
+  private buildOptions(): ChartConfiguration<'doughnut'>['options'] {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'bottom',
+          labels: {
+            padding: 12,
+            usePointStyle: true,
+            generateLabels: this.generateLegendLabels.bind(this)
+          }
+        },
+        tooltip: {
+          enabled: true,
+          backgroundColor: 'rgba(0, 0, 0, 0.9)',
+          titleColor: '#ffffff',
+          bodyColor: '#ffffff',
+          borderColor: '#ffffff',
+          borderWidth: 1,
+          cornerRadius: 6,
+          displayColors: true,
+          padding: 12,
+          titleFont: {size: 14, weight: 'bold'},
+          bodyFont: {size: 12},
+          position: 'nearest',
+          callbacks: {
+            title: (context) => String(context[0]?.label ?? ''),
+            label: this.formatTooltipLabel.bind(this)
+          }
+        }
+      },
+      interaction: {
+        intersect: false,
+        mode: 'point'
+      },
+      cutout: '45%'
+    };
   }
 }

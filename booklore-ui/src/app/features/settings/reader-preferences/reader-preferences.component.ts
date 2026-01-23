@@ -10,18 +10,19 @@ import {EpubReaderPreferencesComponent} from './epub-reader-preferences/epub-rea
 import {PdfReaderPreferencesComponent} from './pdf-reader-preferences/pdf-reader-preferences-component';
 import {CbxReaderPreferencesComponent} from './cbx-reader-preferences/cbx-reader-preferences-component';
 import {CustomFontsComponent} from '../custom-fonts/custom-fonts.component';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-reader-preferences',
   templateUrl: './reader-preferences.component.html',
   standalone: true,
   styleUrls: ['./reader-preferences.component.scss'],
-  imports: [FormsModule, TooltipModule, EpubReaderPreferencesComponent, PdfReaderPreferencesComponent, CbxReaderPreferencesComponent, CustomFontsComponent]
+  imports: [FormsModule, TooltipModule, TranslateModule, EpubReaderPreferencesComponent, PdfReaderPreferencesComponent, CbxReaderPreferencesComponent, CustomFontsComponent]
 })
 export class ReaderPreferences implements OnInit, OnDestroy {
   readonly scopeOptions = [
-    {name: 'Global', key: 'Global', icon: 'pi pi-globe'},
-    {name: 'Individual', key: 'Individual', icon: 'pi pi-user'}
+    {name: 'settings.readerPreferences.scope.option.global', key: 'Global', icon: 'pi pi-globe'},
+    {name: 'settings.readerPreferences.scope.option.individual', key: 'Individual', icon: 'pi pi-user'}
   ];
 
   selectedPdfScope!: string;

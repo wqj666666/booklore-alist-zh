@@ -10,6 +10,7 @@ import {ProgressSpinner} from 'primeng/progressspinner';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {BookService} from '../../../book/service/book.service';
 import {Image} from 'primeng/image';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-cover-search',
@@ -20,7 +21,8 @@ import {Image} from 'primeng/image';
     FormsModule,
     InputText,
     ProgressSpinner,
-    Image
+    Image,
+    TranslateModule
   ],
   styleUrls: ['./cover-search.component.scss']
 })

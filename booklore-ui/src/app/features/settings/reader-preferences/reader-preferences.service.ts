@@ -3,11 +3,13 @@ import {User, UserService, UserSettings} from '../user-management/user.service';
 import {MessageService} from 'primeng/api';
 import {filter, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
+import {TranslateService} from '@ngx-translate/core';
 
 @Injectable({providedIn: 'root'})
 export class ReaderPreferencesService implements OnDestroy {
   private readonly userService = inject(UserService);
   private readonly messageService = inject(MessageService);
+  private readonly translateService = inject(TranslateService);
   private currentUser: User | null = null;
   private readonly destroy$ = new Subject<void>();
 
@@ -38,8 +40,8 @@ export class ReaderPreferencesService implements OnDestroy {
     this.userService.updateUserSetting(this.currentUser.id, rootKey, updatedValue);
     this.messageService.add({
       severity: 'success',
-      summary: 'Preferences Updated',
-      detail: 'Your preferences have been saved successfully.',
+      summary: this.translateService.instant('settings.toast.preferencesUpdated.summary'),
+      detail: this.translateService.instant('settings.toast.preferencesUpdated.detail'),
       life: 2000
     });
   }

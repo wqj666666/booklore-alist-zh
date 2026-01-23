@@ -9,13 +9,15 @@ import {NgClass} from '@angular/common';
 import {BookMetadataHostService} from '../../../../shared/service/book-metadata-host.service';
 import {takeUntil} from 'rxjs/operators';
 import {TooltipModule} from 'primeng/tooltip';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-book-card-lite-component',
   imports: [
     Button,
     NgClass,
-    TooltipModule
+    TooltipModule,
+    TranslateModule
   ],
   templateUrl: './book-card-lite-component.html',
   styleUrl: './book-card-lite-component.scss'

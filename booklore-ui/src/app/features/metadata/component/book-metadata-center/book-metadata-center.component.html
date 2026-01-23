@@ -3,18 +3,18 @@
     <p-tablist>
       <p-tab value="view">
         <i [class]="'pi pi-book'"></i>
-        Book Details
+        {{ 'metadata.center.tab.bookDetails' | translate }}
       </p-tab>
       @if (admin || canEditMetadata) {
         <p-tab value="edit">
           <i [class]="'pi pi-pencil'"></i>
-          Edit Metadata
+          {{ 'metadata.center.tab.editMetadata' | translate }}
         </p-tab>
       }
       @if (admin || canEditMetadata) {
         <p-tab value="match">
           <i [class]="'pi pi-search'"></i>
-          Search Metadata
+          {{ 'metadata.center.tab.searchMetadata' | translate }}
         </p-tab>
       }
     </p-tablist>

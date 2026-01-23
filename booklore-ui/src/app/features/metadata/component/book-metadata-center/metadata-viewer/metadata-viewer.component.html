@@ -7,7 +7,7 @@
 
           <p-image
             [src]="urlHelper.getCoverUrl(book.id, book.metadata?.coverUpdatedOn)"
-            alt="Image"
+            [alt]="'metadata.viewer.alt.coverImage' | translate"
             width="250"
             appendTo="body"
             [preview]="true">
@@ -70,7 +70,7 @@
               rounded
               outlined
               severity="info"
-              pTooltip="Go to previous book"
+              [pTooltip]="'metadata.viewer.tooltip.goToPreviousBook' | translate"
               tooltipPosition="bottom">
             </p-button>
             <span class="text-sm text-surface-600 dark:text-surface-400">
@@ -84,7 +84,7 @@
               severity="info"
               rounded
               outlined
-              pTooltip="Go to next book"
+              [pTooltip]="'metadata.viewer.tooltip.goToNextBook' | translate"
               tooltipPosition="bottom">
             </p-button>
           </div>
@@ -114,7 +114,7 @@
                 <i
                   class="pi lock-icon"
                   [ngClass]="isMetadataFullyLocked(book?.metadata!) ? 'pi-lock locked' : 'pi-lock-open unlocked'"
-                  [pTooltip]="isMetadataFullyLocked(book?.metadata!) ? 'This book metadata is locked.' : 'This book metadata is unlocked.'"
+                  [pTooltip]="isMetadataFullyLocked(book?.metadata!) ? ('metadata.viewer.tooltip.metadataLocked' | translate) : ('metadata.viewer.tooltip.metadataUnlocked' | translate)"
                   tooltipPosition="top"
                 ></i>
               </div>
@@ -134,7 +134,7 @@
 
             <div class="personal-rating">
               <div class="rating-group">
-                <i class="pi pi-thumbs-up-fill rating-icon" pTooltip="Personal Rating" tooltipPosition="top"></i>
+                <i class="pi pi-thumbs-up-fill rating-icon" [pTooltip]="'metadata.viewer.tooltip.personalRating' | translate" tooltipPosition="top"></i>
                 <p-rating
                   [ngModel]="book?.personalRating"
                   (onRate)="onPersonalRatingChange(book, $event)"
@@ -148,7 +148,7 @@
                 icon="pi pi-undo"
                 severity="warn"
                 (onClick)="resetPersonalRating(book)"
-                pTooltip="Reset Rating"
+                [pTooltip]="'metadata.viewer.tooltip.resetRating' | translate"
                 tooltipPosition="top"
                 class="reset-button">
               </p-button>
@@ -168,7 +168,7 @@
                   [pTooltip]="getRatingTooltip(book, 'amazon')"
                   tooltipPosition="top"
                 >
-                  <img src="https://www.amazon.com/favicon.ico" alt="Amazon" class="rating-favicon"/>
+                  <img src="https://www.amazon.com/favicon.ico" [alt]="'metadata.viewer.alt.amazon' | translate" class="rating-favicon"/>
                   <span class="rating-value">{{ getRatingPercent(book.metadata!.amazonRating) }}%</span>
                 </a>
               }
@@ -182,7 +182,7 @@
                   [pTooltip]="getRatingTooltip(book, 'goodreads')"
                   tooltipPosition="top"
                 >
-                  <img src="https://www.goodreads.com/favicon.ico" alt="Goodreads" class="rating-favicon"/>
+                  <img src="https://www.goodreads.com/favicon.ico" [alt]="'metadata.viewer.alt.goodreads' | translate" class="rating-favicon"/>
                   <span class="rating-value">{{ getRatingPercent(book.metadata!.goodreadsRating) }}%</span>
                 </a>
               }
@@ -196,7 +196,7 @@
                   [pTooltip]="getRatingTooltip(book, 'hardcover')"
                   tooltipPosition="top"
                 >
-                  <img src="https://assets.hardcover.app/static/favicon.ico" alt="Hardcover" class="rating-favicon"/>
+                  <img src="https://assets.hardcover.app/static/favicon.ico" [alt]="'metadata.viewer.alt.hardcover' | translate" class="rating-favicon"/>
                   <span class="rating-value">{{ getRatingPercent(book.metadata!.hardcoverRating) }}%</span>
                 </a>
               }
@@ -210,7 +210,7 @@
                   [pTooltip]="getRatingTooltip(book, 'lubimyczytac')"
                   tooltipPosition="top"
                 >
-                  <img src="https://lubimyczytac.pl/favicon.ico" alt="Lubimyczytac" class="rating-favicon"/>
+                  <img src="https://lubimyczytac.pl/favicon.ico" [alt]="'metadata.viewer.alt.lubimyczytac' | translate" class="rating-favicon"/>
                   <span class="rating-value">{{ getRatingPercent(book.metadata!.lubimyczytacRating) }}%</span>
                 </a>
               }
@@ -224,7 +224,7 @@
                   [pTooltip]="getRatingTooltip(book, 'ranobedb')"
                   tooltipPosition="top"
                 >
-                  <img src="https://www.ranobedb.org/favicon.png" alt="Ranobedb" class="rating-favicon"/>
+                  <img src="https://www.ranobedb.org/favicon.png" [alt]="'metadata.viewer.alt.ranobedb' | translate" class="rating-favicon"/>
                   <span class="rating-value">{{ getRatingPercent(book.metadata!.ranobedbRating) }}%</span>
                 </a>
               }
@@ -236,7 +236,7 @@
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <img src="https://books.google.com/favicon.ico" alt="Google Books" class="rating-favicon"/>
+                  <img src="https://books.google.com/favicon.ico" [alt]="'metadata.viewer.alt.googleBooks' | translate" class="rating-favicon"/>
                 </a>
               }
 
@@ -247,7 +247,7 @@
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <img src="https://www.comicvine.com/favicon.ico" alt="Comic Vine" class="rating-favicon"/>
+                  <img src="https://www.comicvine.com/favicon.ico" [alt]="'metadata.viewer.alt.comicVine' | translate" class="rating-favicon"/>
                 </a>
               }
             </div>
@@ -256,7 +256,7 @@
           <div class="tags-section">
             @if (book?.metadata?.categories?.length) {
               <div class="tag-row">
-                <span class="tag-label">Genres:</span>
+                <span class="tag-label">{{ 'metadata.viewer.label.genres' | translate }}:</span>
                 <div class="tag-scroll">
                   <div class="tag-container">
                     @for (category of book.metadata!.categories; track category) {
@@ -271,7 +271,7 @@
 
             @if (book?.metadata?.moods?.length) {
               <div class="tag-row">
-                <span class="tag-label">Moods:</span>
+                <span class="tag-label">{{ 'metadata.viewer.label.moods' | translate }}:</span>
                 <div class="tag-scroll">
                   <div class="tag-container">
                     @for (mood of book.metadata!.moods; track mood) {
@@ -286,7 +286,7 @@
 
             @if (book?.metadata?.tags?.length) {
               <div class="tag-row">
-                <span class="tag-label">Tags:</span>
+                <span class="tag-label">{{ 'metadata.viewer.label.tags' | translate }}:</span>
                 <div class="tag-scroll">
                   <div class="tag-container">
                     @for (tag of book.metadata!.tags; track tag) {
@@ -302,7 +302,7 @@
 
           <div class="metadata-grid">
             <div class="metadata-item">
-              <span class="metadata-key">Library:</span>
+              <span class="metadata-key">{{ 'metadata.viewer.label.library' | translate }}:</span>
               @if (book?.libraryName) {
                 <span class="metadata-value metadata-link" (click)="goToLibrary(book.libraryId!)">
                   {{ book?.libraryName }}
@@ -313,7 +313,7 @@
             </div>
 
             <div class="metadata-item">
-              <span class="metadata-key">Publisher:</span>
+              <span class="metadata-key">{{ 'metadata.viewer.label.publisher' | translate }}:</span>
               @if (book?.metadata?.publisher) {
                 <span class="metadata-value metadata-link" (click)="goToPublisher(book?.metadata?.publisher!)">
                   {{ book?.metadata?.publisher }}
@@ -324,7 +324,7 @@
             </div>
 
             <div class="metadata-item">
-              <span class="metadata-key">Published:</span>
+              <span class="metadata-key">{{ 'metadata.viewer.label.published' | translate }}:</span>
               @if (book?.metadata!.publishedDate) {
                 <span class="metadata-value metadata-link" (click)="goToPublishedYear(book?.metadata!.publishedDate!)">
                   {{ book?.metadata!.publishedDate }}
@@ -335,7 +335,7 @@
             </div>
 
             <div class="metadata-item">
-              <span class="metadata-key">Language:</span>
+              <span class="metadata-key">{{ 'metadata.viewer.label.language' | translate }}:</span>
               @if (book?.metadata!.language) {
                 <span class="metadata-value metadata-link" (click)="goToLanguage(book?.metadata!.language!)">
                   {{ book?.metadata!.language }}
@@ -346,7 +346,7 @@
             </div>
 
             <div class="metadata-item">
-              <span class="metadata-key">File Type:</span>
+              <span class="metadata-key">{{ 'metadata.viewer.label.fileType' | translate }}:</span>
               @if (getFileExtension(book?.filePath)) {
                 <span (click)="goToFileType(book?.filePath)" style="cursor: pointer;">
                   <app-tag size="3xs" variant="pill" [color]="getFileTypeColor(getFileExtension(book?.filePath))">
@@ -361,14 +361,14 @@
             </div>
 
             <div class="metadata-item">
-              <span class="metadata-key">BookLore Progress:</span>
+              <span class="metadata-key">{{ 'metadata.viewer.label.bookloreProgress' | translate }}:</span>
               <span class="metadata-value-group">
                 <app-tag size="3xs" variant="pill" [color]="getProgressColor(getProgressPercent(book))">
-                  {{ getProgressPercent(book) !== null ? getProgressPercent(book) + '%' : 'N/A' }}
+                  {{ getProgressPercent(book) !== null ? getProgressPercent(book) + '%' : ('metadata.viewer.value.na' | translate) }}
                 </app-tag>
                 @if (getProgressPercent(book) !== null) {
                   <p-button
-                    pTooltip="Reset progress"
+                    [pTooltip]="'metadata.viewer.tooltip.resetProgress' | translate"
                     tooltipPosition="bottom"
                     icon="pi pi-refresh"
                     size="small"
@@ -382,7 +382,7 @@
             </div>
 
             <div class="metadata-item">
-              <span class="metadata-key">Metadata Match:</span>
+              <span class="metadata-key">{{ 'metadata.viewer.label.metadataMatch' | translate }}:</span>
               @if (book?.metadataMatchScore != null) {
                 <span (click)="goToMatchScoreRange(book?.metadataMatchScore!)" style="cursor: pointer;">
                   <app-tag size="3xs" variant="pill" [color]="getMatchScoreColor(book?.metadataMatchScore!)">
@@ -395,7 +395,7 @@
             </div>
 
             <div class="metadata-item">
-              <span class="metadata-key">ISBN:</span>
+              <span class="metadata-key">{{ 'metadata.viewer.label.isbn' | translate }}:</span>
               @if (book?.metadata?.isbn13 || book?.metadata?.isbn10) {
                 <span class="metadata-value">
                   {{ book.metadata!.isbn13 }}
@@ -410,7 +410,7 @@
             </div>
 
             <div class="metadata-item">
-              <span class="metadata-key">Read Status:</span>
+              <span class="metadata-key">{{ 'metadata.viewer.label.readStatus' | translate }}:</span>
               <span class="metadata-value-group">
                 <span (click)="goToReadStatus(selectedReadStatus)" style="cursor: pointer;">
                   <app-tag size="3xs" variant="pill" [color]="getStatusColor(selectedReadStatus)">
@@ -424,13 +424,13 @@
 
             @if (book?.koreaderProgress && book.koreaderProgress?.percentage != null) {
               <div class="metadata-item">
-                <span class="metadata-key">KOReader Progress:</span>
+                <span class="metadata-key">{{ 'metadata.viewer.label.koreaderProgress' | translate }}:</span>
                 <span class="metadata-value-group">
                   <app-tag size="3xs" variant="pill" [color]="getKoProgressColor(getKOReaderPercentage(book))">
                     {{ getKOReaderPercentage(book) + '%' }}
                   </app-tag>
                   <p-button
-                    pTooltip="Reset progress"
+                    [pTooltip]="'metadata.viewer.tooltip.resetProgress' | translate"
                     tooltipPosition="bottom"
                     icon="pi pi-refresh"
                     size="small"
@@ -445,13 +445,13 @@
 
             @if (book?.koboProgress && book.koboProgress?.percentage != null) {
               <div class="metadata-item">
-                <span class="metadata-key">Kobo Progress:</span>
+                <span class="metadata-key">{{ 'metadata.viewer.label.koboProgress' | translate }}:</span>
                 <span class="metadata-value-group">
                   <app-tag size="3xs" variant="pill" [color]="getKoProgressColor(book.koboProgress?.percentage)">
                     {{ book.koboProgress?.percentage | number:'1.0-1' }}%
                   </app-tag>
                   <p-button
-                    pTooltip="Reset progress"
+                    [pTooltip]="'metadata.viewer.tooltip.resetProgress' | translate"
                     tooltipPosition="bottom"
                     icon="pi pi-refresh"
                     size="small"
@@ -467,7 +467,7 @@
             @if (selectedReadStatus === ReadStatus.READ) {
               <div class="metadata-item">
                 @if (book?.dateFinished) {
-                  <span class="metadata-key">Finished On:</span>
+                  <span class="metadata-key">{{ 'metadata.viewer.label.finishedOn' | translate }}:</span>
                   @if (!isEditingDateFinished) {
                     <span class="metadata-value-group">
                       <span class="metadata-value">{{ formatDate(book.dateFinished) }}</span>
@@ -483,8 +483,8 @@
                         iconDisplay="input"
                         [style]="{ 'width': '125px', 'font-size': '12px' }">
                       </p-datepicker>
-                      <p-button rounded icon="pi pi-check" size="small" severity="success" text (onClick)="saveDateFinished(book)" pTooltip="Save date"></p-button>
-                      <p-button rounded icon="pi pi-times" size="small" severity="danger" text (onClick)="cancelDateFinishedEdit()" pTooltip="Cancel"></p-button>
+                      <p-button rounded icon="pi pi-check" size="small" severity="success" text (onClick)="saveDateFinished(book)" [pTooltip]="'metadata.viewer.tooltip.saveDate' | translate"></p-button>
+                      <p-button rounded icon="pi pi-times" size="small" severity="danger" text (onClick)="cancelDateFinishedEdit()" [pTooltip]="'common.cancel' | translate"></p-button>
                     </span>
                   }
                 }
@@ -492,7 +492,7 @@
             }
 
             <div class="metadata-item">
-              <span class="metadata-key">Page Count:</span>
+              <span class="metadata-key">{{ 'metadata.viewer.label.pageCount' | translate }}:</span>
               @if (book?.metadata!.pageCount) {
                 <span class="metadata-value metadata-link" (click)="goToPageCountRange(book?.metadata!.pageCount!)">
                   {{ book?.metadata!.pageCount }}
@@ -503,7 +503,7 @@
             </div>
 
             <div class="metadata-item">
-              <span class="metadata-key">File Size:</span>
+              <span class="metadata-key">{{ 'metadata.viewer.label.fileSize' | translate }}:</span>
               @if (book?.fileSizeKb) {
                 <span class="metadata-value metadata-link" (click)="goToFileSizeRange(book?.fileSizeKb!)">
                   {{ getFileSizeInMB(book) }}
@@ -515,7 +515,7 @@
           </div>
 
           <div class="file-path-section">
-            <span class="metadata-key">File Path:</span>
+            <span class="metadata-key">{{ 'metadata.viewer.label.filePath' | translate }}:</span>
             <i class="pi eye-icon" [ngClass]="showFilePath ? 'pi-eye-slash' : 'pi-eye'" (click)="showFilePath = !showFilePath"></i>
             @if (showFilePath) {
               <code class="file-path-code">{{ book?.filePath }}</code>
@@ -534,7 +534,7 @@
                   rounded
                   outlined
                   severity="info"
-                  pTooltip="Go to previous book"
+                  [pTooltip]="'metadata.viewer.tooltip.goToPreviousBook' | translate"
                   tooltipPosition="bottom">
                 </p-button>
                 <span class="text-sm text-surface-600 dark:text-surface-400">
@@ -548,7 +548,7 @@
                   severity="info"
                   rounded
                   outlined
-                  pTooltip="Go to next book"
+                  [pTooltip]="'metadata.viewer.tooltip.goToNextBook' | translate"
                   tooltipPosition="bottom">
                 </p-button>
               </div>
@@ -556,33 +556,33 @@
             }
             @if (book!.bookType === 'PDF') {
               @if (readMenuItems$ | async; as readItems) {
-                <p-splitbutton label="Read" icon="pi pi-book" [model]="readItems" (onClick)="read(book.id, 'ngx')" severity="primary"/>
+                <p-splitbutton [label]="'metadata.viewer.button.read' | translate" icon="pi pi-book" [model]="readItems" (onClick)="read(book.id, 'ngx')" severity="primary"/>
               }
             }
             @if (book!.bookType !== 'PDF' && book!.bookType !== 'FB2') {
-              <p-button label="Read" icon="pi pi-book" (onClick)="read(book?.metadata!.bookId, undefined)" severity="primary"/>
+              <p-button [label]="'metadata.viewer.button.read' | translate" icon="pi pi-book" (onClick)="read(book?.metadata!.bookId, undefined)" severity="primary"/>
             }
-            <p-button label="Shelf" icon="pi pi-folder" severity="info" outlined (onClick)="assignShelf(book.id)" class="mobile-icon-only"></p-button>
+            <p-button [label]="'metadata.viewer.button.shelf' | translate" icon="pi pi-folder" severity="info" outlined (onClick)="assignShelf(book.id)" class="mobile-icon-only"></p-button>
             @if (userState.user!.permissions.canDownload || userState.user!.permissions.admin) {
               @if ((book!.alternativeFormats && book!.alternativeFormats.length > 0) || (book!.supplementaryFiles && book!.supplementaryFiles.length > 0)) {
                 @if (downloadMenuItems$ | async; as downloadItems) {
-                  <p-splitbutton label="Download" icon="pi pi-download" [model]="downloadItems" (onClick)="download(book)" severity="success" outlined class="mobile-icon-only"/>
+                  <p-splitbutton [label]="'metadata.viewer.button.download' | translate" icon="pi pi-download" [model]="downloadItems" (onClick)="download(book)" severity="success" outlined class="mobile-icon-only"/>
                 }
               } @else {
-                <p-button label="Download" icon="pi pi-download" severity="success" outlined (onClick)="download(book)" class="mobile-icon-only"></p-button>
+                <p-button [label]="'metadata.viewer.button.download' | translate" icon="pi pi-download" severity="success" outlined (onClick)="download(book)" class="mobile-icon-only"></p-button>
               }
             }
             @if (userState.user!.permissions.canEditMetadata || userState.user!.permissions.admin) {
               @if (refreshMenuItems$ | async; as refreshItems) {
                 <p-splitbutton
-                  [label]="isAutoFetching ? 'Fetching...' : 'Auto Fetch'"
+                  [label]="isAutoFetching ? ('metadata.viewer.status.fetching' | translate) : ('metadata.viewer.button.autoFetch' | translate)"
                   [icon]="isAutoFetching ? 'pi pi-spin pi-spinner' : 'pi pi-bolt'"
                   [outlined]="true"
                   [model]="refreshItems"
                   severity="warn"
                   (onClick)="quickRefresh(book!.id)"
                   [disabled]="isAutoFetching"
-                  pTooltip="Automatically fetch metadata using default sources"
+                  [pTooltip]="'metadata.viewer.tooltip.autoFetchDefault' | translate"
                   tooltipPosition="top"
                   styleClass="mobile-icon-only">
                 </p-splitbutton>
@@ -609,7 +609,7 @@
       </div>
       @if (book.metadata!.description && book.metadata!.description.length > 500) {
         <p-button
-          [label]="isExpanded ? 'Show less' : 'Show more'"
+          [label]="isExpanded ? ('metadata.viewer.button.showLess' | translate) : ('metadata.viewer.button.showMore' | translate)"
           [icon]="isExpanded ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"
           iconPos="right"
           size="small"
@@ -623,20 +623,20 @@
       <p-tablist>
         @if (bookInSeries.length > 1) {
           <p-tab [value]="1">
-            <i class="pi pi-ethereum"></i> More in Series
+            <i class="pi pi-ethereum"></i> {{ 'metadata.viewer.tab.moreInSeries' | translate }}
           </p-tab>
         }
         <p-tab [value]="2">
-          <i class="pi pi-bookmark"></i> Similar Books
+          <i class="pi pi-bookmark"></i> {{ 'metadata.viewer.tab.similarBooks' | translate }}
         </p-tab>
         <p-tab [value]="3">
-          <i class="pi pi-pen-to-square"></i> Notes
+          <i class="pi pi-pen-to-square"></i> {{ 'metadata.viewer.tab.notes' | translate }}
         </p-tab>
         <p-tab [value]="4">
-          <i class="pi pi-clock"></i> Reading Sessions
+          <i class="pi pi-clock"></i> {{ 'metadata.viewer.tab.readingSessions' | translate }}
         </p-tab>
         <p-tab [value]="5">
-          <i class="pi pi-comments"></i> Reviews
+          <i class="pi pi-comments"></i> {{ 'metadata.viewer.tab.reviews' | translate }}
         </p-tab>
       </p-tablist>
       <p-tabpanels>
@@ -693,6 +693,6 @@
 } @else {
   <div class="loading-state">
     <p-progressSpinner strokeWidth="4" fill="transparent" animationDuration=".8s"></p-progressSpinner>
-    <p class="loading-text">Loading book details...</p>
+    <p class="loading-text">{{ 'metadata.viewer.loading.bookDetails' | translate }}</p>
   </div>
 }

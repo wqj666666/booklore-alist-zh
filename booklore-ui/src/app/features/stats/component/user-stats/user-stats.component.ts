@@ -19,12 +19,14 @@ import {ReadingHeatmapChartComponent} from '../reading-heatmap-chart/reading-hea
 import {PersonalRatingChartComponent} from '../personal-rating-chart/personal-rating-chart.component';
 import {ReadingProgressChartComponent} from '../reading-progress-chart/reading-progress-chart.component';
 import {ReadStatusChartComponent} from '../read-status-chart/read-status-chart.component';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-user-stats',
   standalone: true,
   imports: [
     CommonModule,
+    TranslateModule,
     DragDropModule,
     DialogModule,
     ButtonModule,

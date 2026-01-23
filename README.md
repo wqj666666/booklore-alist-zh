@@ -1,463 +1,275 @@
+# Booklore-AList-ZH
+
 <div align="center">
 
-# 📚 BookLore
+[![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Angular](https://img.shields.io/badge/Angular-21.x-red.svg)](https://angular.io/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-green.svg)](https://spring.io/projects/spring-boot)
 
-### *Your Personal Library, Beautifully Organized*
+基于 [Booklore](https://github.com/booklore-app/booklore) 的中文优化版本，支持 AList 存储后端
 
-**🌐 Official Website: [https://booklore.org](https://booklore.org/)**
-
-<p align="center">
-  <img src="assets/demo.gif" alt="BookLore Demo" width="800px" style="border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" />
-</p>
-
-[![Release](https://img.shields.io/github/v/release/adityachandelgit/BookLore?color=4c6ef5&style=for-the-badge&logo=github)](https://github.com/booklore-app/booklore/releases)
-[![License](https://img.shields.io/github/license/adityachandelgit/BookLore?color=fab005&style=for-the-badge)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/adityachandelgit/BookLore?style=for-the-badge&color=ffd43b)](https://github.com/booklore-app/booklore/stargazers)
-[![Docker Pulls](https://img.shields.io/docker/pulls/booklore/booklore?color=2496ED&style=for-the-badge&logo=docker&logoColor=white)](https://hub.docker.com/r/booklore/booklore)
-
-[![Discord](https://img.shields.io/badge/Join_Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/Ee5hd458Uz)
-[![Open Collective](https://img.shields.io/opencollective/all/booklore?style=for-the-badge&color=7FADF2&logo=opencollective)](https://opencollective.com/booklore)
-
----
-
-**BookLore** is a powerful, self-hosted web application designed to organize and manage your personal book collection with elegance and ease. Build your dream library with an intuitive interface, robust metadata management, and seamless multi-user support.
-
-[🚀 Get Started](#-getting-started-with-booklore) • [📖 Documentation](https://booklore.org/docs/getting-started) • [🎮 Try Demo](#-live-demo-explore-booklore-in-action) • [💬 Community](https://discord.gg/Ee5hd458Uz)
+[功能特性](#-功能特性) • [快速开始](#-快速开始) • [部署指南](#-部署指南) • [贡献指南](#-贡献指南) • [许可证](#-许可证)
 
 </div>
 
 ---
 
-<div align="center">
+## 📖 关于本项目
 
-## ✨ **Features That Make BookLore Shine**
+**Booklore-AList-ZH** 是 [Booklore](https://github.com/booklore-app/booklore) 的派生项目，专为中文用户优化，并扩展了 AList 存储支持。
 
-</div>
+### 与原项目的关系
 
-<table>
-<tr>
-<td width="50%">
+本项目基于 Booklore 开源项目开发，遵循 GPL-3.0 许可证。我们在原项目的基础上进行了以下改进：
 
-### 📖 **Library Management**
+- ✅ **完整的中英文国际化** - 所有 UI 界面支持中英文切换
+- ✅ **AList 存储集成** - 支持使用 AList 作为存储后端
+- ✅ **默认本地存储** - 保留原有本地存储功能，可自由选择
 
-- **Smart Organization**: Custom shelves with powerful filters
-- **Magic Shelves**: Dynamic, auto-updating collections
-- **Auto Metadata**: Rich details from multiple sources
-- **Advanced Search**: Find any book instantly
-
-</td>
-<td width="50%">
-
-### 🌐 **Connectivity**
-
-- **Kobo Integration**: Seamless device sync
-- **OPDS Support**: Connect any reading app
-- **KOReader Sync**: Cross-platform progress tracking
-- **Email Sharing**: One-click book sending
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-### 👥 **User Experience**
-
-- **Multi-User Support**: Granular permissions
-- **Flexible Auth**: Local or OIDC providers
-- **Mobile Ready**: Responsive on all devices
-- **Built-in Reader**: PDFs, EPUBs, comics
-
-</td>
-<td width="50%">
-
-### 🚀 **Smart Features**
-
-- **BookDrop Import**: Auto-detect bulk files
-- **Private Notes**: Personal reading annotations
-- **Community Reviews**: Enriched book data
-- **Progress Tracking**: Reading statistics
-
-</td>
-</tr>
-</table>
+**原项目**: https://github.com/booklore-app/booklore
 
 ---
 
-<div align="center">
+## 🌟 功能特性
 
-## 💖 **Support the Project**
+### 核心功能（继承自原项目）
 
-</div>
+- 📚 **数字图书馆管理** - 管理和组织您的电子书和漫画收藏
+- 📖 **多格式阅读器** - 支持 EPUB、PDF、CBZ、CBR 等格式
+- 🔍 **智能元数据获取** - 自动从多个来源获取书籍信息
+- 📊 **阅读统计** - 追踪您的阅读习惯和进度
+- 🔐 **隐私优先** - 自托管，完全控制您的数据
+- 🎨 **现代化界面** - 基于 Angular 21 和 PrimeNG 的优雅 UI
 
-<div align="center">
+### 本版本新增特性
 
-Your support helps BookLore grow and improve! 🌱
+#### 1. 完整的中英文国际化支持
 
-<table>
-<tr>
-<td align="center" width="33%">
+- ✨ **运行时语言切换** - 无需重启，即时切换界面语言
+- 🌏 **全面覆盖** - 包括菜单、设置、阅读器、统计等所有模块
+- 🔄 **持久化语言偏好** - 自动保存并恢复您的语言选择
+- 📝 **中文优化** - 针对中文用户的使用习惯进行了细致优化
 
-### ⭐ **Star Us**
+#### 2. AList 存储后端支持
 
-Give us a star to show your support and help others discover BookLore!
-
-[![Star this repo](https://img.shields.io/github/stars/adityachandelgit/BookLore?style=social)](https://github.com/booklore-app/booklore)
-
-</td>
-<td align="center" width="33%">
-
-### 💰 **Sponsor**
-
-Support development, hosting, and testing costs
-
-[![Open Collective](https://img.shields.io/badge/Open_Collective-7FADF2?style=for-the-badge&logo=opencollective&logoColor=white)](https://opencollective.com/booklore)
-
-</td>
-<td align="center" width="34%">
-
-### 📢 **Spread the Word**
-
-Share BookLore with fellow book lovers and developers!
-
-</td>
-</tr>
-</table>
-
-> 🎯 **Current Goal:** Raising funds for a **Kobo device** to implement native Kobo sync support  
-> [💡 Support the Kobo Sync Bounty →](https://opencollective.com/booklore/projects/kobo-device-for-testing)
-
-</div>
+- ☁️ **灵活存储选择** - 支持本地存储和 AList 云存储
+- 🔗 **AList 集成** - 无缝对接 AList 文件管理系统
+- 💾 **混合存储** - 不同书库可以使用不同的存储后端
+- ⚙️ **便捷配置** - 在设置页面轻松配置 AList 连接
 
 ---
 
-<div align="center">
+## 🚀 快速开始
 
-## 🎮 **Live Demo: Explore BookLore in Action**
+### 使用 Docker（推荐）
 
-</div>
+最简单的部署方式是使用 Docker Compose：
 
-<div align="center">
+```bash
+# 克隆仓库
+git clone https://github.com/wqj666666/booklore-alist-zh.git
+cd booklore-alist-zh
 
-Experience BookLore's features in a live environment before deploying your own instance!
-
-| 🌐 Demo URL                                        | 👤 Username | 🔑 Password        |
-|----------------------------------------------------|-------------|--------------------|
-| **[demo.booklore.org](https://demo.booklore.org)** | `booklore`  | `9HC20PGGfitvWaZ1` |
-
-> ⚠️ **Note:** Demo account has standard user permissions only.  
-> Admin features (user management, library setup) require a self-hosted instance.
-
-</div>
-
----
-
-<div align="center">
-
-## 🚀 **Getting Started with BookLore**
-
-### Choose Your Path
-
-<table>
-<tr>
-<td align="center" width="50%">
-
-### 📘 **Documentation**
-
-Guides for installation, setup, features, and more
-
-[![Read the Docs](https://img.shields.io/badge/📖_Read_the_Docs-4c6ef5?style=for-the-badge)](https://booklore.org/docs/getting-started)
-
-*Contribute to the docs at: [booklore-docs](https://github.com/booklore-app/booklore-docs)*
-
-</td>
-<td align="center" width="50%">
-
-### 🐳 **Quick Deploy**
-
-Get up and running in minutes with Docker
-
-[![Deploy with Docker](https://img.shields.io/badge/🐳_Deploy_Now-2496ED?style=for-the-badge)](#-deploy-with-docker)
-
-*Easiest way to self-host BookLore*
-
-</td>
-</tr>
-</table>
-
-</div>
-
----
-
-<div align="center">
-
-## 🐳 **Deploy with Docker**
-
-</div>
-
-### **Prerequisites**
-
-Ensure you have [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) installed.
-
-<details>
-<summary><b>📦 Image Repositories</b></summary>
-
-- 🐳 **Docker Hub:** `booklore/booklore`
-- 📦 **GitHub Container Registry:** `ghcr.io/booklore-app/booklore`
-
-> 💡 Legacy images at `ghcr.io/adityachandelgit/booklore-app` remain available but won't receive updates.
-
-</details>
-
-### **Step 1️⃣: Create Environment Configuration**
-
-Create a `.env` file in your project directory:
-
-```ini
-# 🎯 BookLore Application Settings
-APP_USER_ID=0
-APP_GROUP_ID=0
-TZ=Etc/UTC
-BOOKLORE_PORT=6060
-
-# 🗄️ Database Connection (BookLore)
-DATABASE_URL=jdbc:mariadb://mariadb:3306/booklore
-DB_USER=booklore
-DB_PASSWORD=ChangeMe_BookLoreApp_2025!
-
-# 🔧 MariaDB Container Settings
-DB_USER_ID=1000
-DB_GROUP_ID=1000
-MYSQL_ROOT_PASSWORD=ChangeMe_MariaDBRoot_2025!
-MYSQL_DATABASE=booklore
+# 启动服务
+docker compose up -d
 ```
 
-### **Step 2️⃣: Create Docker Compose File**
+访问 `http://localhost:8080` 开始使用！
 
-Create a `docker-compose.yml` file:
+### 手动部署
+
+#### 前置要求
+
+- **Java 21+** - [下载地址](https://adoptium.net/)
+- **Node.js 18+** - [下载地址](https://nodejs.org/)
+- **MariaDB 10.6+** - [下载地址](https://mariadb.org/download/)
+
+#### 后端部署
+
+```bash
+cd booklore-api
+
+# 配置数据库连接（编辑 application.yml）
+# 详见部署指南
+
+# 启动后端
+./gradlew bootRun
+```
+
+#### 前端部署
+
+```bash
+cd booklore-ui
+
+# 安装依赖
+npm install
+
+# 启动开发服务器
+npm start
+
+# 或构建生产版本
+npm run build
+```
+
+---
+
+## 📦 部署指南
+
+### Docker 部署
+
+提供了完整的 Docker Compose 配置：
 
 ```yaml
+# docker-compose.yml
 services:
   booklore:
-    image: booklore/booklore:latest
-    # Alternative: Use GitHub Container Registry
-    # image: ghcr.io/booklore-app/booklore:latest
+    # Docker Hub 官方镜像
+    image: pual666666/booklore-alist-zh:latest
     container_name: booklore
     environment:
-      - USER_ID=${APP_USER_ID}
-      - GROUP_ID=${APP_GROUP_ID}
-      - TZ=${TZ}
-      - DATABASE_URL=${DATABASE_URL}
-      - DATABASE_USERNAME=${DB_USER}
-      - DATABASE_PASSWORD=${DB_PASSWORD}
-      - BOOKLORE_PORT=${BOOKLORE_PORT}
-    depends_on:
-      mariadb:
-        condition: service_healthy
+      - USER_ID=0
+      - GROUP_ID=0
+      - TZ=Asia/Shanghai  # 时区设置
+      
+      # 数据库配置（请根据实际情况修改）
+      # 如果 MariaDB 是 Docker 容器且在同一网络，填写容器名
+      # 如果 MariaDB 在宿主机或其他服务器，填写 IP 地址
+      - DATABASE_URL=jdbc:mariadb://your-database-host:3306/booklore
+      - DATABASE_USERNAME=root
+      - DATABASE_PASSWORD=your_secure_password
+      
+      - BOOKLORE_PORT=6060
+      - SWAGGER_ENABLED=false
+      - FORCE_DISABLE_OIDC=false
     ports:
-      - "${BOOKLORE_PORT}:${BOOKLORE_PORT}"
+      - "6060:6060"
     volumes:
-      - ./data:/app/data
-      - ./books:/books
-      - ./bookdrop:/bookdrop
+      - ./data:/app/data      # 应用数据
+      - ./books:/books        # 书籍存储
+      - ./bookdrop:/bookdrop  # 书籍上传临时目录
     healthcheck:
-      test: wget -q -O - http://localhost:${BOOKLORE_PORT}/api/v1/healthcheck
+      test: wget -q -O - http://localhost:6060/api/v1/healthcheck
       interval: 60s
       retries: 5
       start_period: 60s
       timeout: 10s
     restart: unless-stopped
-
-  mariadb:
-    image: lscr.io/linuxserver/mariadb:11.4.5
-    container_name: mariadb
-    environment:
-      - PUID=${DB_USER_ID}
-      - PGID=${DB_GROUP_ID}
-      - TZ=${TZ}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${DB_USER}
-      - MYSQL_PASSWORD=${DB_PASSWORD}
-    volumes:
-      - ./mariadb/config:/config
-    restart: unless-stopped
-    healthcheck:
-      test: [ "CMD", "mariadb-admin", "ping", "-h", "localhost" ]
-      interval: 5s
-      timeout: 5s
-      retries: 10
 ```
 
-### **Step 3️⃣: Launch BookLore**
+**部署步骤**：
 
-```bash
-docker compose up -d
+1. 创建 `docker-compose.yml` 文件，复制上面的配置
+2. 修改环境变量中的数据库连接信息
+3. 运行 `docker compose up -d` 启动服务
+4. 访问 `http://localhost:6060` 开始使用
+
+**注意事项**：
+- 首次启动需要创建管理员账户
+- 确保数据库已创建 `booklore` 数据库
+- 建议修改默认密码
+
+### AList 存储配置
+
+1. 在设置页面选择 **存储设置** 标签
+2. 配置 AList 服务器地址和认证信息
+3. 测试连接确保配置正确
+4. 在创建书库时选择 AList 作为存储后端
+
+详细配置说明请参考 [部署文档](https://github.com/wqj666666/booklore-alist-zh/wiki)。
+
+---
+
+## 🔧 技术栈
+
+### 前端
+- **框架**: Angular 21 (Standalone Components)
+- **UI 库**: PrimeNG 21
+- **国际化**: @ngx-translate/core
+- **样式**: TailwindCSS + SCSS
+- **测试**: Vitest
+
+### 后端
+- **框架**: Spring Boot 3.5
+- **语言**: Java 21
+- **数据库**: MariaDB
+- **认证**: JWT + OIDC (可选)
+- **API**: RESTful + WebSocket
+
+---
+
+## 📝 主要改进内容
+
+### UI 国际化实现
+
+- ✅ 引入 ngx-translate 实现运行时翻译
+- ✅ 建立完整的中英文语言资源文件
+- ✅ 实现 LanguageService 管理语言状态和持久化
+- ✅ 覆盖所有页面、组件、菜单、提示信息
+- ✅ 同步 PrimeNG 组件的内置文案
+- ✅ 优化日期、数字格式化的本地化
+
+### AList 存储集成
+
+- ✅ 扩展 LibraryPath 数据模型支持存储类型
+- ✅ 新增 AList 配置管理界面
+- ✅ 实现 AList API 客户端
+- ✅ 支持混合存储策略（本地 + AList）
+- ✅ 提供连接测试和状态监控
+
+
+
+## 🙏 致谢
+
+### 原项目
+
+本项目基于 [Booklore](https://github.com/booklore-app/booklore) 开发，感谢 Booklore 团队的卓越工作！
+
+**原项目作者**: Booklore Contributors  
+**原项目地址**: https://github.com/booklore-app/booklore  
+**原项目许可证**: GPL-3.0
+
+### 特别感谢
+
+- [AList](https://alist.nn.ci/) - 优秀的文件列表程序
+- [PrimeNG](https://primeng.org/) - 强大的 Angular UI 组件库
+- 所有为本项目做出贡献的开发者
+
+---
+
+## 📄 许可证
+
+本项目继承原项目的 **GPL-3.0 许可证**。
+
+```
+Booklore-AList-ZH
+Copyright (C) 2026 wqj666666
+
+This program is a modified version of Booklore
+Original Copyright (C) 2024 Booklore Contributors
+Original project: https://github.com/booklore-app/booklore
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
 ```
 
-### **Step 4️⃣: Access Your Library**
+详见 [LICENSE](./LICENSE) 文件。
 
-Open your browser and navigate to:
 
-**🌐 http://localhost:6060**
+## 🗺️ 路线图
 
-🎉 **Welcome to your personal library!**
+- [ ] 完善 AList 存储功能
+- [ ] 优化中文搜索体验
+- [ ] 支持更多存储后端
+- [ ] 移动端优化
+- [ ] 添加更多语言支持
 
----
-
-<div align="center">
-
-## 📥 **BookDrop: Automatic Import**
-
-### *Drop Files, Import Automatically*
-
-</div>
-
-BookLore's **BookDrop** feature automatically detects and processes book files dropped into a designated folder.
-
-### **How It Works**
-
-```mermaid
-graph LR
-    A[📁 Drop Files] --> B[🔍 Auto-Detect]
-    B --> C[📊 Extract Metadata]
-    C --> D[✅ Review & Import]
-```
-
-1. **File Watcher**: Monitors the BookDrop folder continuously
-2. **Auto-Detection**: Processes new files and extracts metadata
-3. **Metadata Enrichment**: Fetches details from Google Books, Open Library
-4. **Review & Finalize**: Review, edit, and import to your library
-
-### **Docker Configuration**
-
-Add the BookDrop volume to your `docker-compose.yml`:
-
-```yaml
-services:
-  booklore:
-    volumes:
-      - ./data:/app/data
-      - ./books:/books
-      - ./bookdrop:/bookdrop  # 👈 BookDrop magic happens here
-```
-
----
-
-<div align="center">
-
-## 🤝 **Community & Support**
-<table>
-<tr>
-<td align="center">
-
-### 🐞 **Bug Reports**
-
-Found an issue?
-
-[![Open Issue](https://img.shields.io/badge/Report-ff6b6b?style=for-the-badge)](https://github.com/booklore-app/booklore/issues/new?template=bug_report.yml)
-
-</td>
-<td align="center">
-
-### 💡 **Feature Req**
-
-Have an idea?
-
-[![Request Feature](https://img.shields.io/badge/Suggest-4ecdc4?style=for-the-badge)](https://github.com/booklore-app/booklore/issues/new?template=feature_request.yml)
-
-</td>
-<td align="center">
-
-### 🤝 **Contribute**
-
-Join development!
-
-[![Contributing](https://img.shields.io/badge/Contribute-95e1d3?style=for-the-badge)](CONTRIBUTING.md)
-
-</td>
-<td align="center">
-
-### 💬 **Chat**
-
-Join community!
-
-[![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/Ee5hd458Uz)
-
-</td>
-</tr>
-</table>
-
-</div>
-
-
----
-
-<div align="center">
-
-## 📊 **Project Analytics**
-
-### Repository Activity
-
-![Repository Activity](https://repobeats.axiom.co/api/embed/44a04220bfc5136e7064181feb07d5bf0e59e27e.svg)
-
-### ⭐ Star History
-
-<a href="https://www.star-history.com/#booklore-app/booklore&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=booklore-app/booklore&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=booklore-app/booklore&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=booklore-app/booklore&type=date&legend=top-left" width="600" />
- </picture>
-</a>
-
-</div>
-
----
-
-<div align="center">
-
-## 👨‍💻 **Contributors**
-
-### Thanks to all our amazing contributors! 🙏
-
-[![Contributors](https://contrib.rocks/image?repo=adityachandelgit/BookLore)](https://github.com/booklore-app/booklore/graphs/contributors)
-
-**Want to see your face here?** [Start contributing today!](CONTRIBUTING.md)
-
-</div>
-
----
-
-<div align="center">
-
-## 🌟 **Sponsors**
-
-### Thank you to our amazing sponsors!
-
-<a href="https://www.pikapods.com/pods?run=booklore">
-  <img src="https://www.pikapods.com/static/run-button.svg" alt="Run on PikaPods" height="40">
-</a>
-
-*Become a sponsor and get your logo here! [Support us on Open Collective](https://opencollective.com/booklore)*
-
-</div>
-
----
-
-<div align="center">
-
-## ⚖️ **License**
-
-**GNU General Public License v3.0**
-
-Copyright © 2024-2025 BookLore
-
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=for-the-badge)](http://www.gnu.org/licenses/gpl.html)
-
----
-
-<sub>Made with ❤️ by the BookLore community</sub>
-
-**[⬆ Back to Top](#-booklore)**
-
-</div>

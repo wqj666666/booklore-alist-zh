@@ -26,6 +26,8 @@ import {ReadingVelocityTimelineChartService} from '../service/reading-velocity-t
 import {MonthlyReadingPatternsChartService} from '../service/monthly-reading-patterns-chart.service';
 import {TopSeriesChartService} from '../service/top-series-chart.service';
 import {ChartConfig, ChartConfigService} from '../service/chart-config.service';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {LanguageService} from '../../../core/i18n/language.service';
 
 @Component({
   selector: 'app-stats-component',
@@ -36,7 +38,8 @@ import {ChartConfig, ChartConfigService} from '../service/chart-config.service';
     BaseChartDirective,
     Select,
     DragDropModule,
-    Button
+    Button,
+    TranslateModule
   ],
   templateUrl: './stats-component.html',
   styleUrls: ['./stats-component.scss']
@@ -61,6 +64,8 @@ export class StatsComponent implements OnInit, OnDestroy {
   protected readonly topSeriesChartService = inject(TopSeriesChartService);
   protected readonly chartConfigService = inject(ChartConfigService);
   private readonly pageTitle = inject(PageTitleService);
+  private readonly translateService = inject(TranslateService);
+  private readonly languageService = inject(LanguageService);
 
   private readonly destroy$ = new Subject<void>();
 
@@ -92,7 +97,10 @@ export class StatsComponent implements OnInit, OnDestroy {
       family: "'Inter', sans-serif",
       size: 11.5,
     };
-    this.pageTitle.setPageTitle('Statistics');
+    this.updatePageTitle();
+    this.languageService.language$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.updatePageTitle());
     this.loadLibraryOptions();
     this.loadChartConfig();
   }
@@ -205,4 +213,8 @@ export class StatsComponent implements OnInit, OnDestroy {
   }
 
   protected readonly ChartDataLabels = ChartDataLabels;
+
+  private updatePageTitle(): void {
+    this.pageTitle.setPageTitle(this.translateService.instant('stats.library.pageTitle'));
+  }
 }

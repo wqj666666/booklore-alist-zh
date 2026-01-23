@@ -14,7 +14,7 @@
       [text]="true"
       [rounded]="true"
       class="close-button"
-      pTooltip="Close"
+      [pTooltip]="'common.close' | translate"
       tooltipPosition="left"/>
   </div>
 
@@ -82,7 +82,7 @@
             [rounded]="true"
             size="small"
             (onClick)="clearSelectedIcon()"
-            pTooltip="Remove icon"
+            [pTooltip]="'book.shelfCreator.tooltip.removeIcon' | translate"
             tooltipPosition="left"
           />
         </div>

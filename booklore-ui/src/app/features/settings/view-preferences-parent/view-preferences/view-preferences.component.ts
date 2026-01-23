@@ -13,6 +13,7 @@ import {FormsModule} from '@angular/forms';
 import {ToastModule} from 'primeng/toast';
 import {Tooltip} from 'primeng/tooltip';
 import {filter, take, takeUntil} from 'rxjs/operators';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-view-preferences',
@@ -23,50 +24,20 @@ import {filter, take, takeUntil} from 'rxjs/operators';
     Button,
     TableModule,
     ToastModule,
-    Tooltip
+    Tooltip,
+    TranslateModule
   ],
   templateUrl: './view-preferences.component.html',
   styleUrl: './view-preferences.component.scss'
 })
 export class ViewPreferencesComponent implements OnInit, OnDestroy {
-  sortOptions = [
-    {label: 'Title', field: 'title'},
-    {label: 'Title + Series', field: 'titleSeries'},
-    {label: 'File Name', field: 'fileName'},
-    {label: 'Author', field: 'author'},
-    {label: 'Author + Series', field: 'authorSeries'},
-    {label: 'Last Read', field: 'lastReadTime'},
-    {label: 'Added On', field: 'addedOn'},
-    {label: 'File Size', field: 'fileSizeKb'},
-    {label: 'Locked', field: 'locked'},
-    {label: 'Publisher', field: 'publisher'},
-    {label: 'Published Date', field: 'publishedDate'},
-    {label: 'Amazon Rating', field: 'amazonRating'},
-    {label: 'Amazon #', field: 'amazonReviewCount'},
-    {label: 'Goodreads Rating', field: 'goodreadsRating'},
-    {label: 'Goodreads #', field: 'goodreadsReviewCount'},
-    {label: 'Hardcover Rating', field: 'hardcoverRating'},
-    {label: 'Hardcover #', field: 'hardcoverReviewCount'},
-    {label: 'Ranobedb Rating', field: 'ranobedbRating'},
-    {label: 'Pages', field: 'pageCount'},
-    {label: 'Random', field: 'random'},
-  ];
+  sortOptions: {label: string; field: string}[] = [];
 
-  entityTypeOptions = [
-    {label: 'Library', value: 'LIBRARY'},
-    {label: 'Shelf', value: 'SHELF'},
-    {label: 'Magic Shelf', value: 'MAGIC_SHELF'}
-  ];
+  entityTypeOptions: {label: string; value: 'LIBRARY' | 'SHELF' | 'MAGIC_SHELF'}[] = [];
 
-  sortDirectionOptions = [
-    {label: 'Ascending', value: 'ASC'},
-    {label: 'Descending', value: 'DESC'}
-  ];
+  sortDirectionOptions: {label: string; value: 'ASC' | 'DESC'}[] = [];
 
-  viewModeOptions = [
-    {label: 'Grid', value: 'GRID'},
-    {label: 'Table', value: 'TABLE'}
-  ];
+  viewModeOptions: {label: string; value: 'GRID' | 'TABLE'}[] = [];
 
   libraryOptions: { label: string; value: number }[] = [];
   shelfOptions: { label: string; value: number }[] = [];
@@ -92,8 +63,12 @@ export class ViewPreferencesComponent implements OnInit, OnDestroy {
   private magicShelfService = inject(MagicShelfService);
   private userService = inject(UserService);
   private messageService = inject(MessageService);
+  private translateService = inject(TranslateService);
 
   ngOnInit(): void {
+    this.rebuildStaticOptions();
+    this.translateService.onLangChange.pipe(takeUntil(this.destroy$)).subscribe(() => this.rebuildStaticOptions());
+
     combineLatest([
       this.userService.userState$.pipe(filter(userState => !!userState?.user && userState.loaded), take(1)),
       this.libraryService.libraryState$.pipe(filter(libraryState => !!libraryState?.libraries && libraryState.loaded), take(1)),
@@ -222,8 +197,49 @@ export class ViewPreferencesComponent implements OnInit, OnDestroy {
 
     this.messageService.add({
       severity: 'success',
-      summary: 'Preferences Saved',
-      detail: 'Your sorting and view preferences were saved successfully.'
+      summary: this.translateService.instant('settings.viewPreferences.toast.saved.summary'),
+      detail: this.translateService.instant('settings.viewPreferences.toast.saved.detail')
     });
+  }
+
+  private rebuildStaticOptions(): void {
+    this.sortOptions = [
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.title'), field: 'title'},
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.titleSeries'), field: 'titleSeries'},
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.fileName'), field: 'fileName'},
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.author'), field: 'author'},
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.authorSeries'), field: 'authorSeries'},
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.lastReadTime'), field: 'lastReadTime'},
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.addedOn'), field: 'addedOn'},
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.fileSizeKb'), field: 'fileSizeKb'},
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.locked'), field: 'locked'},
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.publisher'), field: 'publisher'},
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.publishedDate'), field: 'publishedDate'},
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.amazonRating'), field: 'amazonRating'},
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.amazonReviewCount'), field: 'amazonReviewCount'},
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.goodreadsRating'), field: 'goodreadsRating'},
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.goodreadsReviewCount'), field: 'goodreadsReviewCount'},
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.hardcoverRating'), field: 'hardcoverRating'},
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.hardcoverReviewCount'), field: 'hardcoverReviewCount'},
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.ranobedbRating'), field: 'ranobedbRating'},
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.pageCount'), field: 'pageCount'},
+      {label: this.translateService.instant('settings.viewPreferences.sortOption.random'), field: 'random'},
+    ];
+
+    this.entityTypeOptions = [
+      {label: this.translateService.instant('settings.viewPreferences.entityType.library'), value: 'LIBRARY'},
+      {label: this.translateService.instant('settings.viewPreferences.entityType.shelf'), value: 'SHELF'},
+      {label: this.translateService.instant('settings.viewPreferences.entityType.magicShelf'), value: 'MAGIC_SHELF'}
+    ];
+
+    this.sortDirectionOptions = [
+      {label: this.translateService.instant('settings.viewPreferences.sortDirection.ascending'), value: 'ASC'},
+      {label: this.translateService.instant('settings.viewPreferences.sortDirection.descending'), value: 'DESC'}
+    ];
+
+    this.viewModeOptions = [
+      {label: this.translateService.instant('settings.viewPreferences.viewMode.grid'), value: 'GRID'},
+      {label: this.translateService.instant('settings.viewPreferences.viewMode.table'), value: 'TABLE'}
+    ];
   }
 }

@@ -8,6 +8,7 @@ import {MessageService} from 'primeng/api';
 import {Subject} from 'rxjs';
 import {filter, takeUntil} from 'rxjs/operators';
 import {DynamicDialogRef} from 'primeng/dynamicdialog';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 export const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const newPassword = control.get('newPassword');
@@ -27,7 +28,8 @@ export const passwordMatchValidator: ValidatorFn = (control: AbstractControl): V
     FormsModule,
     ReactiveFormsModule,
     InputText,
-    Password
+    Password,
+    TranslateModule
   ],
   templateUrl: './user-profile-dialog.component.html',
   styleUrls: ['./user-profile-dialog.component.scss']
@@ -45,6 +47,7 @@ export class UserProfileDialogComponent implements OnInit, OnDestroy {
   private readonly messageService = inject(MessageService);
   private readonly fb = inject(FormBuilder);
   private readonly dialogRef = inject(DynamicDialogRef);
+  private readonly translateService = inject(TranslateService);
 
   constructor() {
     this.changePasswordForm = this.fb.group(
@@ -93,14 +96,18 @@ export class UserProfileDialogComponent implements OnInit, OnDestroy {
     if (!this.currentUser) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Error',
-        detail: 'User data not available.',
+        summary: this.translateService.instant('settings.userProfileDialog.toast.errorSummary'),
+        detail: this.translateService.instant('settings.userProfileDialog.toast.userNotAvailable'),
       });
       return;
     }
 
     if (this.editUserData.name === this.currentUser.name && this.editUserData.email === this.currentUser.email) {
-      this.messageService.add({severity: 'info', summary: 'Info', detail: 'No changes detected.'});
+      this.messageService.add({
+        severity: 'info',
+        summary: this.translateService.instant('settings.userProfileDialog.toast.infoSummary'),
+        detail: this.translateService.instant('settings.userProfileDialog.toast.noChanges'),
+      });
       this.isEditing = false;
       return;
     }
@@ -111,14 +118,18 @@ export class UserProfileDialogComponent implements OnInit, OnDestroy {
     };
     this.userService.updateUser(this.currentUser.id, updateRequest).subscribe({
       next: () => {
-        this.messageService.add({severity: 'success', summary: 'Success', detail: 'Profile updated successfully'});
+        this.messageService.add({
+          severity: 'success',
+          summary: this.translateService.instant('settings.userProfileDialog.toast.successSummary'),
+          detail: this.translateService.instant('settings.userProfileDialog.toast.profileUpdated'),
+        });
         this.isEditing = false;
       },
       error: (err) => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: err.error?.message || 'Failed to update profile',
+          summary: this.translateService.instant('settings.userProfileDialog.toast.errorSummary'),
+          detail: err.error?.message || this.translateService.instant('settings.userProfileDialog.toast.profileUpdateFailed'),
         });
       },
     });
@@ -134,14 +145,18 @@ export class UserProfileDialogComponent implements OnInit, OnDestroy {
 
     this.userService.changePassword(currentPassword, newPassword).subscribe({
       next: () => {
-        this.messageService.add({severity: 'success', summary: 'Success', detail: 'Password changed successfully'});
+        this.messageService.add({
+          severity: 'success',
+          summary: this.translateService.instant('settings.userProfileDialog.toast.successSummary'),
+          detail: this.translateService.instant('settings.userProfileDialog.toast.passwordChanged'),
+        });
         this.resetPasswordForm();
       },
       error: (err) => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: err?.message || 'Failed to change password',
+          summary: this.translateService.instant('settings.userProfileDialog.toast.errorSummary'),
+          detail: err?.message || this.translateService.instant('settings.userProfileDialog.toast.passwordChangeFailed'),
         });
       }
     });

@@ -13,6 +13,7 @@ import { AppSettingsService } from '../../../../shared/service/app-settings.serv
 import { Book, AdditionalFileType } from '../../model/book.model';
 import { MessageService } from 'primeng/api';
 import { filter, take } from 'rxjs/operators';
+import {TranslateModule} from '@ngx-translate/core';
 
 interface FileTypeOption {
   label: string;
@@ -34,7 +35,8 @@ interface UploadingFile {
     Button,
     FileUpload,
     Badge,
-    Tooltip
+    Tooltip,
+    TranslateModule
 ],
   templateUrl: './additional-file-uploader.component.html',
   styleUrls: ['./additional-file-uploader.component.scss']

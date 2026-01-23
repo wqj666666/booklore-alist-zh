@@ -12,6 +12,7 @@ import {UserService} from "../../settings/user-management/user.service";
 import {LoadingService} from '../../../core/services/loading.service';
 import {finalize} from 'rxjs';
 import {DialogLauncherService} from '../../../shared/services/dialog-launcher.service';
+import {TranslateService} from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root',
@@ -28,44 +29,49 @@ export class LibraryShelfMenuService {
   private magicShelfService = inject(MagicShelfService);
   private userService = inject(UserService);
   private loadingService = inject(LoadingService);
+  private translateService = inject(TranslateService);
 
   initializeLibraryMenuItems(entity: Library | Shelf | MagicShelf | null): MenuItem[] {
     return [
       {
-        label: 'Options',
+        label: this.translateService.instant('book.browser.entityMenu.options'),
         items: [
           {
-            label: 'Edit Library',
+            label: this.translateService.instant('book.browser.entityMenu.library.edit'),
             icon: 'pi pi-pen-to-square',
             command: () => {
               this.dialogLauncherService.openLibraryEditDialog((entity?.id as number));
             }
           },
           {
-            label: 'Re-scan Library',
+            label: this.translateService.instant('book.browser.entityMenu.library.rescan.label'),
             icon: 'pi pi-refresh',
             command: () => {
               this.confirmationService.confirm({
-                message: `Are you sure you want to refresh library: ${entity?.name}?`,
-                header: 'Confirmation',
+                message: this.translateService.instant('book.browser.entityMenu.library.rescan.confirmMessage', {name: entity?.name}),
+                header: this.translateService.instant('common.confirm'),
                 rejectButtonProps: {
-                  label: 'Cancel',
+                  label: this.translateService.instant('common.cancel'),
                   severity: 'secondary',
                 },
                 acceptButtonProps: {
-                  label: 'Yes',
+                  label: this.translateService.instant('common.yes'),
                   severity: 'success',
                 },
                 accept: () => {
                   this.libraryService.refreshLibrary(entity?.id!).subscribe({
                     complete: () => {
-                      this.messageService.add({severity: 'info', summary: 'Success', detail: 'Library refresh scheduled'});
+                      this.messageService.add({
+                        severity: 'info',
+                        summary: this.translateService.instant('book.browser.entityMenu.toast.success.summary'),
+                        detail: this.translateService.instant('book.browser.entityMenu.library.rescan.toast.scheduled')
+                      });
                     },
                     error: () => {
                       this.messageService.add({
                         severity: 'error',
-                        summary: 'Failed',
-                        detail: 'Failed to refresh library',
+                        summary: this.translateService.instant('book.browser.entityMenu.toast.failed.summary'),
+                        detail: this.translateService.instant('book.browser.entityMenu.library.rescan.toast.failed'),
                       });
                     }
                   });
@@ -74,14 +80,14 @@ export class LibraryShelfMenuService {
             }
           },
           {
-            label: 'Custom Fetch Metadata',
+            label: this.translateService.instant('book.browser.entityMenu.library.customFetchMetadata'),
             icon: 'pi pi-sync',
             command: () => {
               this.dialogLauncherService.openLibraryMetadataFetchDialog((entity?.id as number));
             }
           },
           {
-            label: 'Auto Fetch Metadata',
+            label: this.translateService.instant('book.browser.entityMenu.library.autoFetchMetadata'),
             icon: 'pi pi-bolt',
             command: () => {
               this.taskHelperService.refreshMetadataTask({
@@ -94,35 +100,41 @@ export class LibraryShelfMenuService {
             separator: true
           },
           {
-            label: 'Delete Library',
+            label: this.translateService.instant('book.browser.entityMenu.library.delete.label'),
             icon: 'pi pi-trash',
             command: () => {
               this.confirmationService.confirm({
-                message: `Are you sure you want to delete library: ${entity?.name}?`,
-                header: 'Confirmation',
+                message: this.translateService.instant('book.browser.entityMenu.library.delete.confirmMessage', {name: entity?.name}),
+                header: this.translateService.instant('common.confirm'),
                 rejectButtonProps: {
-                  label: 'Cancel',
+                  label: this.translateService.instant('common.cancel'),
                   severity: 'secondary',
                 },
                 acceptButtonProps: {
-                  label: 'Yes',
+                  label: this.translateService.instant('common.yes'),
                   severity: 'danger',
                 },
                 accept: () => {
-                  const loader = this.loadingService.show(`Deleting library '${entity?.name}'...`);
+                  const loader = this.loadingService.show(
+                    this.translateService.instant('book.browser.entityMenu.library.delete.deleting', {name: entity?.name})
+                  );
 
                   this.libraryService.deleteLibrary(entity?.id!)
                     .pipe(finalize(() => this.loadingService.hide(loader)))
                     .subscribe({
                       complete: () => {
                         this.router.navigate(['/']);
-                        this.messageService.add({severity: 'info', summary: 'Success', detail: 'Library was deleted'});
+                        this.messageService.add({
+                          severity: 'info',
+                          summary: this.translateService.instant('book.browser.entityMenu.toast.success.summary'),
+                          detail: this.translateService.instant('book.browser.entityMenu.library.delete.toast.deleted')
+                        });
                       },
                       error: () => {
                         this.messageService.add({
                           severity: 'error',
-                          summary: 'Failed',
-                          detail: 'Failed to delete library',
+                          summary: this.translateService.instant('book.browser.entityMenu.toast.failed.summary'),
+                          detail: this.translateService.instant('book.browser.entityMenu.library.delete.toast.failed'),
                         });
                       }
                     });
@@ -138,10 +150,10 @@ export class LibraryShelfMenuService {
   initializeShelfMenuItems(entity: Shelf | null): MenuItem[] {
     return [
       {
-        label: 'Options',
+        label: this.translateService.instant('book.browser.entityMenu.options'),
         items: [
           {
-            label: 'Edit Shelf',
+            label: this.translateService.instant('book.browser.entityMenu.shelf.edit'),
             icon: 'pi pi-pen-to-square',
             command: () => {
               this.dialogLauncherService.openShelfEditDialog((entity?.id as number));
@@ -151,26 +163,35 @@ export class LibraryShelfMenuService {
             separator: true
           },
           {
-            label: 'Delete Shelf',
+            label: this.translateService.instant('book.browser.entityMenu.shelf.delete.label'),
             icon: 'pi pi-trash',
             command: () => {
               this.confirmationService.confirm({
-                message: `Are you sure you want to delete shelf: ${entity?.name}?`,
-                header: 'Confirmation',
+                message: this.translateService.instant('book.browser.entityMenu.shelf.delete.confirmMessage', {name: entity?.name}),
+                header: this.translateService.instant('common.confirm'),
+                rejectButtonProps: {
+                  label: this.translateService.instant('common.cancel'),
+                  severity: 'secondary',
+                },
                 acceptButtonProps: {
+                  label: this.translateService.instant('common.yes'),
                   severity: 'danger'
                 },
                 accept: () => {
                   this.shelfService.deleteShelf(entity?.id!).subscribe({
                     complete: () => {
                       this.router.navigate(['/']);
-                      this.messageService.add({severity: 'info', summary: 'Success', detail: 'Shelf was deleted'});
+                      this.messageService.add({
+                        severity: 'info',
+                        summary: this.translateService.instant('book.browser.entityMenu.toast.success.summary'),
+                        detail: this.translateService.instant('book.browser.entityMenu.shelf.delete.toast.deleted')
+                      });
                     },
                     error: () => {
                       this.messageService.add({
                         severity: 'error',
-                        summary: 'Failed',
-                        detail: 'Failed to delete shelf',
+                        summary: this.translateService.instant('book.browser.entityMenu.toast.failed.summary'),
+                        detail: this.translateService.instant('book.browser.entityMenu.shelf.delete.toast.failed'),
                       });
                     }
                   });
@@ -190,10 +211,10 @@ export class LibraryShelfMenuService {
 
     return [
       {
-        label: 'Options',
+        label: this.translateService.instant('book.browser.entityMenu.options'),
         items: [
           {
-            label: 'Edit Magic Shelf',
+            label: this.translateService.instant('book.browser.entityMenu.magicShelf.edit'),
             icon: 'pi pi-pen-to-square',
             disabled: disableOptions,
             command: () => {
@@ -204,27 +225,36 @@ export class LibraryShelfMenuService {
             separator: true
           },
           {
-            label: 'Delete Magic Shelf',
+            label: this.translateService.instant('book.browser.entityMenu.magicShelf.delete.label'),
             icon: 'pi pi-trash',
             disabled: disableOptions,
             command: () => {
               this.confirmationService.confirm({
-                message: `Are you sure you want to delete magic shelf: ${entity?.name}?`,
-                header: 'Confirmation',
+                message: this.translateService.instant('book.browser.entityMenu.magicShelf.delete.confirmMessage', {name: entity?.name}),
+                header: this.translateService.instant('common.confirm'),
+                rejectButtonProps: {
+                  label: this.translateService.instant('common.cancel'),
+                  severity: 'secondary',
+                },
                 acceptButtonProps: {
+                  label: this.translateService.instant('common.yes'),
                   severity: 'danger'
                 },
                 accept: () => {
                   this.magicShelfService.deleteShelf(entity?.id!).subscribe({
                     complete: () => {
                       this.router.navigate(['/']);
-                      this.messageService.add({severity: 'info', summary: 'Success', detail: 'Magic shelf was deleted'});
+                      this.messageService.add({
+                        severity: 'info',
+                        summary: this.translateService.instant('book.browser.entityMenu.toast.success.summary'),
+                        detail: this.translateService.instant('book.browser.entityMenu.magicShelf.delete.toast.deleted')
+                      });
                     },
                     error: () => {
                       this.messageService.add({
                         severity: 'error',
-                        summary: 'Failed',
-                        detail: 'Failed to delete shelf',
+                        summary: this.translateService.instant('book.browser.entityMenu.toast.failed.summary'),
+                        detail: this.translateService.instant('book.browser.entityMenu.magicShelf.delete.toast.failed'),
                       });
                     }
                   });

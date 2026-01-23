@@ -5,9 +5,9 @@
       <i class="pi pi-user header-icon"></i>
     </div>
     <div class="header-text">
-      <h2 class="panel-title">User Profile</h2>
+      <h2 class="panel-title">{{ 'settings.userProfileDialog.title' | translate }}</h2>
       <p class="panel-description">
-        Manage your account information and security settings
+        {{ 'settings.userProfileDialog.description' | translate }}
       </p>
     </div>
     <p-button
@@ -15,6 +15,7 @@
       [text]="true"
       [rounded]="true"
       severity="secondary"
+      [attr.aria-label]="'common.close' | translate"
       (onClick)="closeDialog()"
       styleClass="close-button">
     </p-button>
@@ -24,11 +25,11 @@
     <div class="form-section">
       <h3 class="section-title">
         <i class="pi pi-id-card"></i>
-        Basic Information
+        {{ 'settings.userProfileDialog.section.basic.title' | translate }}
       </h3>
 
       <div class="form-field">
-        <label class="field-label">Username</label>
+        <label class="field-label" for="username">{{ 'settings.userProfileDialog.field.username.label' | translate }}</label>
         <input
           disabled
           id="username"
@@ -36,11 +37,11 @@
           pInputText
           [(ngModel)]="editUserData.username"
           class="field-input"
-          placeholder="Username..."/>
+          [placeholder]="'settings.userProfileDialog.field.username.placeholder' | translate"/>
       </div>
 
       <div class="form-field">
-        <label class="field-label">Full Name</label>
+        <label class="field-label" for="fullname">{{ 'settings.userProfileDialog.field.fullName.label' | translate }}</label>
         <input
           [disabled]="!isEditing"
           id="fullname"
@@ -48,11 +49,11 @@
           pInputText
           [(ngModel)]="editUserData.name"
           class="field-input"
-          placeholder="Enter full name..."/>
+          [placeholder]="'settings.userProfileDialog.field.fullName.placeholder' | translate"/>
       </div>
 
       <div class="form-field">
-        <label class="field-label">Email</label>
+        <label class="field-label" for="email">{{ 'settings.userProfileDialog.field.email.label' | translate }}</label>
         <input
           [disabled]="!isEditing"
           id="email"
@@ -60,17 +61,17 @@
           pInputText
           [(ngModel)]="editUserData.email"
           class="field-input"
-          placeholder="Enter email..."/>
+          [placeholder]="'settings.userProfileDialog.field.email.placeholder' | translate"/>
       </div>
 
       <div class="edit-actions">
         @if (!isEditing) {
-          <p-button label="Edit Profile" severity="info" icon="pi pi-pencil" [outlined]="true" (onClick)="toggleEdit()"></p-button>
+          <p-button [label]="'settings.userProfileDialog.action.editProfile' | translate" severity="info" icon="pi pi-pencil" [outlined]="true" (onClick)="toggleEdit()"></p-button>
         }
         @if (isEditing) {
           <div class="edit-buttons">
-            <p-button label="Cancel" severity="secondary" [outlined]="true" icon="pi pi-times" (onClick)="toggleEdit()"></p-button>
-            <p-button label="Save Changes" severity="success" [outlined]="true" icon="pi pi-check" (onClick)="updateProfile()"></p-button>
+            <p-button [label]="'common.cancel' | translate" severity="secondary" [outlined]="true" icon="pi pi-times" (onClick)="toggleEdit()"></p-button>
+            <p-button [label]="'settings.userProfileDialog.action.saveChanges' | translate" severity="success" [outlined]="true" icon="pi pi-check" (onClick)="updateProfile()"></p-button>
           </div>
         }
       </div>
@@ -81,12 +82,12 @@
     <div class="form-section">
       <h3 class="section-title">
         <i class="pi pi-shield"></i>
-        Security Settings
+        {{ 'settings.userProfileDialog.section.security.title' | translate }}
       </h3>
 
       <form [formGroup]="changePasswordForm" (ngSubmit)="submitPasswordChange()">
         <div class="form-field">
-          <label class="field-label" for="currentPassword">Current Password</label>
+          <label class="field-label" for="currentPassword">{{ 'auth.changePassword.form.currentPasswordLabel' | translate }}</label>
           <p-password
             id="currentPassword"
             formControlName="currentPassword"
@@ -99,14 +100,14 @@
             <small class="field-error">
               <i class="pi pi-exclamation-circle"></i>
               @if (changePasswordForm.get('currentPassword')?.errors?.['required']) {
-                <span>Current password is required.</span>
+                <span>{{ 'settings.userProfileDialog.validation.currentPasswordRequired' | translate }}</span>
               }
             </small>
           }
         </div>
 
         <div class="form-field">
-          <label class="field-label" for="newPassword">New Password</label>
+          <label class="field-label" for="newPassword">{{ 'auth.changePassword.form.newPasswordLabel' | translate }}</label>
           <p-password
             id="newPassword"
             formControlName="newPassword"
@@ -119,17 +120,17 @@
             <small class="field-error">
               <i class="pi pi-exclamation-circle"></i>
               @if (changePasswordForm.get('newPassword')?.errors?.['required']) {
-                <span>New password is required.</span>
+                <span>{{ 'settings.userProfileDialog.validation.newPasswordRequired' | translate }}</span>
               }
               @if (changePasswordForm.get('newPassword')?.errors?.['minlength']) {
-                <span>Password must be at least 6 characters long.</span>
+                <span>{{ 'settings.userProfileDialog.validation.newPasswordMinLength' | translate }}</span>
               }
             </small>
           }
         </div>
 
         <div class="form-field">
-          <label class="field-label" for="confirmNewPassword">Confirm New Password</label>
+          <label class="field-label" for="confirmNewPassword">{{ 'auth.changePassword.form.confirmNewPasswordLabel' | translate }}</label>
           <p-password
             id="confirmNewPassword"
             formControlName="confirmNewPassword"
@@ -142,7 +143,7 @@
             <small class="field-error">
               <i class="pi pi-exclamation-circle"></i>
               @if (changePasswordForm.get('confirmNewPassword')?.errors?.['required']) {
-                <span>Please confirm your new password.</span>
+                <span>{{ 'settings.userProfileDialog.validation.confirmNewPasswordRequired' | translate }}</span>
               }
             </small>
           }
@@ -150,13 +151,13 @@
                 changePasswordForm.get('confirmNewPassword')?.touched) {
             <small class="field-error">
               <i class="pi pi-exclamation-circle"></i>
-              <span>Passwords do not match.</span>
+              <span>{{ 'settings.userProfileDialog.validation.passwordMismatch' | translate }}</span>
             </small>
           }
         </div>
 
         <div class="password-actions">
-          <p-button type="submit" severity="info" [outlined]="true" label="Change Password" icon="pi pi-key" [disabled]="changePasswordForm.invalid"></p-button>
+          <p-button type="submit" severity="info" [outlined]="true" [label]="'settings.userProfileDialog.action.changePassword' | translate" icon="pi pi-key" [disabled]="changePasswordForm.invalid"></p-button>
         </div>
       </form>
     </div>
@@ -167,6 +168,6 @@
 @if (!currentUser) {
   <div class="loading-state">
     <i class="pi pi-spin pi-spinner loading-icon"></i>
-    <p>Loading user data...</p>
+    <p>{{ 'settings.userProfileDialog.loading.userData' | translate }}</p>
   </div>
 }

@@ -1,39 +1,36 @@
 <div class="pattern-extract-container">
   <div class="info-banner">
     <i class="pi pi-info-circle"></i>
-    <span>
-      Enter a pattern to extract metadata from filenames of <strong>{{ fileCount }}</strong> selected file(s).
-      Use placeholders like <code>{{ '{' }}SeriesName{{ '}' }}</code> to capture values.
-    </span>
+    <span [innerHTML]="'bookdrop.patternExtract.info.banner' | translate:{count: fileCount}"></span>
   </div>
 
   <p-divider></p-divider>
 
   <div class="pattern-section">
-    <h4>Pattern</h4>
+    <h4>{{ 'bookdrop.patternExtract.section.pattern' | translate }}</h4>
     <div class="pattern-input-row">
       <input
         #patternInput
         pInputText
         [formControl]="patternControl"
-        [placeholder]="patternPlaceholderText"
+        [placeholder]="'bookdrop.patternExtract.input.placeholder' | translate"
         id="pattern-input"
-        aria-label="Filename pattern for metadata extraction"
+        [attr.aria-label]="'bookdrop.patternExtract.a11y.filenamePatternInput' | translate"
         class="pattern-input"
         (input)="previewPattern()"/>
       <p-button
         icon="pi pi-eye"
-        label="Preview"
+        [label]="'bookdrop.patternExtract.button.preview' | translate"
         severity="secondary"
         [disabled]="!hasValidPattern"
-        [ariaLabel]="'Preview pattern extraction on sample files'"
+        [ariaLabel]="'bookdrop.patternExtract.a11y.previewButton' | translate"
         (click)="previewPattern()">
       </p-button>
     </div>
   </div>
 
   <div class="placeholders-section">
-    <h4>Available Placeholders</h4>
+    <h4>{{ 'bookdrop.patternExtract.section.availablePlaceholders' | translate }}</h4>
     <div class="placeholder-chips">
       @for (placeholder of availablePlaceholders; track placeholder.name) {
         <p-chip
@@ -48,11 +45,11 @@
   </div>
 
   <div class="common-patterns-section">
-    <h4>Common Patterns</h4>
+    <h4>{{ 'bookdrop.patternExtract.section.commonPatterns' | translate }}</h4>
     <div class="common-pattern-buttons">
       @for (commonPattern of commonPatterns; track commonPattern.pattern) {
         <p-button
-          [label]="commonPattern.label"
+          [label]="commonPattern.labelKey | translate"
           severity="secondary"
           size="small"
           outlined
@@ -66,7 +63,7 @@
 
   @if (previewResults.length > 0) {
     <div class="preview-section">
-      <h4>Preview (Sample Files)</h4>
+      <h4>{{ 'bookdrop.patternExtract.section.previewSampleFiles' | translate }}</h4>
       <div class="preview-list">
         @for (preview of previewResults; track preview.fileName) {
           <div class="preview-item" [ngClass]="getPreviewClass(preview)">
@@ -102,18 +99,18 @@
     @if (isExtracting) {
       <div class="extracting-indicator">
         <p-progressSpinner strokeWidth="4" [style]="spinnerStyle"></p-progressSpinner>
-        <span>Extracting metadata...</span>
+        <span>{{ 'bookdrop.patternExtract.status.extracting' | translate }}</span>
       </div>
     }
     <p-button
-      label="Cancel"
+      [label]="'common.cancel' | translate"
       icon="pi pi-times"
       severity="secondary"
       [disabled]="isExtracting"
       (click)="cancel()">
     </p-button>
     <p-button
-      label="Extract and Apply"
+      [label]="'bookdrop.patternExtract.button.extractAndApply' | translate"
       icon="pi pi-check"
       severity="success"
       [disabled]="!hasValidPattern || isExtracting"

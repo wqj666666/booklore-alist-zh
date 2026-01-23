@@ -8,9 +8,10 @@ import {Message} from 'primeng/message';
 import {InputText} from 'primeng/inputtext';
 import {OAuthService} from 'angular-oauth2-oidc';
 import {Observable, Subject} from 'rxjs';
-import {filter, take} from 'rxjs/operators';
+import {filter, take, takeUntil} from 'rxjs/operators';
 import {getOidcErrorCount, isOidcBypassed, resetOidcBypass} from '../../../core/security/auth-initializer';
 import {AppSettingsService, PublicAppSettings} from '../../service/app-settings.service';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,8 @@ import {AppSettingsService, PublicAppSettings} from '../../service/app-settings.
     Password,
     Button,
     Message,
-    InputText
+    InputText,
+    TranslateModule,
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
@@ -39,10 +41,15 @@ export class LoginComponent implements OnInit, OnDestroy {
   private oAuthService = inject(OAuthService);
   private appSettingsService = inject(AppSettingsService);
   private router = inject(Router);
+  private translateService = inject(TranslateService);
 
   publicAppSettings$: Observable<PublicAppSettings | null> = this.appSettingsService.publicAppSettings$;
 
   private destroy$ = new Subject<void>();
+  private errorMessageKey: string | null = null;
+  private errorMessageParams: Record<string, unknown> | undefined;
+  private oidcBypassMessageKey: string | null = null;
+  private oidcBypassMessageParams: Record<string, unknown> | undefined;
 
   ngOnInit(): void {
     this.publicAppSettings$
@@ -55,6 +62,17 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.oidcName = publicSettings!.oidcProviderDetails?.providerName || 'OIDC';
         this.checkOidcBypassStatus();
       });
+
+    this.translateService.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        if (this.oidcBypassMessageKey) {
+          this.oidcBypassMessage = this.translateService.instant(this.oidcBypassMessageKey, this.oidcBypassMessageParams);
+        }
+        if (this.errorMessageKey) {
+          this.errorMessage = this.translateService.instant(this.errorMessageKey, this.errorMessageParams);
+        }
+      });
   }
 
   private checkOidcBypassStatus(): void {
@@ -65,12 +83,17 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.showOidcBypassInfo = true;
 
       if (this.isOidcBypassed && errorCount >= 3) {
-        this.oidcBypassMessage = `${this.oidcName} authentication has been automatically disabled after ${errorCount} consecutive failures (including timeouts). You can retry or continue with local login.`;
+        this.setOidcBypassMessage('auth.login.oidcWarning.autoDisabledAfterFailures', {provider: this.oidcName, errorCount});
       } else if (this.isOidcBypassed) {
-        this.oidcBypassMessage = `${this.oidcName} authentication has been manually disabled. You can re-enable it or continue with local login.`;
+        this.setOidcBypassMessage('auth.login.oidcWarning.manuallyDisabled', {provider: this.oidcName});
       } else if (errorCount > 0) {
-        this.oidcBypassMessage = `${this.oidcName} authentication encountered ${errorCount} error(s), possibly due to timeouts or server issues.`;
+        this.setOidcBypassMessage('auth.login.oidcWarning.encounteredErrors', {provider: this.oidcName, errorCount});
       }
+    } else {
+      this.showOidcBypassInfo = false;
+      this.oidcBypassMessage = '';
+      this.oidcBypassMessageKey = null;
+      this.oidcBypassMessageParams = undefined;
     }
   }
 
@@ -85,9 +108,16 @@ export class LoginComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         if (error.status === 0) {
-          this.errorMessage = 'Cannot connect to the server. Please check your connection and try again.';
+          this.setErrorMessage('auth.login.errors.cannotConnect');
         } else {
-          this.errorMessage = error?.error?.message || 'An unexpected error occurred. Please try again.';
+          const backendMessage = error?.error?.message;
+          if (backendMessage) {
+            this.errorMessage = backendMessage;
+            this.errorMessageKey = null;
+            this.errorMessageParams = undefined;
+          } else {
+            this.setErrorMessage('auth.login.errors.unexpected');
+          }
         }
       }
     });
@@ -100,6 +130,8 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.isOidcLoginInProgress = true;
     this.errorMessage = '';
+    this.errorMessageKey = null;
+    this.errorMessageParams = undefined;
 
     try {
       setTimeout(() => {
@@ -108,7 +140,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.oAuthService.initCodeFlow();
     } catch (error) {
       console.error('OIDC login initiation failed:', error);
-      this.errorMessage = 'Failed to initiate OIDC login. Please try again or use local login.';
+      this.setErrorMessage('auth.login.errors.oidcInitiationFailed');
       this.isOidcLoginInProgress = false;
     }
   }
@@ -142,5 +174,17 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private setErrorMessage(key: string, params?: Record<string, unknown>): void {
+    this.errorMessageKey = key;
+    this.errorMessageParams = params;
+    this.errorMessage = this.translateService.instant(key, params);
+  }
+
+  private setOidcBypassMessage(key: string, params?: Record<string, unknown>): void {
+    this.oidcBypassMessageKey = key;
+    this.oidcBypassMessageParams = params;
+    this.oidcBypassMessage = this.translateService.instant(key, params);
   }
 }

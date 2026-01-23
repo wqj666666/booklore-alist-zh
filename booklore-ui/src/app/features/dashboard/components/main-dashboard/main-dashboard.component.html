@@ -20,14 +20,14 @@
                 @if (permissions.admin || permissions.canManageLibrary) {
                   <div>
                     <h1 class="no-library-header">
-                      Welcome to BookLore!<br>
-                      Let's create your first library
+                      {{ 'dashboard.noLibrary.welcomeTitle' | translate }}<br>
+                      {{ 'dashboard.noLibrary.welcomeSubtitle' | translate }}
                     </h1>
                     <p class="text-gray-300 mb-8 mx-auto leading-relaxed">
-                      A library is where all your books live. Start building your digital collection today!
+                      {{ 'dashboard.noLibrary.description' | translate }}
                     </p>
                     <p-button
-                      label="Create Your Library"
+                      [label]="'dashboard.noLibrary.createLibrary' | translate"
                       icon="pi pi-plus"
                       styleClass="p-button-rounded p-button-outlined"
                       (click)="createNewLibrary()">
@@ -44,7 +44,7 @@
               severity="info"
               rounded
               text
-              [pTooltip]="'Customize Dashboard'"
+              [pTooltip]="'dashboard.customizeDashboard' | translate"
               tooltipPosition="left"
               (click)="openDashboardSettings()">
             </p-button>
@@ -56,6 +56,7 @@
                 <app-dashboard-scroller
                   [bookListType]="scroller.type"
                   [title]="scroller.title"
+                  [titleKey]="scroller.titleKey"
                   [isMagicShelf]="scroller.type === ScrollerType.MAGIC_SHELF"
                   [books]="getBooksForScroller(scroller) | async">
                 </app-dashboard-scroller>

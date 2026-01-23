@@ -2,10 +2,10 @@
   <div class="settings-header">
     <h2 class="settings-title">
       <i class="pi pi-users"></i>
-      User Management
+      {{ 'settings.userManagement.title' | translate }}
     </h2>
     <p class="settings-description">
-      Manage Booklore users, their permissions, and library access. Configure user roles and capabilities for your book collection.
+      {{ 'settings.userManagement.description' | translate }}
     </p>
   </div>
 
@@ -15,11 +15,11 @@
         <div class="section-title-group">
           <h3 class="section-title">
             <i class="pi pi-user"></i>
-            Current Users
+            {{ 'settings.userManagement.section.currentUsers.title' | translate }}
           </h3>
           <p-button
             icon="pi pi-plus"
-            label="Create User"
+            [label]="'settings.userManagement.button.createUser' | translate"
             severity="success"
             size="small"
             outlined
@@ -40,46 +40,46 @@
               <th style="width: 100px; text-align: center">
                 <div class="header-content" style="justify-content: center">
                   <i class="pi pi-tag"></i>
-                  <span>Type</span>
+                  <span>{{ 'settings.userManagement.table.header.type' | translate }}</span>
                 </div>
               </th>
               <th style="min-width: 180px">
                 <div class="header-content">
                   <i class="pi pi-user"></i>
-                  <span>User</span>
+                  <span>{{ 'settings.userManagement.table.header.user' | translate }}</span>
                 </div>
               </th>
               <th style="min-width: 200px">
                 <div class="header-content">
                   <i class="pi pi-book"></i>
-                  <span>Libraries</span>
+                  <span>{{ 'settings.userManagement.table.header.libraries' | translate }}</span>
                 </div>
               </th>
-              <th style="width: 120px; text-align: center" pTooltip="Admin permissions" tooltipPosition="top">
+              <th style="width: 120px; text-align: center" [pTooltip]="'settings.userManagement.tooltip.adminPermissions' | translate" tooltipPosition="top">
                 <i class="pi pi-shield"></i>
               </th>
-              <th style="width: 120px; text-align: center" pTooltip="Book Management permissions" tooltipPosition="top">
+              <th style="width: 120px; text-align: center" [pTooltip]="'settings.userManagement.tooltip.bookManagementPermissions' | translate" tooltipPosition="top">
                 <i class="pi pi-book"></i>
               </th>
-              <th style="width: 120px; text-align: center" pTooltip="System Access permissions" tooltipPosition="top">
+              <th style="width: 120px; text-align: center" [pTooltip]="'settings.userManagement.tooltip.systemAccessPermissions' | translate" tooltipPosition="top">
                 <i class="pi pi-eye"></i>
               </th>
-              <th style="width: 120px; text-align: center" pTooltip="System Configuration permissions" tooltipPosition="top">
+              <th style="width: 120px; text-align: center" [pTooltip]="'settings.userManagement.tooltip.systemConfigurationPermissions' | translate" tooltipPosition="top">
                 <i class="pi pi-cog"></i>
               </th>
-              <th style="width: 120px; text-align: center" pTooltip="Metadata Editing permissions" tooltipPosition="top">
+              <th style="width: 120px; text-align: center" [pTooltip]="'settings.userManagement.tooltip.metadataEditingPermissions' | translate" tooltipPosition="top">
                 <i class="pi pi-pencil"></i>
               </th>
-              <th style="width: 120px; text-align: center" pTooltip="Device Sync permissions" tooltipPosition="top">
+              <th style="width: 120px; text-align: center" [pTooltip]="'settings.userManagement.tooltip.deviceSyncPermissions' | translate" tooltipPosition="top">
                 <i class="pi pi-mobile"></i>
               </th>
-              <th style="width: 120px; text-align: center" pTooltip="Bulk Reset permissions" tooltipPosition="top">
+              <th style="width: 120px; text-align: center" [pTooltip]="'settings.userManagement.tooltip.bulkResetPermissions' | translate" tooltipPosition="top">
                 <i class="pi pi-refresh"></i>
               </th>
               <th style="width: 180px; text-align: center">
                 <div class="header-content" style="justify-content: center">
                   <i class="pi pi-ellipsis-h"></i>
-                  <span>Actions</span>
+                  <span>{{ 'settings.userManagement.table.header.actions' | translate }}</span>
                 </div>
               </th>
             </tr>
@@ -118,22 +118,22 @@
                     optionLabel="name"
                     optionValue="id"
                     [(ngModel)]="editingLibraryIds"
-                    placeholder="Select Libraries"
+                    [placeholder]="'settings.userManagement.placeholder.selectLibraries' | translate"
                     appendTo="body"
                     [style]="{'width': '100%'}"
                     size="small"
                     [disabled]="user.permissions.admin">
                   </p-multiSelect>
                 } @else {
-                  <span class="library-names">{{ user.libraryNames || 'None' }}</span>
+                  <span class="library-names">{{ user.libraryNames || ('common.none' | translate) }}</span>
                 }
               </td>
               <td class="text-center">
                 <div class="permission-indicator admin-indicator" [class.active]="user.permissions.admin">
                   @if (user.permissions.admin) {
-                    <i class="pi pi-shield" pTooltip="Administrator"></i>
+                    <i class="pi pi-shield" [pTooltip]="'settings.userManagement.tooltip.administrator' | translate"></i>
                   } @else {
-                    <i class="pi pi-minus" pTooltip="Not Administrator"></i>
+                    <i class="pi pi-minus" [pTooltip]="'settings.userManagement.tooltip.notAdministrator' | translate"></i>
                   }
                 </div>
               </td>
@@ -189,7 +189,7 @@
                       [rounded]="true"
                       (onClick)="toggleEdit(user)"
                       tooltipPosition="top"
-                      pTooltip="Edit user">
+                      [pTooltip]="'settings.userManagement.tooltip.editUser' | translate">
                     </p-button>
                   }
                   @if (user.isEditing) {
@@ -200,7 +200,7 @@
                       [rounded]="true"
                       (onClick)="saveUser(user)"
                       tooltipPosition="top"
-                      pTooltip="Save changes">
+                      [pTooltip]="'settings.userManagement.tooltip.saveChanges' | translate">
                     </p-button>
                     <p-button
                       icon="pi pi-times"
@@ -209,7 +209,7 @@
                       text
                       (onClick)="toggleEdit(user)"
                       tooltipPosition="top"
-                      pTooltip="Cancel">
+                      [pTooltip]="'common.cancel' | translate">
                     </p-button>
                   }
                   @if (!user.isEditing) {
@@ -220,7 +220,7 @@
                       [rounded]="true"
                       (onClick)="openChangePasswordDialog(user)"
                       tooltipPosition="top"
-                      pTooltip="Change password">
+                      [pTooltip]="'settings.userManagement.tooltip.changePassword' | translate">
                     </p-button>
                     <p-button
                       [disabled]="user.id === currentUser?.id"
@@ -230,7 +230,7 @@
                       [rounded]="true"
                       (onClick)="deleteUser(user)"
                       tooltipPosition="top"
-                      pTooltip="Delete user">
+                      [pTooltip]="'settings.userManagement.tooltip.deleteUser' | translate">
                     </p-button>
                   }
                 </div>
@@ -243,23 +243,23 @@
                     <div class="expanded-section">
                       <h4 class="expanded-title">
                         <i class="pi pi-id-card"></i>
-                        User Information
+                        {{ 'settings.userManagement.expanded.userInformation.title' | translate }}
                       </h4>
                       <div class="info-grid">
                         <div class="info-item">
-                          <label>Full Name</label>
+                          <label>{{ 'settings.userManagement.label.fullName' | translate }}</label>
                           @if (user.isEditing) {
                             <input type="text" [(ngModel)]="user.name" class="p-inputtext p-component p-inputtext-sm"/>
                           } @else {
-                            <span>{{ user.name || 'N/A' }}</span>
+                            <span>{{ user.name || ('common.na' | translate) }}</span>
                           }
                         </div>
                         <div class="info-item">
-                          <label>Email</label>
+                          <label>{{ 'settings.userManagement.label.email' | translate }}</label>
                           @if (user.isEditing) {
                             <input type="email" [(ngModel)]="user.email" class="p-inputtext p-component p-inputtext-sm"/>
                           } @else {
-                            <span>{{ user.email || 'N/A' }}</span>
+                            <span>{{ user.email || ('common.na' | translate) }}</span>
                           }
                         </div>
                       </div>
@@ -268,155 +268,155 @@
                     <div class="expanded-section">
                       <h4 class="expanded-title">
                         <i class="pi pi-lock"></i>
-                        Permissions
+                        {{ 'settings.userManagement.expanded.permissions.title' | translate }}
                       </h4>
                       <div class="permissions-grid">
                         <div class="permission-group">
-                          <h5><i class="pi pi-book"></i> Book Management</h5>
+                          <h5><i class="pi pi-book"></i> {{ 'settings.userManagement.permissionGroup.bookManagement' | translate }}</h5>
                           <div class="permission-items">
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canUpload" [disabled]="isPermissionDisabled(user)" inputId="upload-{{user.id}}"></p-checkbox>
-                              <label [for]="'upload-'+user.id">Upload Books</label>
+                              <label [for]="'upload-'+user.id">{{ 'settings.userManagement.permission.uploadBooks' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canDownload" [disabled]="isPermissionDisabled(user)" inputId="download-{{user.id}}"></p-checkbox>
-                              <label [for]="'download-'+user.id">Download Books</label>
+                              <label [for]="'download-'+user.id">{{ 'settings.userManagement.permission.downloadBooks' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canDeleteBook" [disabled]="isPermissionDisabled(user)" inputId="delete-{{user.id}}"></p-checkbox>
-                              <label [for]="'delete-'+user.id">Delete Books</label>
+                              <label [for]="'delete-'+user.id">{{ 'settings.userManagement.permission.deleteBooks' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canManageLibrary" [disabled]="isPermissionDisabled(user)" inputId="library-{{user.id}}"></p-checkbox>
-                              <label [for]="'library-'+user.id">Manage Library</label>
+                              <label [for]="'library-'+user.id">{{ 'settings.userManagement.permission.manageLibrary' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canEmailBook" [disabled]="isPermissionDisabled(user)" inputId="email-{{user.id}}"></p-checkbox>
-                              <label [for]="'email-'+user.id">Email Books</label>
+                              <label [for]="'email-'+user.id">{{ 'settings.userManagement.permission.emailBooks' | translate }}</label>
                             </div>
                           </div>
                         </div>
 
                         <div class="permission-group">
-                          <h5><i class="pi pi-eye"></i> System Access</h5>
+                          <h5><i class="pi pi-eye"></i> {{ 'settings.userManagement.permissionGroup.systemAccess' | translate }}</h5>
                           <div class="permission-items">
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canAccessBookdrop" [disabled]="isPermissionDisabled(user)" inputId="bookdrop-{{user.id}}"></p-checkbox>
-                              <label [for]="'bookdrop-'+user.id">Access Bookdrop</label>
+                              <label [for]="'bookdrop-'+user.id">{{ 'settings.userManagement.permission.accessBookdrop' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canAccessLibraryStats" [disabled]="isPermissionDisabled(user)" inputId="stats-{{user.id}}"></p-checkbox>
-                              <label [for]="'stats-'+user.id">View Library Statistics</label>
+                              <label [for]="'stats-'+user.id">{{ 'settings.userManagement.permission.viewLibraryStatistics' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canAccessUserStats" [disabled]="isPermissionDisabled(user)" inputId="userstats-{{user.id}}"></p-checkbox>
-                              <label [for]="'userstats-'+user.id">View User Reading Statistics</label>
+                              <label [for]="'userstats-'+user.id">{{ 'settings.userManagement.permission.viewUserReadingStatistics' | translate }}</label>
                             </div>
                           </div>
                         </div>
 
                         <div class="permission-group">
-                          <h5><i class="pi pi-cog"></i> System Configuration</h5>
+                          <h5><i class="pi pi-cog"></i> {{ 'settings.userManagement.permissionGroup.systemConfiguration' | translate }}</h5>
                           <div class="permission-items">
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canManageMetadataConfig" [disabled]="isPermissionDisabled(user)" inputId="metadataconfig-{{user.id}}"></p-checkbox>
-                              <label [for]="'metadataconfig-'+user.id">Manage Metadata Configuration</label>
+                              <label [for]="'metadataconfig-'+user.id">{{ 'settings.userManagement.permission.manageMetadataConfiguration' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canManageGlobalPreferences" [disabled]="isPermissionDisabled(user)" inputId="preferences-{{user.id}}"></p-checkbox>
-                              <label [for]="'preferences-'+user.id">Manage Application Preferences</label>
+                              <label [for]="'preferences-'+user.id">{{ 'settings.userManagement.permission.manageApplicationPreferences' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canAccessTaskManager" [disabled]="isPermissionDisabled(user)" inputId="taskmanager-{{user.id}}"></p-checkbox>
-                              <label [for]="'taskmanager-'+user.id">Access Task Manager</label>
+                              <label [for]="'taskmanager-'+user.id">{{ 'settings.userManagement.permission.accessTaskManager' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canManageIcons" [disabled]="isPermissionDisabled(user)" inputId="icons-{{user.id}}"></p-checkbox>
-                              <label [for]="'icons-'+user.id">Manage Icons</label>
+                              <label [for]="'icons-'+user.id">{{ 'settings.userManagement.permission.manageIcons' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canManageFonts" [disabled]="isPermissionDisabled(user)" inputId="fonts-{{user.id}}"></p-checkbox>
-                              <label [for]="'fonts-'+user.id">Manage Fonts</label>
+                              <label [for]="'fonts-'+user.id">{{ 'settings.userManagement.permission.manageFonts' | translate }}</label>
                             </div>
                           </div>
                         </div>
 
                         <div class="permission-group">
-                          <h5><i class="pi pi-pencil"></i> Metadata Editing</h5>
+                          <h5><i class="pi pi-pencil"></i> {{ 'settings.userManagement.permissionGroup.metadataEditing' | translate }}</h5>
                           <div class="permission-items">
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canEditMetadata" [disabled]="isPermissionDisabled(user)" inputId="metadata-{{user.id}}"></p-checkbox>
-                              <label [for]="'metadata-'+user.id">Edit Single Metadata</label>
+                              <label [for]="'metadata-'+user.id">{{ 'settings.userManagement.permission.editSingleMetadata' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canBulkAutoFetchMetadata" [disabled]="isPermissionDisabled(user)" inputId="bulkautofetch-{{user.id}}"></p-checkbox>
-                              <label [for]="'bulkautofetch-'+user.id">Bulk Auto Fetch Metadata</label>
+                              <label [for]="'bulkautofetch-'+user.id">{{ 'settings.userManagement.permission.bulkAutoFetchMetadata' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canBulkCustomFetchMetadata" [disabled]="isPermissionDisabled(user)" inputId="bulkcustomfetch-{{user.id}}"></p-checkbox>
-                              <label [for]="'bulkcustomfetch-'+user.id">Bulk Custom Fetch Metadata</label>
+                              <label [for]="'bulkcustomfetch-'+user.id">{{ 'settings.userManagement.permission.bulkCustomFetchMetadata' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canBulkEditMetadata" [disabled]="isPermissionDisabled(user)" inputId="bulkmetadataeditor-{{user.id}}"></p-checkbox>
-                              <label [for]="'bulkmetadataeditor-'+user.id">Access Bulk Metadata Editor</label>
+                              <label [for]="'bulkmetadataeditor-'+user.id">{{ 'settings.userManagement.permission.accessBulkMetadataEditor' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canBulkRegenerateCover" [disabled]="isPermissionDisabled(user)" inputId="bulkregeneratecover-{{user.id}}"></p-checkbox>
-                              <label [for]="'bulkregeneratecover-'+user.id">Bulk Regenerate Cover</label>
+                              <label [for]="'bulkregeneratecover-'+user.id">{{ 'settings.userManagement.permission.bulkRegenerateCover' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canMoveOrganizeFiles" [disabled]="isPermissionDisabled(user)" inputId="moveorganizefiles-{{user.id}}"></p-checkbox>
-                              <label [for]="'moveorganizefiles-'+user.id">Move/Organize Files</label>
+                              <label [for]="'moveorganizefiles-'+user.id">{{ 'settings.userManagement.permission.moveOrganizeFiles' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canBulkLockUnlockMetadata" [disabled]="isPermissionDisabled(user)" inputId="bulklockunlock-{{user.id}}"></p-checkbox>
-                              <label [for]="'bulklockunlock-'+user.id">Bulk Lock/Unlock Metadata</label>
+                              <label [for]="'bulklockunlock-'+user.id">{{ 'settings.userManagement.permission.bulkLockUnlockMetadata' | translate }}</label>
                             </div>
                           </div>
                         </div>
 
                         <div class="permission-group">
-                          <h5><i class="pi pi-mobile"></i> Device Sync</h5>
+                          <h5><i class="pi pi-mobile"></i> {{ 'settings.userManagement.permissionGroup.deviceSync' | translate }}</h5>
                           <div class="permission-items">
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canSyncKoReader" [disabled]="isPermissionDisabled(user)" inputId="koreader-{{user.id}}"></p-checkbox>
-                              <label [for]="'koreader-'+user.id">KOReader Sync</label>
+                              <label [for]="'koreader-'+user.id">{{ 'settings.userManagement.permission.koreaderSync' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canSyncKobo" [disabled]="isPermissionDisabled(user)" inputId="kobo-{{user.id}}"></p-checkbox>
-                              <label [for]="'kobo-'+user.id">Kobo Sync</label>
+                              <label [for]="'kobo-'+user.id">{{ 'settings.userManagement.permission.koboSync' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canAccessOpds" [disabled]="isPermissionDisabled(user)" inputId="opds-{{user.id}}"></p-checkbox>
-                              <label [for]="'opds-'+user.id">OPDS Feed Access</label>
+                              <label [for]="'opds-'+user.id">{{ 'settings.userManagement.permission.opdsFeedAccess' | translate }}</label>
                             </div>
                           </div>
                         </div>
 
                         <div class="permission-group">
-                          <h5><i class="pi pi-refresh"></i> Bulk Reset</h5>
+                          <h5><i class="pi pi-refresh"></i> {{ 'settings.userManagement.permissionGroup.bulkReset' | translate }}</h5>
                           <div class="permission-items">
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canBulkResetBookloreReadProgress" [disabled]="isPermissionDisabled(user)" inputId="bulkresetbooklore-{{user.id}}"></p-checkbox>
-                              <label [for]="'bulkresetbooklore-'+user.id">Bulk Reset Booklore Read Progress</label>
+                              <label [for]="'bulkresetbooklore-'+user.id">{{ 'settings.userManagement.permission.bulkResetBookloreReadProgress' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canBulkResetKoReaderReadProgress" [disabled]="isPermissionDisabled(user)" inputId="bulkresetkoreader-{{user.id}}"></p-checkbox>
-                              <label [for]="'bulkresetkoreader-'+user.id">Bulk Reset KoReader Read Progress</label>
+                              <label [for]="'bulkresetkoreader-'+user.id">{{ 'settings.userManagement.permission.bulkResetKoreaderReadProgress' | translate }}</label>
                             </div>
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.canBulkResetBookReadStatus" [disabled]="isPermissionDisabled(user)" inputId="bulkresetreadstatus-{{user.id}}"></p-checkbox>
-                              <label [for]="'bulkresetreadstatus-'+user.id">Bulk Reset Book Read Status</label>
+                              <label [for]="'bulkresetreadstatus-'+user.id">{{ 'settings.userManagement.permission.bulkResetBookReadStatus' | translate }}</label>
                             </div>
                           </div>
                         </div>
 
                         <div class="permission-group">
-                          <h5><i class="pi pi-shield"></i> Administration</h5>
+                          <h5><i class="pi pi-shield"></i> {{ 'settings.userManagement.permissionGroup.administration' | translate }}</h5>
                           <div class="permission-items">
                             <div class="permission-item">
                               <p-checkbox [binary]="true" [(ngModel)]="user.permissions.admin" (onChange)="onAdminCheckboxChange(user)" [disabled]="!user.isEditing" inputId="admin-{{user.id}}"></p-checkbox>
-                              <label [for]="'admin-'+user.id">Full Administrator Access</label>
+                              <label [for]="'admin-'+user.id">{{ 'settings.userManagement.permission.fullAdministratorAccess' | translate }}</label>
                             </div>
                           </div>
                         </div>
@@ -433,28 +433,28 @@
   </div>
 
   <p-dialog
-    header="Change Password"
+    [header]="'settings.userManagement.passwordDialog.header' | translate"
     [(visible)]="isPasswordDialogVisible"
     [modal]="true"
     styleClass="user-dialog"
     [style]="{width: '400px'}">
     <div class="dialog-form">
       <div class="form-field">
-        <label for="newPassword">New Password</label>
+        <label for="newPassword">{{ 'settings.userManagement.passwordDialog.label.newPassword' | translate }}</label>
         <p-password
           id="newPassword"
           [(ngModel)]="newPassword"
-          placeholder="Enter new password"
+          [placeholder]="'settings.userManagement.passwordDialog.placeholder.newPassword' | translate"
           [feedback]="false"
           fluid>
         </p-password>
       </div>
       <div class="form-field">
-        <label for="confirmPassword">Confirm Password</label>
+        <label for="confirmPassword">{{ 'settings.userManagement.passwordDialog.label.confirmPassword' | translate }}</label>
         <p-password
           id="confirmPassword"
           [(ngModel)]="confirmNewPassword"
-          placeholder="Confirm new password"
+          [placeholder]="'settings.userManagement.passwordDialog.placeholder.confirmPassword' | translate"
           [feedback]="false"
           fluid>
         </p-password>
@@ -469,13 +469,13 @@
     <ng-template pTemplate="footer">
       <div class="dialog-actions">
         <p-button
-          label="Cancel"
+          [label]="'common.cancel' | translate"
           severity="secondary"
           outlined="true"
           (onClick)="isPasswordDialogVisible = false">
         </p-button>
         <p-button
-          label="Change Password"
+          [label]="'settings.userManagement.passwordDialog.button.changePassword' | translate"
           severity="success"
           (onClick)="submitPasswordChange()">
         </p-button>

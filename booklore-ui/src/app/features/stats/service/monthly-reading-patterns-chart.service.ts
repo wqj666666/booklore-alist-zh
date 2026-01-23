@@ -1,5 +1,5 @@
 import {inject, Injectable, OnDestroy} from '@angular/core';
-import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, EMPTY, Observable, Subject} from 'rxjs';
 import {map, takeUntil, catchError, filter, first, switchMap} from 'rxjs/operators';
 import {ChartConfiguration, ChartData} from 'chart.js';
 import {TooltipItem} from 'chart.js';
@@ -8,6 +8,8 @@ import {LibraryFilterService} from './library-filter.service';
 import {BookService} from '../../book/service/book.service';
 import {Book, ReadStatus} from '../../book/model/book.model';
 import {BookState} from '../../book/model/state/book-state.model';
+import {TranslateService} from '@ngx-translate/core';
+import {LanguageService} from '../../../core/i18n/language.service';
 
 interface MonthlyPattern {
   month: string;
@@ -35,137 +37,13 @@ type MonthlyPatternsChartData = ChartData<'line', number[], string>;
 export class MonthlyReadingPatternsChartService implements OnDestroy {
   private readonly bookService = inject(BookService);
   private readonly libraryFilterService = inject(LibraryFilterService);
+  private readonly translateService = inject(TranslateService);
+  private readonly languageService = inject(LanguageService);
   private readonly destroy$ = new Subject<void>();
 
   public readonly monthlyPatternsChartType = 'line' as const;
 
-  public readonly monthlyPatternsChartOptions: ChartConfiguration<'line'>['options'] = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      x: {
-        type: 'category',
-        ticks: {
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11
-          }
-        },
-        grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
-        },
-        title: {
-          display: true,
-          text: 'Month',
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11.5
-          }
-        }
-      },
-      y: {
-        type: 'linear',
-        display: true,
-        position: 'left',
-        beginAtZero: true,
-        ticks: {
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11
-          }
-        },
-        grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
-        },
-        title: {
-          display: true,
-          text: 'Book Count',
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11.5
-          }
-        }
-      },
-      y1: {
-        type: 'linear',
-        display: true,
-        position: 'right',
-        beginAtZero: true,
-        max: 100,
-        ticks: {
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11
-          },
-          callback: function(value) {
-            return value + '%';
-          }
-        },
-        grid: {
-          drawOnChartArea: false
-        },
-        title: {
-          display: true,
-          text: 'Progress %',
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11.5
-          }
-        }
-      }
-    },
-    plugins: {
-      legend: {
-        display: true,
-        position: 'top',
-        labels: {
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11.5
-          },
-          padding: 12,
-          usePointStyle: true
-        }
-      },
-      tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.9)',
-        titleColor: '#ffffff',
-        bodyColor: '#ffffff',
-        borderColor: '#ffffff',
-        borderWidth: 1,
-        cornerRadius: 6,
-        displayColors: true,
-        padding: 12,
-        titleFont: {size: 14, weight: 'bold'},
-        bodyFont: {size: 12},
-        callbacks: {
-          title: (context) => context[0]?.label || '',
-          label: this.formatTooltipLabel.bind(this)
-        }
-      }
-    },
-    interaction: {
-      intersect: false,
-      mode: 'index'
-    },
-    elements: {
-      point: {
-        radius: 4,
-        hoverRadius: 6
-      },
-      line: {
-        tension: 0.3,
-        borderWidth: 2
-      }
-    }
-  };
+  public monthlyPatternsChartOptions: ChartConfiguration<'line'>['options'] = this.buildOptions();
 
   private readonly monthlyPatternsChartDataSubject = new BehaviorSubject<MonthlyPatternsChartData>({
     labels: [],
@@ -180,9 +58,10 @@ export class MonthlyReadingPatternsChartService implements OnDestroy {
         filter(state => state.loaded),
         first(),
         switchMap(() =>
-          this.libraryFilterService.selectedLibrary$.pipe(
-            takeUntil(this.destroy$)
-          )
+          combineLatest([
+            this.libraryFilterService.selectedLibrary$,
+            this.languageService.language$
+          ]).pipe(takeUntil(this.destroy$))
         ),
         catchError((error) => {
           console.error('Error processing monthly patterns stats:', error);
@@ -190,6 +69,7 @@ export class MonthlyReadingPatternsChartService implements OnDestroy {
         })
       )
       .subscribe(() => {
+        this.monthlyPatternsChartOptions = this.buildOptions();
         const stats = this.calculateMonthlyPatternsStats();
         this.updateChartData(stats);
       });
@@ -207,7 +87,8 @@ export class MonthlyReadingPatternsChartService implements OnDestroy {
 
       const datasets = [
         {
-          label: 'Books Started',
+          label: this.translateService.instant('stats.library.chart.monthlyReadingPatterns.datasets.booksStarted'),
+          metric: 'booksStarted',
           data: stats.map(s => s.booksStarted),
           borderColor: CHART_COLORS.booksStarted,
           backgroundColor: CHART_COLORS.booksStarted + '20',
@@ -217,7 +98,8 @@ export class MonthlyReadingPatternsChartService implements OnDestroy {
           pointStyle: 'circle'
         },
         {
-          label: 'Books Finished',
+          label: this.translateService.instant('stats.library.chart.monthlyReadingPatterns.datasets.booksFinished'),
+          metric: 'booksFinished',
           data: stats.map(s => s.booksFinished),
           borderColor: CHART_COLORS.booksFinished,
           backgroundColor: CHART_COLORS.booksFinished + '20',
@@ -227,7 +109,8 @@ export class MonthlyReadingPatternsChartService implements OnDestroy {
           pointStyle: 'triangle'
         },
         {
-          label: 'Books Added',
+          label: this.translateService.instant('stats.library.chart.monthlyReadingPatterns.datasets.booksAdded'),
+          metric: 'booksAdded',
           data: stats.map(s => s.booksAdded),
           borderColor: CHART_COLORS.booksAdded,
           backgroundColor: CHART_COLORS.booksAdded + '20',
@@ -238,7 +121,8 @@ export class MonthlyReadingPatternsChartService implements OnDestroy {
           borderDash: [3, 3]
         },
         {
-          label: 'Avg Progress %',
+          label: this.translateService.instant('stats.library.chart.monthlyReadingPatterns.datasets.avgProgress'),
+          metric: 'avgProgress',
           data: stats.map(s => s.averageProgress),
           borderColor: CHART_COLORS.averageProgress,
           backgroundColor: CHART_COLORS.averageProgress + '20',
@@ -249,7 +133,8 @@ export class MonthlyReadingPatternsChartService implements OnDestroy {
           pointStyle: 'star'
         },
         {
-          label: 'Genre Diversity',
+          label: this.translateService.instant('stats.library.chart.monthlyReadingPatterns.datasets.genreDiversity'),
+          metric: 'genreDiversity',
           data: stats.map(s => s.genreDiversity),
           borderColor: CHART_COLORS.genreDiversity,
           backgroundColor: CHART_COLORS.genreDiversity + '20',
@@ -259,7 +144,7 @@ export class MonthlyReadingPatternsChartService implements OnDestroy {
           pointStyle: 'cross',
           borderDash: [5, 2, 2, 2]
         }
-      ];
+      ] as any;
 
       this.monthlyPatternsChartDataSubject.next({
         labels,
@@ -459,38 +344,43 @@ export class MonthlyReadingPatternsChartService implements OnDestroy {
 
   private formatDisplayMonth(monthKey: string): string {
     const [year, month] = monthKey.split('-');
-    const monthNames = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
-    return `${monthNames[parseInt(month) - 1]} ${year}`;
+    const date = new Date(parseInt(year), parseInt(month) - 1, 1);
+    const locale = this.languageService.getCurrentLanguage();
+    const formattedMonth = new Intl.DateTimeFormat(locale, {month: 'short'}).format(date);
+    return this.translateService.instant('stats.library.chart.monthlyReadingPatterns.monthLabel', {month: formattedMonth, year});
   }
 
   private formatTooltipLabel(context: TooltipItem<any>): string {
-    const datasetLabel = context.dataset.label;
     const value = context.parsed.y;
     const dataIndex = context.dataIndex;
     const stats = this.getLastCalculatedStats();
+    const metric = (context.dataset as any).metric as string | undefined;
 
     if (!stats || dataIndex >= stats.length) {
-      return `${datasetLabel}: ${value}`;
+      return String(value);
     }
 
     const monthStats = stats[dataIndex];
 
-    switch (datasetLabel) {
-      case 'Books Started':
-        return `${value} books started | ${monthStats.genreDiversity} genres explored`;
-      case 'Books Finished':
-        return `${value} books completed | ${monthStats.totalReadingTime} est. minutes read`;
-      case 'Books Added':
-        return `${value} books added to library`;
-      case 'Avg Progress %':
-        return `${value}% average progress on current reads`;
-      case 'Genre Diversity':
-        return `${value} unique genres being read`;
+    switch (metric) {
+      case 'booksStarted':
+        return this.translateService.instant('stats.library.chart.monthlyReadingPatterns.tooltips.booksStarted', {
+          count: value,
+          genres: monthStats.genreDiversity
+        });
+      case 'booksFinished':
+        return this.translateService.instant('stats.library.chart.monthlyReadingPatterns.tooltips.booksFinished', {
+          count: value,
+          minutes: monthStats.totalReadingTime
+        });
+      case 'booksAdded':
+        return this.translateService.instant('stats.library.chart.monthlyReadingPatterns.tooltips.booksAdded', {count: value});
+      case 'avgProgress':
+        return this.translateService.instant('stats.library.chart.monthlyReadingPatterns.tooltips.avgProgress', {percent: value});
+      case 'genreDiversity':
+        return this.translateService.instant('stats.library.chart.monthlyReadingPatterns.tooltips.genreDiversity', {count: value});
       default:
-        return `${datasetLabel}: ${value}`;
+        return String(value);
     }
   }
 
@@ -498,5 +388,135 @@ export class MonthlyReadingPatternsChartService implements OnDestroy {
 
   private getLastCalculatedStats(): MonthlyPattern[] {
     return this.lastCalculatedStats;
+  }
+
+  private buildOptions(): ChartConfiguration<'line'>['options'] {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          type: 'category',
+          ticks: {
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11
+            }
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.1)'
+          },
+          title: {
+            display: true,
+            text: this.translateService.instant('stats.library.chart.monthlyReadingPatterns.axis.xTitle'),
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11.5
+            }
+          }
+        },
+        y: {
+          type: 'linear',
+          display: true,
+          position: 'left',
+          beginAtZero: true,
+          ticks: {
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11
+            }
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.1)'
+          },
+          title: {
+            display: true,
+            text: this.translateService.instant('stats.library.chart.monthlyReadingPatterns.axis.yTitle'),
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11.5
+            }
+          }
+        },
+        y1: {
+          type: 'linear',
+          display: true,
+          position: 'right',
+          beginAtZero: true,
+          max: 100,
+          ticks: {
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11
+            },
+            callback: function(value) {
+              return value + '%';
+            }
+          },
+          grid: {
+            drawOnChartArea: false
+          },
+          title: {
+            display: true,
+            text: this.translateService.instant('stats.library.chart.monthlyReadingPatterns.axis.y1Title'),
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11.5
+            }
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          labels: {
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11.5
+            },
+            padding: 12,
+            usePointStyle: true
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.9)',
+          titleColor: '#ffffff',
+          bodyColor: '#ffffff',
+          borderColor: '#ffffff',
+          borderWidth: 1,
+          cornerRadius: 6,
+          displayColors: true,
+          padding: 12,
+          titleFont: {size: 14, weight: 'bold'},
+          bodyFont: {size: 12},
+          callbacks: {
+            title: (context) => context[0]?.label || '',
+            label: this.formatTooltipLabel.bind(this)
+          }
+        }
+      },
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      },
+      elements: {
+        point: {
+          radius: 4,
+          hoverRadius: 6
+        },
+        line: {
+          tension: 0.3,
+          borderWidth: 2
+        }
+      }
+    };
   }
 }

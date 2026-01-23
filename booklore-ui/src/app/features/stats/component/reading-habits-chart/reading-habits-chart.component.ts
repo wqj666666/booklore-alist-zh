@@ -1,4 +1,4 @@
-import {Component, inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {BaseChartDirective} from 'ng2-charts';
 import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
@@ -7,6 +7,7 @@ import {ChartConfiguration, ChartData} from 'chart.js';
 import {BookService} from '../../../book/service/book.service';
 import {Book, ReadStatus} from '../../../book/model/book.model';
 import {BookState} from '../../../book/model/state/book-state.model';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 interface ReadingHabitsProfile {
   consistency: number;
@@ -31,13 +32,15 @@ type ReadingHabitsChartData = ChartData<'radar', number[], string>;
 @Component({
   selector: 'app-reading-habits-chart',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective],
+  imports: [CommonModule, TranslateModule, BaseChartDirective],
   templateUrl: './reading-habits-chart.component.html',
   styleUrls: ['./reading-habits-chart.component.scss']
 })
 export class ReadingHabitsChartComponent implements OnInit, OnDestroy {
   private readonly bookService = inject(BookService);
+  private readonly translate = inject(TranslateService);
   private readonly destroy$ = new Subject<void>();
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
   public readonly chartType = 'radar' as const;
 
@@ -76,18 +79,19 @@ export class ReadingHabitsChartComponent implements OnInit, OnDestroy {
             size: 12
           },
           padding: 25,
-          callback: function (label: string) {
+          callback: (label: string) => {
             const icons: Record<string, string> = {
-              'Consistency': '📅',
-              'Multitasking': '📚',
-              'Completionism': '✅',
-              'Exploration': '🔍',
-              'Organization': '📋',
-              'Intensity': '⚡',
-              'Methodology': '🎯',
-              'Momentum': '🔥'
+              'stats.user.readingHabits.habit.consistency': '📅',
+              'stats.user.readingHabits.habit.multitasking': '📚',
+              'stats.user.readingHabits.habit.completionism': '✅',
+              'stats.user.readingHabits.habit.exploration': '🔍',
+              'stats.user.readingHabits.habit.organization': '📋',
+              'stats.user.readingHabits.habit.intensity': '⚡',
+              'stats.user.readingHabits.habit.methodology': '🎯',
+              'stats.user.readingHabits.habit.momentum': '🔥'
             };
-            return [icons[label] || '', label];
+            const translated = this.translate.instant(label);
+            return [icons[label] || '', translated];
           }
         }
       }
@@ -110,16 +114,16 @@ export class ReadingHabitsChartComponent implements OnInit, OnDestroy {
         callbacks: {
           title: (context) => {
             const label = context[0]?.label || '';
-            return `${label} Habit`;
+            return this.translate.instant('stats.user.readingHabits.tooltip.title', {habit: label});
           },
           label: (context) => {
             const score = context.parsed.r;
             const insight = this.habitInsights.find(i => i.habit === context.label);
 
             return [
-              `Score: ${score.toFixed(1)}/100`,
+              this.translate.instant('stats.user.readingHabits.tooltip.score', {score: score.toFixed(1)}),
               '',
-              insight ? insight.description : 'Your reading habit pattern'
+              insight ? this.translate.instant(insight.description) : this.translate.instant('stats.user.readingHabits.tooltip.fallbackDescription')
             ];
           }
         }
@@ -145,8 +149,14 @@ export class ReadingHabitsChartComponent implements OnInit, OnDestroy {
 
   private readonly chartDataSubject = new BehaviorSubject<ReadingHabitsChartData>({
     labels: [
-      'Consistency', 'Multitasking', 'Completionism', 'Exploration',
-      'Organization', 'Intensity', 'Methodology', 'Momentum'
+      'stats.user.readingHabits.habit.consistency',
+      'stats.user.readingHabits.habit.multitasking',
+      'stats.user.readingHabits.habit.completionism',
+      'stats.user.readingHabits.habit.exploration',
+      'stats.user.readingHabits.habit.organization',
+      'stats.user.readingHabits.habit.intensity',
+      'stats.user.readingHabits.habit.methodology',
+      'stats.user.readingHabits.habit.momentum'
     ],
     datasets: []
   });
@@ -168,6 +178,12 @@ export class ReadingHabitsChartComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         const profile = this.calculateReadingHabitsData();
         this.updateChartData(profile);
+      });
+
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.chart?.chart?.update();
       });
   }
 
@@ -205,11 +221,17 @@ export class ReadingHabitsChartComponent implements OnInit, OnDestroy {
 
       this.chartDataSubject.next({
         labels: [
-          'Consistency', 'Multitasking', 'Completionism', 'Exploration',
-          'Organization', 'Intensity', 'Methodology', 'Momentum'
+          'stats.user.readingHabits.habit.consistency',
+          'stats.user.readingHabits.habit.multitasking',
+          'stats.user.readingHabits.habit.completionism',
+          'stats.user.readingHabits.habit.exploration',
+          'stats.user.readingHabits.habit.organization',
+          'stats.user.readingHabits.habit.intensity',
+          'stats.user.readingHabits.habit.methodology',
+          'stats.user.readingHabits.habit.momentum'
         ],
         datasets: [{
-          label: 'Reading Habits Profile',
+          label: this.translate.instant('stats.user.readingHabits.datasetLabel'),
           data,
           backgroundColor: 'rgba(156, 39, 176, 0.2)',
           borderColor: '#9c27b0',
@@ -536,51 +558,51 @@ export class ReadingHabitsChartComponent implements OnInit, OnDestroy {
   private convertToHabitInsights(profile: ReadingHabitsProfile): HabitInsight[] {
     return [
       {
-        habit: 'Consistency',
+        habit: 'stats.user.readingHabits.habit.consistency',
         score: profile.consistency,
-        description: 'You maintain regular reading patterns and schedules',
+        description: 'stats.user.readingHabits.description.consistency',
         color: '#9c27b0'
       },
       {
-        habit: 'Multitasking',
+        habit: 'stats.user.readingHabits.habit.multitasking',
         score: profile.multitasking,
-        description: 'You juggle multiple books simultaneously',
+        description: 'stats.user.readingHabits.description.multitasking',
         color: '#e91e63'
       },
       {
-        habit: 'Completionism',
+        habit: 'stats.user.readingHabits.habit.completionism',
         score: profile.completionism,
-        description: 'You finish books rather than abandon them',
+        description: 'stats.user.readingHabits.description.completionism',
         color: '#ff5722'
       },
       {
-        habit: 'Exploration',
+        habit: 'stats.user.readingHabits.habit.exploration',
         score: profile.exploration,
-        description: 'You actively seek out new authors and genres',
+        description: 'stats.user.readingHabits.description.exploration',
         color: '#ff9800'
       },
       {
-        habit: 'Organization',
+        habit: 'stats.user.readingHabits.habit.organization',
         score: profile.organization,
-        description: 'You maintain systematic book tracking and metadata',
+        description: 'stats.user.readingHabits.description.organization',
         color: '#ffc107'
       },
       {
-        habit: 'Intensity',
+        habit: 'stats.user.readingHabits.habit.intensity',
         score: profile.intensity,
-        description: 'You prefer longer, immersive reading sessions',
+        description: 'stats.user.readingHabits.description.intensity',
         color: '#4caf50'
       },
       {
-        habit: 'Methodology',
+        habit: 'stats.user.readingHabits.habit.methodology',
         score: profile.methodology,
-        description: 'You follow systematic approaches to book selection',
+        description: 'stats.user.readingHabits.description.methodology',
         color: '#2196f3'
       },
       {
-        habit: 'Momentum',
+        habit: 'stats.user.readingHabits.habit.momentum',
         score: profile.momentum,
-        description: 'You maintain active reading streaks and continuity',
+        description: 'stats.user.readingHabits.description.momentum',
         color: '#673ab7'
       }
     ];

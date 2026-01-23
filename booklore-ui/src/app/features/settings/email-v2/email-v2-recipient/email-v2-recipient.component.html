@@ -4,15 +4,15 @@
       <div>
         <h2 class="settings-title">
           <i class="pi pi-users"></i>
-          Recipient Emails
+          {{ 'settings.emailV2.recipient.title' | translate }}
         </h2>
         <p class="settings-description">
-          Manage the list of recipients who will receive books via email. The 'Default' recipient will be used for 'Quick Book Send,' located in the Book Card menu.
+          {{ 'settings.emailV2.recipient.description' | translate }}
         </p>
       </div>
       <p-button
         icon="pi pi-plus"
-        label="Create Recipient"
+        [label]="'settings.emailV2.recipient.action.createRecipient' | translate"
         severity="success"
         size="small"
         [outlined]="true"
@@ -30,31 +30,31 @@
               <th style="width: 10%;">
                 <div class="header-content">
                   <i class="pi pi-star"></i>
-                  <span>Default</span>
+                  <span>{{ 'settings.emailV2.recipient.table.default' | translate }}</span>
                 </div>
               </th>
               <th style="width: 45%;">
                 <div class="header-content">
                   <i class="pi pi-envelope"></i>
-                  <span>Email Address</span>
+                  <span>{{ 'settings.emailV2.recipient.table.emailAddress' | translate }}</span>
                 </div>
               </th>
               <th style="width: 30%;">
                 <div class="header-content">
                   <i class="pi pi-user"></i>
-                  <span>Name</span>
+                  <span>{{ 'settings.emailV2.recipient.table.name' | translate }}</span>
                 </div>
               </th>
               <th style="width: 8%;" class="actions-header">
                 <div class="header-content">
                   <i class="pi pi-pencil"></i>
-                  <span>Edit</span>
+                  <span>{{ 'settings.emailV2.recipient.table.edit' | translate }}</span>
                 </div>
               </th>
               <th style="width: 7%;" class="actions-header">
                 <div class="header-content">
                   <i class="pi pi-trash"></i>
-                  <span>Delete</span>
+                  <span>{{ 'settings.emailV2.recipient.table.delete' | translate }}</span>
                 </div>
               </th>
             </tr>
@@ -98,7 +98,7 @@
                     [outlined]="true"
                     [rounded]="true"
                     (onClick)="toggleEditRecipient(recipient)"
-                    pTooltip="Edit recipient">
+                    [pTooltip]="'settings.emailV2.recipient.tooltip.editRecipient' | translate">
                   </p-button>
                 }
                 @if (recipient.isEditing) {
@@ -110,7 +110,7 @@
                       [outlined]="true"
                       [rounded]="true"
                       (onClick)="saveRecipient(recipient)"
-                      pTooltip="Save changes">
+                      [pTooltip]="'settings.emailV2.recipient.tooltip.saveChanges' | translate">
                     </p-button>
                     <p-button
                       icon="pi pi-times"
@@ -119,7 +119,7 @@
                       [outlined]="true"
                       [rounded]="true"
                       (onClick)="toggleEditRecipient(recipient)"
-                      pTooltip="Cancel">
+                      [pTooltip]="'settings.emailV2.recipient.tooltip.cancel' | translate">
                     </p-button>
                   </div>
                 }
@@ -133,7 +133,7 @@
                   [outlined]="true"
                   [rounded]="true"
                   (onClick)="deleteRecipient(recipient)"
-                  pTooltip="Delete recipient">
+                  [pTooltip]="'settings.emailV2.recipient.tooltip.deleteRecipient' | translate">
                 </p-button>
               </td>
             </tr>
@@ -144,8 +144,8 @@
               <td colspan="5">
                 <div class="empty-message">
                   <i class="pi pi-users"></i>
-                  <p class="empty-title">No recipients found</p>
-                  <p class="empty-subtitle">Add your first email recipient to start sending books</p>
+                  <p class="empty-title">{{ 'settings.emailV2.recipient.empty.title' | translate }}</p>
+                  <p class="empty-subtitle">{{ 'settings.emailV2.recipient.empty.subtitle' | translate }}</p>
                 </div>
               </td>
             </tr>

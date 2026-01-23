@@ -15,11 +15,16 @@ import com.adityachandel.booklore.model.enums.BookFileExtension;
 import com.adityachandel.booklore.repository.BookAdditionalFileRepository;
 import com.adityachandel.booklore.repository.BookRepository;
 import com.adityachandel.booklore.repository.LibraryRepository;
+import com.adityachandel.booklore.service.event.BookEventBroadcaster;
 import com.adityachandel.booklore.service.file.FileFingerprint;
 import com.adityachandel.booklore.service.appsettings.AppSettingService;
 import com.adityachandel.booklore.service.file.FileMovingHelper;
+import com.adityachandel.booklore.service.kobo.KoboAutoShelfService;
 import com.adityachandel.booklore.service.monitoring.MonitoringRegistrationService;
 import com.adityachandel.booklore.service.metadata.extractor.MetadataExtractorFactory;
+import com.adityachandel.booklore.service.storage.StorageBackend;
+import com.adityachandel.booklore.service.storage.StorageBackendSelector;
+import com.adityachandel.booklore.service.upload.UploadBookCreationService.UploadBookCreationContext;
 import com.adityachandel.booklore.util.PathPatternResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +59,12 @@ public class FileUploadService {
     private final AdditionalFileMapper additionalFileMapper;
     private final FileMovingHelper fileMovingHelper;
     private final MonitoringRegistrationService monitoringRegistrationService;
+    private final StorageBackendSelector storageBackendSelector;
+    private final UploadBookCreationService uploadBookCreationService;
+    private final BookEventBroadcaster bookEventBroadcaster;
+    private final KoboAutoShelfService koboAutoShelfService;
 
+    @Transactional
     public void uploadFile(MultipartFile file, long libraryId, long pathId) {
         validateFile(file);
 
@@ -72,12 +82,43 @@ public class FileUploadService {
             final String uploadPattern = fileMovingHelper.getFileNamingPattern(libraryEntity);
 
             final String relativePath = PathPatternResolver.resolvePattern(metadata, uploadPattern, originalFileName);
-            final Path finalPath = Paths.get(libraryPathEntity.getPath(), relativePath);
-
-            validateFinalPath(finalPath);
-            moveFileToFinalLocation(tempPath, finalPath);
-
-            log.info("File uploaded to final location: {}", finalPath);
+            
+            // 根据 LibraryPath 配置选择存储后端
+            final StorageBackend storageBackend = storageBackendSelector.getBackend(libraryPathEntity);
+            
+            if (storageBackend.getType() == StorageBackend.StorageType.ALIST) {
+                // AList 存储：上传到 AList
+                writeToStorageBackend(storageBackend, relativePath, tempPath);
+                log.info("File uploaded to AList storage: {}", relativePath);
+                
+                // 对于 AList 存储，使用 UploadBookCreationService 创建书籍记录
+                UploadBookCreationContext context = UploadBookCreationContext.builder()
+                        .libraryEntity(libraryEntity)
+                        .libraryPathEntity(libraryPathEntity)
+                        .fileExtension(fileExtension)
+                        .metadata(metadata)
+                        .relativePath(relativePath)
+                        .tempFilePath(tempPath)
+                        .fileSizeBytes(file.getSize())
+                        .build();
+                
+                Book book = uploadBookCreationService.createBookFromUpload(context);
+                
+                // 广播书籍添加事件
+                bookEventBroadcaster.broadcastBookAddEvent(book);
+                
+                // 自动添加到 Kobo 书架
+                koboAutoShelfService.autoAddBookToKoboShelves(book.getId());
+                
+                log.info("Book record created for AList upload: {} (ID: {})", book.getFileName(), book.getId());
+            } else {
+                // 本地存储：移动文件到本地目录
+                final Path finalPath = Paths.get(libraryPathEntity.getPath(), relativePath);
+                validateFinalPath(finalPath);
+                moveFileToFinalLocation(tempPath, finalPath);
+                log.info("File uploaded to local storage: {}", finalPath);
+                // 本地存储依赖文件监控来检测新文件并创建书籍记录
+            }
 
         } catch (IOException e) {
             log.error("Failed to upload file: {}", originalFileName, e);
@@ -105,27 +146,40 @@ public class FileUploadService {
                 validateAlternativeFormatDuplicate(fileHash);
             }
 
-            final Path finalPath;
             final String finalFileName;
+            final String relativeFilePath;
             if (isBook) {
                 String pattern = fileMovingHelper.getFileNamingPattern(book.getLibrary());
                 String resolvedRelativePath = PathPatternResolver.resolvePattern(book.getMetadata(), pattern, sanitizedFileName);
                 finalFileName = Paths.get(resolvedRelativePath).getFileName().toString();
-                finalPath = buildAdditionalFilePath(book, finalFileName);
+                relativeFilePath = buildAdditionalFileRelativePath(book, finalFileName);
             } else {
                 finalFileName = sanitizedFileName;
-                finalPath = buildAdditionalFilePath(book, sanitizedFileName);
+                relativeFilePath = buildAdditionalFileRelativePath(book, sanitizedFileName);
             }
-            validateFinalPath(finalPath);
 
-            if (libraryId != null) {
-                log.debug("Unregistering library {} for monitoring", libraryId);
-                monitoringRegistrationService.unregisterLibrary(libraryId);
-                monitoringUnregistered = true;
+            // 根据 LibraryPath 配置选择存储后端
+            final LibraryPathEntity libraryPath = book.getLibraryPath();
+            final StorageBackend storageBackend = storageBackendSelector.getBackend(libraryPath);
+
+            if (storageBackend.getType() == StorageBackend.StorageType.ALIST) {
+                // AList 存储：上传到 AList
+                writeToStorageBackend(storageBackend, relativeFilePath, tempPath);
+                log.info("Additional file uploaded to AList storage: {}", relativeFilePath);
+            } else {
+                // 本地存储：移动文件到本地目录
+                final Path finalPath = Paths.get(libraryPath.getPath(), relativeFilePath);
+                validateFinalPath(finalPath);
+
+                if (libraryId != null) {
+                    log.debug("Unregistering library {} for monitoring", libraryId);
+                    monitoringRegistrationService.unregisterLibrary(libraryId);
+                    monitoringUnregistered = true;
+                }
+                moveFileToFinalLocation(tempPath, finalPath);
+
+                log.info("Additional file uploaded to local storage: {}", finalPath);
             }
-            moveFileToFinalLocation(tempPath, finalPath);
-
-            log.info("Additional file uploaded to final location: {}", finalPath);
 
             final BookFileEntity entity = createAdditionalFileEntity(book, finalFileName, isBook, bookType, file.getSize(), fileHash, description);
             final BookFileEntity savedEntity = additionalFileRepository.save(entity);
@@ -237,9 +291,31 @@ public class FileUploadService {
         }
     }
 
-    private Path buildAdditionalFilePath(BookEntity book, String fileName) {
+    /**
+     * 构建附加文件的相对路径（不包含库根路径）
+     */
+    private String buildAdditionalFileRelativePath(BookEntity book, String fileName) {
         final BookFileEntity primaryFile = book.getPrimaryBookFile();
-        return Paths.get(book.getLibraryPath().getPath(), primaryFile.getFileSubPath(), fileName);
+        String subPath = primaryFile.getFileSubPath();
+        if (subPath == null || subPath.isBlank()) {
+            return fileName;
+        }
+        if (subPath.endsWith("/") || subPath.endsWith("\\")) {
+            return subPath + fileName;
+        }
+        return subPath + "/" + fileName;
+    }
+
+    /**
+     * 使用存储后端写入文件
+     */
+    private void writeToStorageBackend(StorageBackend storageBackend, String relativePath, Path localFile) {
+        // 检查目标文件是否已存在
+        if (storageBackend.exists(relativePath)) {
+            throw ApiError.FILE_ALREADY_EXISTS.createException();
+        }
+        // 使用存储后端写入文件
+        storageBackend.write(relativePath, localFile);
     }
 
     private BookFileEntity createAdditionalFileEntity(BookEntity book, String fileName, boolean isBook, BookFileType bookType, long fileSize, String fileHash, String description) {

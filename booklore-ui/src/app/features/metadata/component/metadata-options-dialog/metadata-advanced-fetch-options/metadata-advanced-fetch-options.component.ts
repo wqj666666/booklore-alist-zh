@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, inject, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Select} from 'primeng/select';
 import {FormsModule} from '@angular/forms';
 
@@ -7,19 +7,23 @@ import {Button} from 'primeng/button';
 import {MessageService} from 'primeng/api';
 import {FieldOptions, MetadataRefreshOptions} from '../../../model/request/metadata-refresh-options.model';
 import {Tooltip} from 'primeng/tooltip';
+import {TranslateModule} from '@ngx-translate/core';
+import {TranslateService} from '@ngx-translate/core';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-metadata-advanced-fetch-options',
   templateUrl: './metadata-advanced-fetch-options.component.html',
-  imports: [Select, FormsModule, Checkbox, Button, Tooltip],
+  imports: [Select, FormsModule, Checkbox, Button, Tooltip, TranslateModule],
   styleUrl: './metadata-advanced-fetch-options.component.scss',
   standalone: true
 })
-export class MetadataAdvancedFetchOptionsComponent implements OnChanges {
+export class MetadataAdvancedFetchOptionsComponent implements OnChanges, OnInit, OnDestroy {
 
   @Output() metadataOptionsSubmitted = new EventEmitter<MetadataRefreshOptions>();
   @Input() currentMetadataOptions!: MetadataRefreshOptions;
   @Input() submitButtonLabel!: string;
+  @Input() submitButtonLabelParams?: Record<string, unknown>;
 
   fields: (keyof FieldOptions)[] = [
     'title', 'subtitle', 'description', 'authors', 'publisher', 'publishedDate',
@@ -45,7 +49,7 @@ export class MetadataAdvancedFetchOptionsComponent implements OnChanges {
   ];
 
   providers: string[] = ['Amazon', 'Google', 'GoodReads', 'Hardcover', 'Comicvine', 'Douban', 'Lubimyczytac', 'Ranobedb'];
-  providersWithClear: string[] = ['Clear All', 'Amazon', 'Google', 'GoodReads', 'Hardcover', 'Comicvine', 'Douban', 'Lubimyczytac', 'Ranobedb'];
+  providersWithClear: string[] = [];
 
   refreshCovers: boolean = false;
   mergeCategories: boolean = false;
@@ -60,6 +64,8 @@ export class MetadataAdvancedFetchOptionsComponent implements OnChanges {
   bulkP4: string | null = null;
 
   private messageService = inject(MessageService);
+  private translateService = inject(TranslateService);
+  private langChangeSubscription?: Subscription;
 
   private justSubmitted = false;
 
@@ -69,6 +75,15 @@ export class MetadataAdvancedFetchOptionsComponent implements OnChanges {
     'hardcoverRating', 'hardcoverReviewCount', 'lubimyczytacRating', 'ranobedbRating',
     'moods', 'tags'
   ];
+
+  ngOnInit(): void {
+    this.rebuildProvidersWithClear();
+    this.langChangeSubscription = this.translateService.onLangChange.subscribe(() => this.rebuildProvidersWithClear());
+  }
+
+  ngOnDestroy(): void {
+    this.langChangeSubscription?.unsubscribe();
+  }
 
   private initializeFieldOptions(): FieldOptions {
     return this.fields.reduce((acc, field) => {
@@ -148,8 +163,8 @@ export class MetadataAdvancedFetchOptionsComponent implements OnChanges {
     } else {
       this.messageService.add({
         severity: 'error',
-        summary: 'Error',
-        detail: 'At least one provider (P1–P4) must be selected for each enabled book field.',
+        summary: this.translateService.instant('metadata.advancedFetch.error.validationSummary'),
+        detail: this.translateService.instant('metadata.advancedFetch.error.validationDetail'),
         life: 5000
       });
     }
@@ -158,7 +173,7 @@ export class MetadataAdvancedFetchOptionsComponent implements OnChanges {
   setBulkProvider(priority: 'p1' | 'p2' | 'p3' | 'p4', provider: string | null): void {
     if (!provider) return;
 
-    const value = provider === 'Clear All' ? null : provider;
+    const value = provider === this.getClearAllLabel() ? null : provider;
 
     for (const field of this.nonProviderSpecificFields) {
       if (this.enabledFields[field]) {
@@ -182,6 +197,14 @@ export class MetadataAdvancedFetchOptionsComponent implements OnChanges {
     }
   }
 
+  private rebuildProvidersWithClear(): void {
+    this.providersWithClear = [this.getClearAllLabel(), ...this.providers];
+  }
+
+  private getClearAllLabel(): string {
+    return this.translateService.instant('metadata.advancedFetch.option.clearAll');
+  }
+
   reset() {
     this.justSubmitted = false;
     for (const field of Object.keys(this.fieldOptions)) {
@@ -202,44 +225,42 @@ export class MetadataAdvancedFetchOptionsComponent implements OnChanges {
   }
 
   formatLabel(field: string): string {
-    const fieldLabels: Record<string, string> = {
-      'title': 'Title',
-      'subtitle': 'Subtitle',
-      'description': 'Description',
-      'authors': 'Authors',
-      'publisher': 'Publisher',
-      'publishedDate': 'Published Date',
-      'seriesName': 'Series Name',
-      'seriesNumber': 'Series Number',
-      'seriesTotal': 'Series Total',
-      'isbn13': 'ISBN-13',
-      'isbn10': 'ISBN-10',
-      'language': 'Language',
-      'categories': 'Genres',
-      'cover': 'Cover Image',
-      'pageCount': 'Page Count',
-      'rating': 'Rating',
-      'reviewCount': 'Review Count',
-      'asin': 'Amazon ASIN',
-      'goodreadsId': 'Goodreads ID',
-      'comicvineId': 'Comicvine ID',
-      'hardcoverId': 'Hardcover ID',
-      'googleId': 'Google Books ID',
-      'amazonRating': 'Amazon Rating',
-      'amazonReviewCount': 'Amazon Review Count',
-      'goodreadsRating': 'Goodreads Rating',
-      'goodreadsReviewCount': 'Goodreads Review Count',
-      'hardcoverRating': 'Hardcover Rating',
-      'hardcoverReviewCount': 'Hardcover Review Count',
-      'lubimyczytacId': 'LC ID',
-      'lubimyczytacRating': 'Lubimyczytac Rating',
-      'ranobedbId': 'Ranobedb ID',
-      'ranobedbRating': 'Ranobedb Rating',
-      'moods': 'Moods (Hardcover)',
-      'tags': 'Tags (Hardcover)'
+    const fieldLabelKeys: Record<string, string> = {
+      title: 'metadata.advancedFetch.field.title',
+      subtitle: 'metadata.advancedFetch.field.subtitle',
+      description: 'metadata.advancedFetch.field.description',
+      authors: 'metadata.advancedFetch.field.authors',
+      publisher: 'metadata.advancedFetch.field.publisher',
+      publishedDate: 'metadata.advancedFetch.field.publishedDate',
+      seriesName: 'metadata.advancedFetch.field.seriesName',
+      seriesNumber: 'metadata.advancedFetch.field.seriesNumber',
+      seriesTotal: 'metadata.advancedFetch.field.seriesTotal',
+      isbn13: 'metadata.advancedFetch.field.isbn13',
+      isbn10: 'metadata.advancedFetch.field.isbn10',
+      language: 'metadata.advancedFetch.field.language',
+      categories: 'metadata.advancedFetch.field.categories',
+      cover: 'metadata.advancedFetch.field.cover',
+      pageCount: 'metadata.advancedFetch.field.pageCount',
+      asin: 'metadata.advancedFetch.field.asin',
+      goodreadsId: 'metadata.advancedFetch.field.goodreadsId',
+      comicvineId: 'metadata.advancedFetch.field.comicvineId',
+      hardcoverId: 'metadata.advancedFetch.field.hardcoverId',
+      googleId: 'metadata.advancedFetch.field.googleId',
+      amazonRating: 'metadata.advancedFetch.field.amazonRating',
+      amazonReviewCount: 'metadata.advancedFetch.field.amazonReviewCount',
+      goodreadsRating: 'metadata.advancedFetch.field.goodreadsRating',
+      goodreadsReviewCount: 'metadata.advancedFetch.field.goodreadsReviewCount',
+      hardcoverRating: 'metadata.advancedFetch.field.hardcoverRating',
+      hardcoverReviewCount: 'metadata.advancedFetch.field.hardcoverReviewCount',
+      lubimyczytacId: 'metadata.advancedFetch.field.lubimyczytacId',
+      lubimyczytacRating: 'metadata.advancedFetch.field.lubimyczytacRating',
+      ranobedbId: 'metadata.advancedFetch.field.ranobedbId',
+      ranobedbRating: 'metadata.advancedFetch.field.ranobedbRating',
+      moods: 'metadata.advancedFetch.field.moods',
+      tags: 'metadata.advancedFetch.field.tags'
     };
 
-    return fieldLabels[field] || field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
+    return fieldLabelKeys[field] ?? `metadata.advancedFetch.field.${field}`;
   }
 
   isProviderSpecificField(field: keyof FieldOptions): boolean {

@@ -14,7 +14,7 @@
             icon="pi pi-plus"
             severity="primary"
             (click)="openCreateDialog()"
-            pTooltip="Add New Note"
+            [pTooltip]="'book.notes.tooltip.addNewNote' | translate"
             tooltipPosition="top"
             class="action-btn floating-btn">
           </p-button>
@@ -53,7 +53,7 @@
                       severity="secondary"
                       text
                       (onClick)="openEditDialog(note)"
-                      pTooltip="Edit note"
+                      [pTooltip]="'book.notes.tooltip.editNote' | translate"
                       tooltipPosition="top"
                       class="action-btn-hover">
                     </p-button>
@@ -63,7 +63,7 @@
                       severity="danger"
                       text
                       (onClick)="deleteNote(note)"
-                      pTooltip="Delete note"
+                      [pTooltip]="'book.notes.tooltip.deleteNote' | translate"
                       tooltipPosition="top"
                       class="action-btn-hover">
                     </p-button>
@@ -90,7 +90,7 @@
         icon="pi pi-plus"
         severity="success"
         (click)="openCreateDialog()"
-        pTooltip="Add New Note"
+        [pTooltip]="'book.notes.tooltip.addNewNote' | translate"
         tooltipPosition="left">
       </p-button>
     </div>

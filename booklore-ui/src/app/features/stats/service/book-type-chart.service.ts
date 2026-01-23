@@ -1,5 +1,5 @@
 import {inject, Injectable, OnDestroy} from '@angular/core';
-import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, EMPTY, Observable, Subject} from 'rxjs';
 import {map, takeUntil, catchError, filter, first, switchMap} from 'rxjs/operators';
 import {ChartConfiguration, ChartData, ChartType, Chart, TooltipItem} from 'chart.js';
 
@@ -7,6 +7,8 @@ import {LibraryFilterService} from './library-filter.service';
 import {BookService} from '../../book/service/book.service';
 import {Book} from '../../book/model/book.model';
 import {BookState} from '../../book/model/state/book-state.model';
+import {TranslateService} from '@ngx-translate/core';
+import {LanguageService} from '../../../core/i18n/language.service';
 
 interface BookTypeStats {
   bookType: string;
@@ -30,6 +32,8 @@ type BookTypeChartData = ChartData<'pie', number[], string>;
 export class BookTypeChartService implements OnDestroy {
   private readonly bookService = inject(BookService);
   private readonly libraryFilterService = inject(LibraryFilterService);
+  private readonly translateService = inject(TranslateService);
+  private readonly languageService = inject(LanguageService);
   private readonly destroy$ = new Subject<void>();
 
   public readonly bookTypeChartType: ChartType = 'pie';
@@ -91,9 +95,10 @@ export class BookTypeChartService implements OnDestroy {
         filter(state => state.loaded),
         first(),
         switchMap(() =>
-          this.libraryFilterService.selectedLibrary$.pipe(
-            takeUntil(this.destroy$)
-          )
+          combineLatest([
+            this.libraryFilterService.selectedLibrary$,
+            this.languageService.language$
+          ]).pipe(takeUntil(this.destroy$))
         ),
         catchError((error) => {
           console.error('Error processing book type stats:', error);
@@ -204,14 +209,15 @@ export class BookTypeChartService implements OnDestroy {
   }
 
   private formatBookType(type: string): string {
-    const TYPE_MAPPING: Record<string, string> = {
-      PDF: 'PDF',
-      EPUB: 'EPUB',
-      CBX: 'Comic Books',
-      Unknown: 'Unknown Format'
+    const TYPE_KEY_MAPPING: Record<string, string> = {
+      PDF: 'stats.library.chart.bookFormats.types.pdf',
+      EPUB: 'stats.library.chart.bookFormats.types.epub',
+      CBX: 'stats.library.chart.bookFormats.types.cbx',
+      Unknown: 'stats.library.chart.bookFormats.types.unknown'
     } as const;
 
-    return TYPE_MAPPING[type] || type;
+    const key = TYPE_KEY_MAPPING[type];
+    return key ? this.translateService.instant(key) : type;
   }
 
   private generateLegendLabels(chart: Chart) {
@@ -238,9 +244,13 @@ export class BookTypeChartService implements OnDestroy {
     const dataIndex = context.dataIndex;
     const dataset = context.dataset;
     const value = dataset.data[dataIndex] as number;
-    const label = context.chart.data.labels?.[dataIndex] || 'Unknown';
+    const label = String(context.chart.data.labels?.[dataIndex] ?? this.translateService.instant('stats.library.chart.common.unknown'));
     const total = (dataset.data as number[]).reduce((a: number, b: number) => a + b, 0);
     const percentage = ((value / total) * 100).toFixed(1);
-    return `${label}: ${value} books (${percentage}%)`;
+    const countLabel = this.translateService.instant(
+      value === 1 ? 'stats.library.units.bookCountOne' : 'stats.library.units.bookCountMany',
+      {count: value}
+    );
+    return this.translateService.instant('stats.library.chart.bookFormats.tooltipLabel', {label, countLabel, percentage});
   }
 }

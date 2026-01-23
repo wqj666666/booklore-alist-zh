@@ -18,6 +18,7 @@ import {MetadataRefreshType} from '../../features/metadata/model/request/metadat
 import {MetadataFetchOptionsComponent} from '../../features/metadata/component/metadata-options-dialog/metadata-fetch-options/metadata-fetch-options.component';
 import {ShelfEditDialogComponent} from '../../features/book/components/shelf-edit-dialog/shelf-edit-dialog.component';
 import {IconPickerComponent} from '../components/icon-picker/icon-picker-component';
+import {TranslateService} from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root',
@@ -25,6 +26,7 @@ import {IconPickerComponent} from '../components/icon-picker/icon-picker-compone
 export class DialogLauncherService {
 
   dialogService = inject(DialogService);
+  private readonly translateService = inject(TranslateService);
 
   private defaultDialogOptions = {
     baseZIndex: 10,
@@ -165,7 +167,7 @@ export class DialogLauncherService {
 
   openBookdropFinalizeResultDialog(result: BookdropFinalizeResult): DynamicDialogRef | null {
     return this.openDialog(BookdropFinalizeResultDialogComponent, {
-      header: 'Import Summary',
+      header: this.translateService.instant('bookdrop.finalizeResult.dialogHeader'),
       data: {
         result: result,
       },

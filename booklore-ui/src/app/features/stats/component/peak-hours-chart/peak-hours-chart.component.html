@@ -3,9 +3,9 @@
     <div class="chart-title">
       <h3>
         <i class="pi pi-clock peak-hours-icon"></i>
-        Peak Reading Hours
+        {{ 'stats.user.peakHours.title' | translate }}
       </h3>
-      <p class="chart-description">Reading activity by hour of the day</p>
+      <p class="chart-description">{{ 'stats.user.peakHours.subtitle' | translate }}</p>
     </div>
     <div class="filter-controls">
       <p-select
@@ -14,7 +14,7 @@
         (onChange)="onFilterChange()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Select Year"
+        [placeholder]="'stats.user.peakHours.filters.selectYear' | translate"
         [style]="{'min-width': '100px'}">
       </p-select>
       <p-select
@@ -23,7 +23,7 @@
         (onChange)="onFilterChange()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Select Month"
+        [placeholder]="'stats.user.peakHours.filters.selectMonth' | translate"
         [style]="{'min-width': '130px'}">
       </p-select>
     </div>

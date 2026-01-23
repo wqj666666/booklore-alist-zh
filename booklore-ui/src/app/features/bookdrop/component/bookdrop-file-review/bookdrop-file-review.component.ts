@@ -29,6 +29,7 @@ import {BookdropFileMetadataPickerComponent} from '../bookdrop-file-metadata-pic
 import {BookdropBulkEditDialogComponent, BulkEditResult} from '../bookdrop-bulk-edit-dialog/bookdrop-bulk-edit-dialog.component';
 import {BookdropPatternExtractDialogComponent} from '../bookdrop-pattern-extract-dialog/bookdrop-pattern-extract-dialog.component';
 import {DialogLauncherService} from '../../../../shared/services/dialog-launcher.service';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 export interface BookdropFileUI {
   file: BookdropFile;
@@ -60,6 +61,7 @@ export interface BookdropFileUI {
     Paginator,
     InputGroup,
     InputGroupAddonModule,
+    TranslateModule,
   ],
 })
 export class BookdropFileReviewComponent implements OnInit {
@@ -73,6 +75,7 @@ export class BookdropFileReviewComponent implements OnInit {
   private readonly urlHelper = inject(UrlHelperService);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly pageTitle = inject(PageTitleService);
+  private readonly translateService = inject(TranslateService);
 
   @ViewChildren('metadataPicker') metadataPickers!: QueryList<BookdropFileMetadataPickerComponent>;
 
@@ -99,7 +102,13 @@ export class BookdropFileReviewComponent implements OnInit {
   excludedFiles = new Set<number>();
 
   ngOnInit(): void {
-    this.pageTitle.setPageTitle('Review Bookdrop Files');
+    this.pageTitle.setPageTitle(this.translateService.instant('bookdrop.review.pageTitle'));
+
+    this.translateService.onLangChange
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.pageTitle.setPageTitle(this.translateService.instant('bookdrop.review.pageTitle'));
+      });
 
     this.activatedRoute.queryParams
       .pipe(startWith({}), tap(() => {
@@ -372,15 +381,15 @@ export class BookdropFileReviewComponent implements OnInit {
     if (selectedCount === 0) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'No files selected',
-        detail: 'Please select files to reset metadata.',
+        summary: this.translateService.instant('bookdrop.review.toast.resetNoFilesSelected.summary'),
+        detail: this.translateService.instant('bookdrop.review.toast.resetNoFilesSelected.detail'),
       });
       return;
     }
 
     this.confirmationService.confirm({
-      message: 'Are you sure you want to reset all metadata changes made to the selected files?',
-      header: 'Confirm Reset',
+      message: this.translateService.instant('bookdrop.review.confirmReset.message'),
+      header: this.translateService.instant('bookdrop.review.confirmReset.header'),
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => this.resetMetadata()
@@ -392,15 +401,19 @@ export class BookdropFileReviewComponent implements OnInit {
     if (selectedCount === 0) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'No files selected',
-        detail: 'Please select files to finalize.',
+        summary: this.translateService.instant('bookdrop.review.toast.finalizeNoFilesSelected.summary'),
+        detail: this.translateService.instant('bookdrop.review.toast.finalizeNoFilesSelected.detail'),
       });
       return;
     }
 
+    const messageKey = selectedCount === 1
+      ? 'bookdrop.review.confirmFinalize.message.one'
+      : 'bookdrop.review.confirmFinalize.message.many';
+
     this.confirmationService.confirm({
-      message: `Are you sure you want to finalize the import of ${selectedCount} file${selectedCount !== 1 ? 's' : ''}?`,
-      header: 'Confirm Finalize',
+      message: this.translateService.instant(messageKey, {count: selectedCount}),
+      header: this.translateService.instant('bookdrop.review.confirmFinalize.header'),
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => this.finalizeImport(),
@@ -412,15 +425,19 @@ export class BookdropFileReviewComponent implements OnInit {
     if (selectedCount === 0) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'No files selected',
-        detail: 'Please select files to delete.',
+        summary: this.translateService.instant('bookdrop.review.toast.deleteNoFilesSelected.summary'),
+        detail: this.translateService.instant('bookdrop.review.toast.deleteNoFilesSelected.detail'),
       });
       return;
     }
 
+    const messageKey = selectedCount === 1
+      ? 'bookdrop.review.confirmDelete.message.one'
+      : 'bookdrop.review.confirmDelete.message.many';
+
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete ${selectedCount} selected Bookdrop file${selectedCount !== 1 ? 's' : ''}? This action cannot be undone.`,
-      header: 'Confirm Delete',
+      message: this.translateService.instant(messageKey, {count: selectedCount}),
+      header: this.translateService.instant('bookdrop.review.confirmDelete.header'),
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
@@ -440,8 +457,8 @@ export class BookdropFileReviewComponent implements OnInit {
           next: () => {
             this.messageService.add({
               severity: 'success',
-              summary: 'Files Deleted',
-              detail: 'Selected Bookdrop files were deleted successfully.',
+              summary: this.translateService.instant('bookdrop.review.toast.deleteSuccess.summary'),
+              detail: this.translateService.instant('bookdrop.review.toast.deleteSuccess.detail'),
             });
 
             this.getSelectedFiles().forEach(file => delete this.fileUiCache[file.file.id]);
@@ -454,8 +471,8 @@ export class BookdropFileReviewComponent implements OnInit {
             console.error('Error deleting files:', err);
             this.messageService.add({
               severity: 'error',
-              summary: 'Delete Failed',
-              detail: 'An error occurred while deleting Bookdrop files.',
+              summary: this.translateService.instant('bookdrop.review.toast.deleteFailed.summary'),
+              detail: this.translateService.instant('bookdrop.review.toast.deleteFailed.detail'),
             });
           },
         });
@@ -520,8 +537,8 @@ export class BookdropFileReviewComponent implements OnInit {
 
         this.messageService.add({
           severity: 'success',
-          summary: 'Import Complete',
-          detail: 'Import process finished. See details below.',
+          summary: this.translateService.instant('bookdrop.review.toast.importComplete.summary'),
+          detail: this.translateService.instant('bookdrop.review.toast.importComplete.detail'),
         });
 
         this.dialogLauncherService.openBookdropFinalizeResultDialog(result);
@@ -540,8 +557,8 @@ export class BookdropFileReviewComponent implements OnInit {
         console.error('Error finalizing import:', err);
         this.messageService.add({
           severity: 'error',
-          summary: 'Import Failed',
-          detail: 'Some files could not be moved. Please check the console for more details.',
+          summary: this.translateService.instant('bookdrop.review.toast.importFailed.summary'),
+          detail: this.translateService.instant('bookdrop.review.toast.importFailed.detail'),
         });
         this.saving = false;
       }
@@ -604,15 +621,15 @@ export class BookdropFileReviewComponent implements OnInit {
       next: () => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Rescan Triggered',
-          detail: 'Bookdrop rescan has been started successfully.',
+          summary: this.translateService.instant('bookdrop.review.toast.rescanTriggered.summary'),
+          detail: this.translateService.instant('bookdrop.review.toast.rescanTriggered.detail'),
         });
       },
       error: (err) => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Rescan Failed',
-          detail: 'Unable to trigger bookdrop rescan. Please try again.',
+          summary: this.translateService.instant('bookdrop.review.toast.rescanFailed.summary'),
+          detail: this.translateService.instant('bookdrop.review.toast.rescanFailed.detail'),
         });
         console.error(err);
       }
@@ -628,14 +645,18 @@ export class BookdropFileReviewComponent implements OnInit {
     if (totalCount === 0) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'No files selected',
-        detail: 'Please select files to bulk edit.',
+        summary: this.translateService.instant('bookdrop.review.toast.bulkEditNoFilesSelected.summary'),
+        detail: this.translateService.instant('bookdrop.review.toast.bulkEditNoFilesSelected.detail'),
       });
       return;
     }
 
+    const headerKey = totalCount === 1
+      ? 'bookdrop.review.dialog.bulkEdit.header.one'
+      : 'bookdrop.review.dialog.bulkEdit.header.many';
+
     const dialogRef = this.dialogLauncherService.openDialog(BookdropBulkEditDialogComponent, {
-      header: `Bulk Edit ${totalCount} Files`,
+      header: this.translateService.instant(headerKey, {count: totalCount}),
       width: '600px',
       modal: true,
       closable: true,
@@ -658,8 +679,8 @@ export class BookdropFileReviewComponent implements OnInit {
     if (totalCount === 0) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'No files selected',
-        detail: 'Please select files to extract metadata from.',
+        summary: this.translateService.instant('bookdrop.review.toast.patternExtractNoFilesSelected.summary'),
+        detail: this.translateService.instant('bookdrop.review.toast.patternExtractNoFilesSelected.detail'),
       });
       return;
     }
@@ -668,7 +689,7 @@ export class BookdropFileReviewComponent implements OnInit {
     const selectedIds = selectedFiles.map(f => f.file.id);
 
     const dialogRef = this.dialogLauncherService.openDialog(BookdropPatternExtractDialogComponent, {
-      header: 'Extract Metadata from Filenames',
+      header: this.translateService.instant('bookdrop.review.dialog.patternExtract.header'),
       width: '700px',
       modal: true,
       closable: true,
@@ -705,8 +726,8 @@ export class BookdropFileReviewComponent implements OnInit {
         console.error('Error loading pages into cache:', err);
         this.messageService.add({
           severity: 'error',
-          summary: 'Bulk Edit Failed',
-          detail: 'An error occurred while loading files into cache.',
+          summary: this.translateService.instant('bookdrop.review.toast.bulkEditFailed.summary'),
+          detail: this.translateService.instant('bookdrop.review.toast.bulkEditFailed.detail'),
         });
         return;
       }
@@ -732,16 +753,19 @@ export class BookdropFileReviewComponent implements OnInit {
       next: (backendResult: BackendBulkEditResult) => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Bulk Edit Applied',
-          detail: `Updated metadata for ${backendResult.successfullyUpdated} of ${backendResult.totalFiles} file(s).`,
+          summary: this.translateService.instant('bookdrop.review.toast.bulkEditApplied.summary'),
+          detail: this.translateService.instant('bookdrop.review.toast.bulkEditApplied.detail', {
+            successfullyUpdated: backendResult.successfullyUpdated,
+            totalFiles: backendResult.totalFiles,
+          }),
         });
       },
       error: (err) => {
         console.error('Error applying bulk edit:', err);
         this.messageService.add({
           severity: 'error',
-          summary: 'Bulk Edit Failed',
-          detail: 'An error occurred while applying bulk edits.',
+          summary: this.translateService.instant('bookdrop.review.toast.bulkEditApplyFailed.summary'),
+          detail: this.translateService.instant('bookdrop.review.toast.bulkEditApplyFailed.detail'),
         });
       },
     });
@@ -783,8 +807,8 @@ export class BookdropFileReviewComponent implements OnInit {
         console.error('Error loading pages into cache:', err);
         this.messageService.add({
           severity: 'error',
-          summary: 'Pattern Extraction Failed',
-          detail: 'An error occurred while loading files into cache.',
+          summary: this.translateService.instant('bookdrop.review.toast.patternExtractionFailed.summary'),
+          detail: this.translateService.instant('bookdrop.review.toast.patternExtractionFailed.detail'),
         });
         return;
       }
@@ -818,8 +842,8 @@ export class BookdropFileReviewComponent implements OnInit {
 
     this.messageService.add({
       severity: 'success',
-      summary: 'Pattern Extraction Applied',
-      detail: `Applied extracted metadata to ${appliedCount} file(s).`,
+      summary: this.translateService.instant('bookdrop.review.toast.patternExtractionApplied.summary'),
+      detail: this.translateService.instant('bookdrop.review.toast.patternExtractionApplied.detail', {count: appliedCount}),
     });
   }
 }

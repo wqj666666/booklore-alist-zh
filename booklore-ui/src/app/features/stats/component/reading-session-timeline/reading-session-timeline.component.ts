@@ -1,12 +1,13 @@
-import {Component, inject, Input, OnInit} from '@angular/core';
+import {Component, inject, Input, OnDestroy, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ReadingSessionTimelineResponse, UserStatsService} from '../../../settings/user-management/user-stats.service';
 import {UrlHelperService} from '../../../../shared/service/url-helper.service';
 import {BookType} from '../../../book/model/book.model';
-import {catchError} from 'rxjs/operators';
-import {of} from 'rxjs';
+import {catchError, takeUntil} from 'rxjs/operators';
+import {of, Subject} from 'rxjs';
 import {Select} from 'primeng/select';
 import {FormsModule} from '@angular/forms';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {
   addWeeks,
   endOfISOWeek,
@@ -51,18 +52,28 @@ interface DayTimeline {
 @Component({
   selector: 'app-reading-session-timeline',
   standalone: true,
-  imports: [CommonModule, Select, FormsModule],
+  imports: [CommonModule, TranslateModule, Select, FormsModule],
   templateUrl: './reading-session-timeline.component.html',
   styleUrls: ['./reading-session-timeline.component.scss']
 })
-export class ReadingSessionTimelineComponent implements OnInit {
+export class ReadingSessionTimelineComponent implements OnInit, OnDestroy {
   @Input() initialYear: number = new Date().getFullYear();
   @Input() weekNumber: number = getISOWeek(new Date());
 
   private userStatsService = inject(UserStatsService);
   private urlHelperService = inject(UrlHelperService);
+  private translate = inject(TranslateService);
+  private readonly destroy$ = new Subject<void>();
 
-  public daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  public daysOfWeek = [
+    'stats.user.timeline.day.mon',
+    'stats.user.timeline.day.tue',
+    'stats.user.timeline.day.wed',
+    'stats.user.timeline.day.thu',
+    'stats.user.timeline.day.fri',
+    'stats.user.timeline.day.sat',
+    'stats.user.timeline.day.sun'
+  ];
   public hourLabels: string[] = [];
   public timelineData: DayTimeline[] = [];
   public currentYear: number = new Date().getFullYear();
@@ -81,6 +92,18 @@ export class ReadingSessionTimelineComponent implements OnInit {
     this.updateWeekOptions();
     this.initializeHourLabels();
     this.loadReadingSessions();
+
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.updateWeekOptions();
+        this.initializeHourLabels();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private initializeYearOptions(): void {
@@ -95,7 +118,10 @@ export class ReadingSessionTimelineComponent implements OnInit {
     const weeksInYear = getISOWeeksInYear(this.currentDate);
     this.weekOptions = [];
     for (let week = 1; week <= weeksInYear; week++) {
-      this.weekOptions.push({label: `Week ${week}`, value: week});
+      this.weekOptions.push({
+        label: this.translate.instant('stats.user.timeline.weekOption', {week}),
+        value: week
+      });
     }
   }
 
@@ -116,10 +142,12 @@ export class ReadingSessionTimelineComponent implements OnInit {
   }
 
   private initializeHourLabels(): void {
+    this.hourLabels = [];
     for (let i = 0; i < 24; i++) {
-      const hour = i === 0 ? 12 : i > 12 ? i - 12 : i;
-      const period = i < 12 ? 'AM' : 'PM';
-      this.hourLabels.push(`${hour} ${period}`);
+      const date = new Date(2024, 0, 1, i, 0, 0, 0);
+      this.hourLabels.push(
+        date.toLocaleTimeString(this.getLocale(), {hour: 'numeric'})
+      );
     }
   }
 
@@ -186,9 +214,7 @@ export class ReadingSessionTimelineComponent implements OnInit {
     const weekEnd = endOfISOWeek(this.currentDate);
 
     const formatDate = (date: Date) => {
-      const month = date.toLocaleDateString('en-US', {month: 'short'});
-      const day = date.getDate();
-      return `${month} ${day}`;
+      return date.toLocaleDateString(this.getLocale(), {month: 'short', day: 'numeric'});
     };
 
     return `${formatDate(weekStart)} - ${formatDate(weekEnd)}`;
@@ -327,10 +353,8 @@ export class ReadingSessionTimelineComponent implements OnInit {
   }
 
   public formatTime(hour: number, minute: number): string {
-    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-    const period = hour < 12 ? 'AM' : 'PM';
-    const displayMinute = minute.toString().padStart(2, '0');
-    return `${displayHour}:${displayMinute} ${period}`;
+    const date = new Date(2024, 0, 1, hour, minute, 0, 0);
+    return date.toLocaleTimeString(this.getLocale(), {hour: 'numeric', minute: '2-digit'});
   }
 
   public formatDuration(minutes: number): string {
@@ -340,9 +364,12 @@ export class ReadingSessionTimelineComponent implements OnInit {
     const secs = totalSeconds % 60;
 
     const parts: string[] = [];
-    if (hours) parts.push(`${hours}H`);
-    if (mins || hours) parts.push(`${mins}M`);
-    parts.push(`${secs}S`);
+    const hourUnit = this.translate.instant('stats.user.units.hourShort');
+    const minuteUnit = this.translate.instant('stats.user.units.minuteShort');
+    const secondUnit = this.translate.instant('stats.user.units.secondShort');
+    if (hours) parts.push(`${hours}${hourUnit}`);
+    if (mins || hours) parts.push(`${mins}${minuteUnit}`);
+    parts.push(`${secs}${secondUnit}`);
 
     return parts.join(' ');
   }
@@ -353,9 +380,13 @@ export class ReadingSessionTimelineComponent implements OnInit {
     const mins = Math.floor((totalSeconds % 3600) / 60);
     const secs = totalSeconds % 60;
 
-    if (hours > 0) return `${hours}h${mins > 0 ? mins + 'm' : ''}`;
-    if (mins > 0) return `${mins}m${secs > 0 ? secs + 's' : ''}`;
-    return `${secs}s`;
+    const hourUnit = this.translate.instant('stats.user.units.hourCompact');
+    const minuteUnit = this.translate.instant('stats.user.units.minuteCompact');
+    const secondUnit = this.translate.instant('stats.user.units.secondCompact');
+
+    if (hours > 0) return `${hours}${hourUnit}${mins > 0 ? mins + minuteUnit : ''}`;
+    if (mins > 0) return `${mins}${minuteUnit}${secs > 0 ? secs + secondUnit : ''}`;
+    return `${secs}${secondUnit}`;
   }
 
   public isDurationGreaterThanOneHour(minutes: number): boolean {
@@ -364,5 +395,9 @@ export class ReadingSessionTimelineComponent implements OnInit {
 
   public getCoverUrl(bookId: number): string {
     return this.urlHelperService.getThumbnailUrl1(bookId);
+  }
+
+  private getLocale(): string {
+    return this.translate.currentLang || this.translate.defaultLang || 'zh-CN';
   }
 }

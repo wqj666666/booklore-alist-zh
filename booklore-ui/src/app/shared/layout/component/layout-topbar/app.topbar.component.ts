@@ -25,6 +25,9 @@ import {DialogLauncherService} from '../../../services/dialog-launcher.service';
 import {UnifiedNotificationBoxComponent} from '../../../components/unified-notification-popover/unified-notification-popover-component';
 import {Severity, LogNotification} from '../../../websocket/model/log-notification.model';
 import {Menu} from 'primeng/menu';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {LanguageService} from '../../../../core/i18n/language.service';
+import {SupportedLanguage} from '../../../../core/i18n/language';
 
 @Component({
   selector: 'app-topbar',
@@ -47,12 +50,15 @@ import {Menu} from 'primeng/menu';
     UnifiedNotificationBoxComponent,
     NgStyle,
     Menu,
+    TranslateModule,
   ],
 })
 export class AppTopBarComponent implements OnDestroy {
   items!: MenuItem[];
   ref?: DynamicDialogRef;
   statsMenuItems: MenuItem[] = [];
+  languageMenuItems: MenuItem[] = [];
+  currentLanguage: SupportedLanguage;
 
   @ViewChild('menubutton') menuButton!: ElementRef;
   @ViewChild('topbarmenubutton') topbarMenuButton!: ElementRef;
@@ -83,8 +89,13 @@ export class AppTopBarComponent implements OnDestroy {
     protected userService: UserService,
     private metadataProgressService: MetadataProgressService,
     private bookdropFileService: BookdropFileService,
-    private dialogLauncher: DialogLauncherService
+    private dialogLauncher: DialogLauncherService,
+    private translateService: TranslateService,
+    private languageService: LanguageService
   ) {
+    this.currentLanguage = this.languageService.getCurrentLanguage();
+    this.updateLanguageMenuItems();
+
     this.subscribeToMetadataProgress();
     this.subscribeToNotifications();
 
@@ -109,6 +120,14 @@ export class AppTopBarComponent implements OnDestroy {
     this.userService.userState$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
+        this.initializeStatsMenu();
+      });
+
+    this.languageService.language$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((language) => {
+        this.currentLanguage = language;
+        this.updateLanguageMenuItems();
         this.initializeStatsMenu();
       });
   }
@@ -163,6 +182,10 @@ export class AppTopBarComponent implements OnDestroy {
 
   logout() {
     this.authService.logout();
+  }
+
+  setLanguage(language: SupportedLanguage): void {
+    this.languageService.setLanguage(language);
   }
 
   handleStatsButtonClick(event: Event) {
@@ -224,7 +247,7 @@ export class AppTopBarComponent implements OnDestroy {
 
     if (user?.permissions?.canAccessLibraryStats || user?.permissions?.admin) {
       this.statsMenuItems.push({
-        label: 'Library Stats',
+        label: this.translateService.instant('menu.libraryStats'),
         icon: 'pi pi-chart-line',
         command: () => this.navigateToStats()
       });
@@ -232,11 +255,31 @@ export class AppTopBarComponent implements OnDestroy {
 
     if (user?.permissions?.canAccessUserStats || user?.permissions?.admin) {
       this.statsMenuItems.push({
-        label: 'Reading Stats',
+        label: this.translateService.instant('menu.readingStats'),
         icon: 'pi pi-users',
         command: () => this.navigateToUserStats()
       });
     }
+  }
+
+  private updateLanguageMenuItems(): void {
+    const createItem = (language: SupportedLanguage, label: string): MenuItem => {
+      const selected = this.currentLanguage === language;
+      const item: MenuItem = {
+        label,
+        disabled: selected,
+        command: () => this.setLanguage(language),
+      };
+      if (selected) {
+        item.icon = 'pi pi-check';
+      }
+      return item;
+    };
+
+    this.languageMenuItems = [
+      createItem('zh-CN', this.translateService.instant('language.zhCN')),
+      createItem('en', this.translateService.instant('language.en')),
+    ];
   }
 
   get hasStatsAccess(): boolean {
@@ -248,13 +291,14 @@ export class AppTopBarComponent implements OnDestroy {
   }
 
   get statsTooltip(): string {
+    const statsLabel = this.translateService.instant('menu.stats');
     if (this.statsMenuItems.length === 0) {
-      return 'Stats';
+      return statsLabel;
     }
     if (this.statsMenuItems.length === 1) {
-      return this.statsMenuItems[0].label || 'Stats';
+      return this.statsMenuItems[0].label || statsLabel;
     }
-    return 'Stats';
+    return statsLabel;
   }
 
   get iconClass(): string {

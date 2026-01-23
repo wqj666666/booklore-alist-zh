@@ -10,6 +10,7 @@ import {MessageService} from 'primeng/api';
 import {AppSettingKey} from '../../../../shared/model/app-settings.model';
 import {Select} from 'primeng/select';
 import {ExternalDocLinkComponent} from '../../../../shared/components/external-doc-link/external-doc-link.component';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-metadata-provider-settings',
@@ -21,7 +22,8 @@ import {ExternalDocLinkComponent} from '../../../../shared/components/external-d
     Button,
     FormsModule,
     Select,
-    ExternalDocLinkComponent
+    ExternalDocLinkComponent,
+    TranslateModule
   ],
   templateUrl: './metadata-provider-settings.component.html',
   styleUrl: './metadata-provider-settings.component.scss'
@@ -81,6 +83,7 @@ export class MetadataProviderSettingsComponent implements OnInit {
 
   private appSettingsService = inject(AppSettingsService);
   private messageService = inject(MessageService);
+  private translateService = inject(TranslateService);
 
   private appSettings$ = this.appSettingsService.appSettings$;
 
@@ -158,14 +161,14 @@ export class MetadataProviderSettingsComponent implements OnInit {
       next: () =>
         this.messageService.add({
           severity: 'success',
-          summary: 'Saved',
-          detail: 'Metadata provider settings saved.'
+          summary: this.translateService.instant('settings.metadataProviders.toast.saved.summary'),
+          detail: this.translateService.instant('settings.metadataProviders.toast.saved.detail')
         }),
       error: () =>
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to save metadata provider settings.'
+          summary: this.translateService.instant('settings.metadataProviders.toast.error.summary'),
+          detail: this.translateService.instant('settings.metadataProviders.toast.error.detail')
         })
     });
   }

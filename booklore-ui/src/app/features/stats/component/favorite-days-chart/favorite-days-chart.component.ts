@@ -1,4 +1,4 @@
-import {Component, inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {BaseChartDirective} from 'ng2-charts';
 import {ChartConfiguration, ChartData} from 'chart.js';
@@ -7,45 +7,34 @@ import {catchError, takeUntil} from 'rxjs/operators';
 import {FavoriteDaysResponse, UserStatsService} from '../../../settings/user-management/user-stats.service';
 import {Select} from 'primeng/select';
 import {FormsModule} from '@angular/forms';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 type FavoriteDaysChartData = ChartData<'bar', number[], string>;
 
 @Component({
   selector: 'app-favorite-days-chart',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective, Select, FormsModule],
+  imports: [CommonModule, TranslateModule, BaseChartDirective, Select, FormsModule],
   templateUrl: './favorite-days-chart.component.html',
   styleUrls: ['./favorite-days-chart.component.scss']
 })
 export class FavoriteDaysChartComponent implements OnInit, OnDestroy {
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
   public readonly chartType = 'bar' as const;
   public readonly chartData$: Observable<FavoriteDaysChartData>;
   public readonly chartOptions: ChartConfiguration['options'];
 
   private readonly userStatsService = inject(UserStatsService);
+  private readonly translate = inject(TranslateService);
   private readonly destroy$ = new Subject<void>();
   private readonly chartDataSubject: BehaviorSubject<FavoriteDaysChartData>;
 
-  private readonly allDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  private dayLabels: string[] = [];
 
   public selectedYear: number | null = null;
   public selectedMonth: number | null = null;
   public yearOptions: { label: string; value: number | null }[] = [];
-  public monthOptions: { label: string; value: number | null }[] = [
-    {label: 'All Months', value: null},
-    {label: 'January', value: 1},
-    {label: 'February', value: 2},
-    {label: 'March', value: 3},
-    {label: 'April', value: 4},
-    {label: 'May', value: 5},
-    {label: 'June', value: 6},
-    {label: 'July', value: 7},
-    {label: 'August', value: 8},
-    {label: 'September', value: 9},
-    {label: 'October', value: 10},
-    {label: 'November', value: 11},
-    {label: 'December', value: 12}
-  ];
+  public monthOptions: { label: string; value: number | null }[] = [];
 
   constructor() {
     this.chartDataSubject = new BehaviorSubject<FavoriteDaysChartData>({
@@ -85,15 +74,24 @@ export class FavoriteDaysChartComponent implements OnInit, OnDestroy {
           bodyFont: {size: 13},
           callbacks: {
             label: (context) => {
-              const label = context.dataset.label || '';
               const value = context.parsed.y;
-              if (label === 'Sessions') {
-                return `${label}: ${value} session${value !== 1 ? 's' : ''}`;
-              } else {
-                const hours = Math.floor(value / 3600);
-                const minutes = Math.floor((value % 3600) / 60);
-                return `${label}: ${hours}h ${minutes}m`;
+              if (context.dataset.yAxisID === 'y') {
+                const sessionCount = value === 1
+                  ? this.translate.instant('stats.user.units.sessionCountOne', {count: value})
+                  : this.translate.instant('stats.user.units.sessionCountMany', {count: value});
+                return this.translate.instant('stats.user.favoriteDays.tooltip.sessions', {count: sessionCount});
               }
+
+              const hours = Math.floor(value);
+              const minutes = Math.round((value - hours) * 60);
+              const hourUnit = this.translate.instant('stats.user.units.hourShort');
+              const minuteUnit = this.translate.instant('stats.user.units.minuteShort');
+              return this.translate.instant('stats.user.favoriteDays.tooltip.duration', {
+                hours,
+                hourUnit,
+                minutes,
+                minuteUnit
+              });
             }
           }
         },
@@ -103,7 +101,7 @@ export class FavoriteDaysChartComponent implements OnInit, OnDestroy {
         x: {
           title: {
             display: true,
-            text: 'Day of Week',
+            text: this.translate.instant('stats.user.favoriteDays.axis.dayOfWeek'),
             color: '#ffffff',
             font: {
               family: "'Inter', sans-serif",
@@ -124,7 +122,7 @@ export class FavoriteDaysChartComponent implements OnInit, OnDestroy {
           position: 'left',
           title: {
             display: true,
-            text: 'Number of Sessions',
+            text: this.translate.instant('stats.user.favoriteDays.axis.sessions'),
             color: 'rgba(139, 92, 246, 1)',
             font: {
               family: "'Inter', sans-serif",
@@ -149,7 +147,7 @@ export class FavoriteDaysChartComponent implements OnInit, OnDestroy {
           position: 'right',
           title: {
             display: true,
-            text: 'Duration (hours)',
+            text: this.translate.instant('stats.user.favoriteDays.axis.durationHours'),
             color: 'rgba(236, 72, 153, 1)',
             font: {
               family: "'Inter', sans-serif",
@@ -161,8 +159,9 @@ export class FavoriteDaysChartComponent implements OnInit, OnDestroy {
           ticks: {
             color: '#ffffff',
             font: {family: "'Inter', sans-serif", size: 11},
-            callback: function (value) {
-              return (typeof value === 'number' ? value.toFixed(1) : '0.0') + 'h';
+            callback: (value) => {
+              const hourUnit = this.translate.instant('stats.user.units.hourCompact');
+              return (typeof value === 'number' ? value.toFixed(1) : '0.0') + hourUnit;
             }
           },
           grid: {
@@ -172,11 +171,31 @@ export class FavoriteDaysChartComponent implements OnInit, OnDestroy {
         }
       }
     };
-    this.initializeYearOptions();
+    this.rebuildFilterOptions();
   }
 
   ngOnInit(): void {
     this.loadFavoriteDays();
+
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.rebuildFilterOptions();
+
+        const scales = this.chartOptions?.scales;
+        if (scales?.['x'] && 'title' in scales['x']) {
+          (scales['x'] as any).title.text = this.translate.instant('stats.user.favoriteDays.axis.dayOfWeek');
+        }
+        if (scales?.['y'] && 'title' in scales['y']) {
+          (scales['y'] as any).title.text = this.translate.instant('stats.user.favoriteDays.axis.sessions');
+        }
+        if (scales?.['y1'] && 'title' in scales['y1']) {
+          (scales['y1'] as any).title.text = this.translate.instant('stats.user.favoriteDays.axis.durationHours');
+        }
+
+        this.loadFavoriteDays();
+        this.chart?.chart?.update();
+      });
   }
 
   ngOnDestroy(): void {
@@ -184,11 +203,26 @@ export class FavoriteDaysChartComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  private rebuildFilterOptions(): void {
+    this.dayLabels = this.buildWeekdayLabels();
+    this.initializeYearOptions();
+    this.initializeMonthOptions();
+  }
+
   private initializeYearOptions(): void {
     const currentYear = new Date().getFullYear();
-    this.yearOptions = [{label: 'All Years', value: null}];
+    this.yearOptions = [{label: this.translate.instant('stats.user.favoriteDays.filters.allYears'), value: null}];
     for (let year = currentYear; year >= currentYear - 10; year--) {
       this.yearOptions.push({label: year.toString(), value: year});
+    }
+  }
+
+  private initializeMonthOptions(): void {
+    const locale = this.getLocale();
+    this.monthOptions = [{label: this.translate.instant('stats.user.favoriteDays.filters.allMonths'), value: null}];
+    for (let month = 1; month <= 12; month++) {
+      const date = new Date(2024, month - 1, 1);
+      this.monthOptions.push({label: date.toLocaleDateString(locale, {month: 'long'}), value: month});
     }
   }
 
@@ -219,13 +253,13 @@ export class FavoriteDaysChartComponent implements OnInit, OnDestroy {
       dayMap.set(item.dayOfWeek - 1, item);
     });
 
-    const labels = this.allDays;
-    const sessionCounts = this.allDays.map((_, index) => {
+    const labels = this.dayLabels;
+    const sessionCounts = this.dayLabels.map((_, index) => {
       const dayData = dayMap.get(index);
       return dayData?.sessionCount || 0;
     });
 
-    const durations = this.allDays.map((_, index) => {
+    const durations = this.dayLabels.map((_, index) => {
       const dayData = dayMap.get(index);
       return dayData ? dayData.totalDurationSeconds / 3600 : 0; // Convert to hours
     });
@@ -234,7 +268,7 @@ export class FavoriteDaysChartComponent implements OnInit, OnDestroy {
       labels,
       datasets: [
         {
-          label: 'Sessions',
+          label: this.translate.instant('stats.user.favoriteDays.dataset.sessions'),
           data: sessionCounts,
           backgroundColor: 'rgba(139, 92, 246, 0.8)',
           borderColor: 'rgba(139, 92, 246, 1)',
@@ -245,7 +279,7 @@ export class FavoriteDaysChartComponent implements OnInit, OnDestroy {
           yAxisID: 'y'
         },
         {
-          label: 'Duration (hours)',
+          label: this.translate.instant('stats.user.favoriteDays.dataset.durationHours'),
           data: durations,
           backgroundColor: 'rgba(236, 72, 153, 0.8)',
           borderColor: 'rgba(236, 72, 153, 1)',
@@ -257,5 +291,20 @@ export class FavoriteDaysChartComponent implements OnInit, OnDestroy {
         }
       ]
     });
+  }
+
+  private buildWeekdayLabels(): string[] {
+    const locale = this.getLocale();
+    const formatter = new Intl.DateTimeFormat(locale, {weekday: 'long'});
+    const sunday = new Date(2024, 0, 7);
+    return Array.from({length: 7}, (_, i) => {
+      const date = new Date(sunday);
+      date.setDate(sunday.getDate() + i);
+      return formatter.format(date);
+    });
+  }
+
+  private getLocale(): string {
+    return this.translate.currentLang || this.translate.defaultLang || 'zh-CN';
   }
 }

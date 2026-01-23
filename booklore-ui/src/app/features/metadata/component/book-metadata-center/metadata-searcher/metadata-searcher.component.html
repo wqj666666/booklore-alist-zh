@@ -13,14 +13,14 @@
         <div class="search-field search-field-provider">
           <label>
             <i class="pi pi-globe"></i>
-            Providers
+            {{ 'metadata.searcher.label.providers' | translate }}
           </label>
           <p-multiselect
             [filter]="false"
             showToggleAll="false"
             [options]="providers"
             formControlName="provider"
-            placeholder="Select providers"
+            [placeholder]="'metadata.searcher.placeholder.providers' | translate"
             [styleClass]="'custom-multiselect'">
           </p-multiselect>
         </div>
@@ -28,10 +28,10 @@
         <div class="search-field">
           <label>
             <i class="pi pi-barcode"></i>
-            ISBN
+            {{ 'metadata.searcher.label.isbn' | translate }}
             <i
               class="pi pi-info-circle"
-              pTooltip="ISBN takes priority. Without ISBN, search uses Title and Author."
+              [pTooltip]="'metadata.searcher.tooltip.isbnPriority' | translate"
               tooltipPosition="right"
               style="margin-left: 0.25rem; color: var(--primary-color); cursor: pointer;"
             ></i>
@@ -39,37 +39,37 @@
           <input
             pInputText
             formControlName="isbn"
-            placeholder="ISBN-10 or ISBN-13"
+            [placeholder]="'metadata.searcher.placeholder.isbn' | translate"
             class="custom-input"/>
         </div>
 
         <div class="search-field">
           <label>
             <i class="pi pi-book"></i>
-            Title
+            {{ 'metadata.searcher.label.title' | translate }}
           </label>
           <input
             pInputText
             formControlName="title"
-            placeholder="Book title"
+            [placeholder]="'metadata.searcher.placeholder.title' | translate"
             class="custom-input"/>
         </div>
 
         <div class="search-field">
           <label>
             <i class="pi pi-user"></i>
-            Author
+            {{ 'metadata.searcher.label.author' | translate }}
           </label>
           <input
             pInputText
             formControlName="author"
-            placeholder="Author name"
+            [placeholder]="'metadata.searcher.placeholder.author' | translate"
             class="custom-input"/>
         </div>
 
         <div class="search-field search-button-field">
           <p-button
-            label="Search"
+            [label]="'common.search' | translate"
             type="submit"
             [disabled]="!isSearchEnabled || loading"
             icon="pi pi-search"
@@ -85,14 +85,14 @@
           <div class="results-info">
             <h3>
               <i class="pi pi-list"></i>
-              Search Results
+              {{ 'metadata.searcher.section.searchResults' | translate }}
             </h3>
-            <span class="results-count">{{ filteredMetadata.length }} books found</span>
+            <span class="results-count">{{ 'metadata.searcher.resultsCount' | translate:{ count: filteredMetadata.length } }}</span>
           </div>
           @if (loading) {
             <span class="fetching-badge">
               <i class="pi pi-spin pi-spinner"></i>
-              Fetching...
+              {{ 'metadata.searcher.badge.fetching' | translate }}
             </span>
           }
         </div>
@@ -126,8 +126,8 @@
         <div class="empty-icon">
           <i class="pi pi-search"></i>
         </div>
-        <h3>Ready to Search</h3>
-        <p>Enter your search criteria above and click Search to find metadata</p>
+        <h3>{{ 'metadata.searcher.empty.readyTitle' | translate }}</h3>
+        <p>{{ 'metadata.searcher.empty.readyDescription' | translate }}</p>
       </div>
     }
 
@@ -136,8 +136,8 @@
         <div class="empty-icon no-results">
           <i class="pi pi-inbox"></i>
         </div>
-        <h3>No Results Found</h3>
-        <p>Try adjusting your search criteria or selecting different providers</p>
+        <h3>{{ 'metadata.searcher.empty.noResultsTitle' | translate }}</h3>
+        <p>{{ 'metadata.searcher.empty.noResultsDescription' | translate }}</p>
       </div>
     }
 
@@ -153,7 +153,7 @@
                   loading="lazy"/>
                 <div class="card-overlay">
                   <i class="pi pi-eye"></i>
-                  <span>Select</span>
+                  <span>{{ 'metadata.searcher.card.select' | translate }}</span>
                 </div>
               </div>
 

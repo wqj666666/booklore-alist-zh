@@ -14,6 +14,7 @@ import {AutoComplete} from 'primeng/autocomplete';
 import {AutoCompleteSelectEvent} from 'primeng/autocomplete';
 import {ProgressSpinner} from 'primeng/progressspinner';
 import {filter, take} from "rxjs/operators";
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bulk-metadata-update-component',
@@ -27,7 +28,8 @@ import {filter, take} from "rxjs/operators";
     DatePicker,
     Checkbox,
     ProgressSpinner,
-    AutoComplete
+    AutoComplete,
+    TranslateModule
 ],
   providers: [MessageService],
   templateUrl: './bulk-metadata-update-component.html',
@@ -61,6 +63,7 @@ export class BulkMetadataUpdateComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly bookService = inject(BookService);
   private readonly messageService = inject(MessageService);
+  private readonly translateService = inject(TranslateService);
 
   allAuthors!: string[];
   allGenres!: string[];
@@ -265,8 +268,8 @@ export class BulkMetadataUpdateComponent implements OnInit {
               this.loading = false;
               this.messageService.add({
                 severity: 'success',
-                summary: 'Metadata & Cover Updated',
-                detail: 'Books updated and cover upload started. Refresh the page when complete.'
+                summary: this.translateService.instant('metadata.bulkUpdate.toast.metadataAndCoverUpdated.summary'),
+                detail: this.translateService.instant('metadata.bulkUpdate.toast.metadataAndCoverUpdated.detail')
               });
               this.ref.close(true);
             },
@@ -275,8 +278,8 @@ export class BulkMetadataUpdateComponent implements OnInit {
               this.loading = false;
               this.messageService.add({
                 severity: 'warn',
-                summary: 'Partial Success',
-                detail: 'Metadata updated but cover upload failed'
+                summary: this.translateService.instant('metadata.bulkUpdate.toast.partialSuccess.summary'),
+                detail: this.translateService.instant('metadata.bulkUpdate.toast.partialSuccess.coverUploadFailed')
               });
               this.ref.close(true);
             }
@@ -285,8 +288,8 @@ export class BulkMetadataUpdateComponent implements OnInit {
           this.loading = false;
           this.messageService.add({
             severity: 'success',
-            summary: 'Metadata Updated',
-            detail: 'Books updated successfully'
+            summary: this.translateService.instant('metadata.bulkUpdate.toast.metadataUpdated.summary'),
+            detail: this.translateService.instant('metadata.bulkUpdate.toast.metadataUpdated.detail')
           });
           this.ref.close(true);
         }
@@ -296,8 +299,8 @@ export class BulkMetadataUpdateComponent implements OnInit {
         this.loading = false;
         this.messageService.add({
           severity: 'error',
-          summary: 'Update Failed',
-          detail: 'An error occurred while updating book metadata'
+          summary: this.translateService.instant('metadata.bulkUpdate.toast.updateFailed.summary'),
+          detail: this.translateService.instant('metadata.bulkUpdate.toast.updateFailed.detail')
         });
       }
     });

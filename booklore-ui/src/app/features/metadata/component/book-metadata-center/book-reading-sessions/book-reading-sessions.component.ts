@@ -4,11 +4,12 @@ import {ReadingSessionApiService, ReadingSessionResponse} from '../../../../../s
 import {TableModule} from 'primeng/table';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {TagModule} from 'primeng/tag';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-book-reading-sessions',
   standalone: true,
-  imports: [CommonModule, TableModule, ProgressSpinnerModule, TagModule],
+  imports: [CommonModule, TableModule, ProgressSpinnerModule, TagModule, TranslateModule],
   templateUrl: './book-reading-sessions.component.html',
   styleUrls: ['./book-reading-sessions.component.scss']
 })
@@ -16,6 +17,7 @@ export class BookReadingSessionsComponent implements OnInit, OnChanges {
   @Input() bookId!: number;
 
   private readonly readingSessionService = inject(ReadingSessionApiService);
+  private readonly translateService = inject(TranslateService);
 
   sessions: ReadingSessionResponse[] = [];
   totalRecords = 0;
@@ -60,17 +62,21 @@ export class BookReadingSessionsComponent implements OnInit, OnChanges {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
+    const hourUnit = this.translateService.instant('metadata.readingSessions.unit.hour');
+    const minuteUnit = this.translateService.instant('metadata.readingSessions.unit.minute');
+    const secondUnit = this.translateService.instant('metadata.readingSessions.unit.second');
 
     if (hours > 0) {
-      return `${hours}h ${minutes}m`;
+      return `${hours}${hourUnit} ${minutes}${minuteUnit}`;
     } else if (minutes > 0) {
-      return `${minutes}m ${secs}s`;
+      return `${minutes}${minuteUnit} ${secs}${secondUnit}`;
     }
-    return `${secs}s`;
+    return `${secs}${secondUnit}`;
   }
 
   formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleString();
+    const locale = this.translateService.currentLang === 'zh-CN' ? 'zh-CN' : 'en-US';
+    return new Date(dateString).toLocaleString(locale);
   }
 
   getProgressColor(delta: number): 'success' | 'secondary' | 'danger' {

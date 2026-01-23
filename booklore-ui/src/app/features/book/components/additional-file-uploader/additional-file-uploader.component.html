@@ -86,7 +86,7 @@
                         <i
                           class="pi pi-spin pi-spinner p-3"
                           style="color: slateblue"
-                          pTooltip="Uploading"
+                          [pTooltip]="'book.additionalFileUploader.tooltip.uploading' | translate"
                           tooltipPosition="top">
                         </i>
                       }
@@ -94,7 +94,7 @@
                         <i
                           class="pi pi-check p-3"
                           style="color: green"
-                          pTooltip="Uploaded"
+                          [pTooltip]="'book.additionalFileUploader.tooltip.uploaded' | translate"
                           tooltipPosition="top">
                         </i>
                       }
@@ -102,7 +102,7 @@
                         <i
                           class="pi pi-exclamation-triangle p-3"
                           style="color: darkred"
-                          pTooltip="{{ uploadFile.errorMessage || 'Upload failed' }}"
+                          [pTooltip]="uploadFile.errorMessage || ('book.additionalFileUploader.tooltip.uploadFailed' | translate)"
                           tooltipPosition="top">
                         </i>
                       }

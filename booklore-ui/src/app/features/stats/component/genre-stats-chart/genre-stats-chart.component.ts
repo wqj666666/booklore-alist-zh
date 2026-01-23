@@ -1,28 +1,31 @@
-import {Component, inject, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {BaseChartDirective} from 'ng2-charts';
 import {ChartConfiguration, ChartData} from 'chart.js';
 import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
 import {catchError, takeUntil} from 'rxjs/operators';
 import {GenreStatsResponse, UserStatsService} from '../../../settings/user-management/user-stats.service';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 type GenreChartData = ChartData<'bar', number[], string>;
 
 @Component({
   selector: 'app-genre-stats-chart',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective],
+  imports: [CommonModule, TranslateModule, BaseChartDirective],
   templateUrl: './genre-stats-chart.component.html',
   styleUrls: ['./genre-stats-chart.component.scss']
 })
 export class GenreStatsChartComponent implements OnInit, OnDestroy {
   @Input() maxGenres: number = 35;
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
   public readonly chartType = 'bar' as const;
   public readonly chartData$: Observable<GenreChartData>;
   public readonly chartOptions: ChartConfiguration['options'];
 
   private readonly userStatsService = inject(UserStatsService);
+  private readonly translate = inject(TranslateService);
   private readonly destroy$ = new Subject<void>();
   private readonly chartDataSubject: BehaviorSubject<GenreChartData>;
 
@@ -58,15 +61,8 @@ export class GenreStatsChartComponent implements OnInit, OnDestroy {
               const dataIndex = context.dataIndex;
               const dataset = context.dataset;
               const label = context.chart.data.labels?.[dataIndex] as string;
-              const minutes = Math.floor((dataset.data[dataIndex] as number) / 60);
-              const hours = Math.floor(minutes / 60);
-              const mins = minutes % 60;
-
-              const timeStr = hours > 0
-                ? `${hours}h ${mins}m`
-                : `${mins}m`;
-
-              return `${label}: ${timeStr}`;
+              const timeStr = this.formatDurationCompact(dataset.data[dataIndex] as number);
+              return this.translate.instant('stats.user.genre.tooltip.label', {genre: label, time: timeStr});
             }
           }
         },
@@ -76,7 +72,7 @@ export class GenreStatsChartComponent implements OnInit, OnDestroy {
         x: {
           title: {
             display: true,
-            text: 'Genres',
+            text: this.translate.instant('stats.user.genre.axis.genres'),
             color: '#ffffff',
             font: {
               family: "'Inter', sans-serif",
@@ -103,7 +99,7 @@ export class GenreStatsChartComponent implements OnInit, OnDestroy {
         y: {
           title: {
             display: true,
-            text: 'Time Read',
+            text: this.translate.instant('stats.user.genre.axis.timeRead'),
             color: '#ffffff',
             font: {
               family: "'Inter', sans-serif",
@@ -116,26 +112,7 @@ export class GenreStatsChartComponent implements OnInit, OnDestroy {
             font: {family: "'Inter', sans-serif", size: 11},
             callback: (value) => {
               const seconds = value as number;
-              const minutes = Math.floor(seconds / 60);
-              const hours = Math.floor(minutes / 60);
-              const days = Math.floor(hours / 24);
-
-              if (days > 0) {
-                const remainingHours = hours % 24;
-                if (remainingHours > 0) {
-                  return `${days} ${days === 1 ? 'day' : 'days'} ${remainingHours} ${remainingHours === 1 ? 'hr' : 'hrs'}`;
-                }
-                return `${days} ${days === 1 ? 'day' : 'days'}`;
-              } else if (hours > 0) {
-                const remainingMinutes = minutes % 60;
-                if (remainingMinutes > 0) {
-                  return `${hours} ${hours === 1 ? 'hr' : 'hrs'} ${remainingMinutes} min`;
-                }
-                return `${hours} ${hours === 1 ? 'hr' : 'hrs'}`;
-              } else if (minutes > 0) {
-                return `${minutes} min`;
-              }
-              return `${seconds} sec`;
+              return this.formatDurationAxis(seconds);
             },
             stepSize: undefined,
             maxTicksLimit: 8
@@ -151,6 +128,26 @@ export class GenreStatsChartComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadGenreStats();
+
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        const scales = this.chartOptions?.scales;
+        if (scales?.['x'] && 'title' in scales['x']) {
+          (scales['x'] as any).title.text = this.translate.instant('stats.user.genre.axis.genres');
+        }
+        if (scales?.['y'] && 'title' in scales['y']) {
+          (scales['y'] as any).title.text = this.translate.instant('stats.user.genre.axis.timeRead');
+        }
+
+        const current = this.chartDataSubject.value;
+        const dataset = current.datasets?.[0];
+        this.chartDataSubject.next({
+          ...current,
+          datasets: dataset ? [{...dataset, label: this.translate.instant('stats.user.genre.datasetLabel')}] : []
+        });
+        this.chart?.chart?.update();
+      });
   }
 
   ngOnDestroy(): void {
@@ -184,7 +181,7 @@ export class GenreStatsChartComponent implements OnInit, OnDestroy {
       labels,
       datasets: [
         {
-          label: 'Reading Time',
+          label: this.translate.instant('stats.user.genre.datasetLabel'),
           data: durations,
           backgroundColor: 'rgba(34, 197, 94, 0.8)',
           borderColor: 'rgba(34, 197, 94, 1)',
@@ -195,5 +192,56 @@ export class GenreStatsChartComponent implements OnInit, OnDestroy {
         }
       ]
     });
+  }
+
+  private formatDurationCompact(totalSeconds: number): string {
+    const minutes = Math.floor(totalSeconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+
+    const hourUnit = this.translate.instant('stats.user.units.hourShort');
+    const minuteUnit = this.translate.instant('stats.user.units.minuteShort');
+
+    if (hours > 0) {
+      return this.translate.instant('stats.user.genre.tooltip.timeHoursMinutes', {
+        hours,
+        hourUnit,
+        minutes: mins,
+        minuteUnit
+      });
+    }
+
+    return this.translate.instant('stats.user.genre.tooltip.timeMinutes', {minutes: mins, minuteUnit});
+  }
+
+  private formatDurationAxis(totalSeconds: number): string {
+    const minutes = Math.floor(totalSeconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    const dayUnit = this.translate.instant('stats.user.units.dayShort');
+    const hourUnit = this.translate.instant('stats.user.units.hourShort');
+    const minuteUnit = this.translate.instant('stats.user.units.minuteShort');
+    const secondUnit = this.translate.instant('stats.user.units.secondShort');
+
+    if (days > 0) {
+      const remainingHours = hours % 24;
+      return remainingHours > 0
+        ? this.translate.instant('stats.user.genre.axis.daysHours', {days, dayUnit, hours: remainingHours, hourUnit})
+        : this.translate.instant('stats.user.genre.axis.days', {days, dayUnit});
+    }
+
+    if (hours > 0) {
+      const remainingMinutes = minutes % 60;
+      return remainingMinutes > 0
+        ? this.translate.instant('stats.user.genre.axis.hoursMinutes', {hours, hourUnit, minutes: remainingMinutes, minuteUnit})
+        : this.translate.instant('stats.user.genre.axis.hours', {hours, hourUnit});
+    }
+
+    if (minutes > 0) {
+      return this.translate.instant('stats.user.genre.axis.minutes', {minutes, minuteUnit});
+    }
+
+    return this.translate.instant('stats.user.genre.axis.seconds', {seconds: totalSeconds, secondUnit});
   }
 }

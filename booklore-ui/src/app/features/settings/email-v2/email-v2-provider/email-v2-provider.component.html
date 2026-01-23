@@ -4,15 +4,15 @@
       <div>
         <h2 class="settings-title">
           <i class="pi pi-server"></i>
-          Email Providers
+          {{ 'settings.emailV2.provider.title' | translate }}
         </h2>
         <p class="settings-description">
-          Configure email-sending services like Gmail, Outlook, or custom SMTP servers for sending books via email. The default email provider will be used for 'Quick Book Send' located in the Book Card menu.
+          {{ 'settings.emailV2.provider.description' | translate }}
         </p>
       </div>
       <p-button
         icon="pi pi-plus"
-        label="Create Provider"
+        [label]="'settings.emailV2.provider.action.createProvider' | translate"
         severity="success"
         size="small"
         [outlined]="true"
@@ -30,65 +30,65 @@
               <th style="width: 5%;">
                 <div class="header-content">
                   <i class="pi pi-star"></i>
-                  <span>Default</span>
+                  <span>{{ 'settings.emailV2.provider.table.default' | translate }}</span>
                 </div>
               </th>
               <th style="width: 20%;">
                 <div class="header-content">
                   <i class="pi pi-tag"></i>
-                  <span>Name</span>
+                  <span>{{ 'settings.emailV2.provider.table.name' | translate }}</span>
                 </div>
               </th>
               <th style="width: 14%;">
                 <div class="header-content">
                   <i class="pi pi-server"></i>
-                  <span>Host</span>
+                  <span>{{ 'settings.emailV2.provider.table.host' | translate }}</span>
                 </div>
               </th>
               <th style="width: 5%;">
                 <div class="header-content">
                   <i class="pi pi-link"></i>
-                  <span>Port</span>
+                  <span>{{ 'settings.emailV2.provider.table.port' | translate }}</span>
                 </div>
               </th>
               <th style="width: 13%;">
                 <div class="header-content">
                   <i class="pi pi-user"></i>
-                  <span>Username</span>
+                  <span>{{ 'settings.emailV2.provider.table.username' | translate }}</span>
                 </div>
               </th>
               <th style="width: 11%;">
                 <div class="header-content">
                   <i class="pi pi-lock"></i>
-                  <span>Password</span>
+                  <span>{{ 'settings.emailV2.provider.table.password' | translate }}</span>
                 </div>
               </th>
               <th style="width: 11%;">
                 <div class="header-content">
                   <i class="pi pi-envelope"></i>
-                  <span>From Address</span>
+                  <span>{{ 'settings.emailV2.provider.table.fromAddress' | translate }}</span>
                 </div>
               </th>
-              <th style="width: 4%;" class="permission-header">Auth</th>
-              <th style="width: 5%;" class="permission-header">StartTLS</th>
+              <th style="width: 4%;" class="permission-header">{{ 'settings.emailV2.provider.table.auth' | translate }}</th>
+              <th style="width: 5%;" class="permission-header">{{ 'settings.emailV2.provider.table.startTls' | translate }}</th>
               @if (isAdmin) {
                 <th style="width: 5%;" class="permission-header">
                   <div class="header-content">
                     <i class="pi pi-share-alt"></i>
-                    <span>Shared</span>
+                    <span>{{ 'settings.emailV2.provider.table.shared' | translate }}</span>
                   </div>
                 </th>
               }
               <th style="width: 7%;" class="actions-header">
                 <div class="header-content">
                   <i class="pi pi-pencil"></i>
-                  <span>Edit</span>
+                  <span>{{ 'settings.emailV2.provider.table.edit' | translate }}</span>
                 </div>
               </th>
               <th style="width: 8%;" class="actions-header">
                 <div class="header-content">
                   <i class="pi pi-trash"></i>
-                  <span>Delete</span>
+                  <span>{{ 'settings.emailV2.provider.table.delete' | translate }}</span>
                 </div>
               </th>
             </tr>
@@ -114,7 +114,7 @@
                     <span>
                       {{ provider.name }}
                       @if (provider.shared) {
-                        <span class="shared-badge" pTooltip="Shared provider">S</span>
+                        <span class="shared-badge" [pTooltip]="'settings.emailV2.provider.tooltip.sharedProvider' | translate">S</span>
                       }
                     </span>
                   </div>
@@ -153,7 +153,7 @@
                   <input [(ngModel)]="provider.password" class="p-inputtext w-full" size="small"/>
                 }
                 @if (!provider.isEditing) {
-                  <span class="password-hidden">Hidden</span>
+                  <span class="password-hidden">{{ 'settings.emailV2.provider.table.passwordHidden' | translate }}</span>
                 }
               </td>
 
@@ -188,7 +188,7 @@
                     [(ngModel)]="provider.shared"
                     [binary]="true"
                     (onChange)="toggleShared(provider)"
-                    pTooltip="Share this provider with all users">
+                    [pTooltip]="'settings.emailV2.provider.tooltip.shareWithAllUsers' | translate">
                   </p-checkbox>
                 </td>
               }
@@ -203,7 +203,7 @@
                     [rounded]="true"
                     [disabled]="!canModifyProvider(provider)"
                     (onClick)="canModifyProvider(provider) && toggleEdit(provider)"
-                    [pTooltip]="canModifyProvider(provider) ? 'Edit provider' : 'Cannot edit shared provider from another user'"
+                    [pTooltip]="canModifyProvider(provider) ? ('settings.emailV2.provider.tooltip.editProvider' | translate) : ('settings.emailV2.provider.tooltip.cannotEditSharedProvider' | translate)"
                     tooltipPosition="left">
                   </p-button>
                 }
@@ -216,7 +216,7 @@
                       [outlined]="true"
                       [rounded]="true"
                       (onClick)="saveProvider(provider)"
-                      pTooltip="Save changes">
+                      [pTooltip]="'settings.emailV2.provider.tooltip.saveChanges' | translate">
                     </p-button>
                     <p-button
                       icon="pi pi-times"
@@ -225,7 +225,7 @@
                       [outlined]="true"
                       [rounded]="true"
                       (onClick)="toggleEdit(provider)"
-                      pTooltip="Cancel">
+                      [pTooltip]="'settings.emailV2.provider.tooltip.cancel' | translate">
                     </p-button>
                   </div>
                 }
@@ -240,7 +240,7 @@
                   [rounded]="true"
                   [disabled]="!canModifyProvider(provider)"
                   (onClick)="canModifyProvider(provider) && deleteProvider(provider)"
-                  [pTooltip]="canModifyProvider(provider) ? 'Delete provider' : 'Cannot delete shared provider from another user'"
+                  [pTooltip]="canModifyProvider(provider) ? ('settings.emailV2.provider.tooltip.deleteProvider' | translate) : ('settings.emailV2.provider.tooltip.cannotDeleteSharedProvider' | translate)"
                   tooltipPosition="left">
                 </p-button>
               </td>
@@ -252,8 +252,8 @@
               <td [attr.colspan]="isAdmin ? 12 : 11">
                 <div class="empty-message">
                   <i class="pi pi-envelope"></i>
-                  <p class="empty-title">No email providers found</p>
-                  <p class="empty-subtitle">Create your first email provider to start sending books</p>
+                  <p class="empty-title">{{ 'settings.emailV2.provider.empty.title' | translate }}</p>
+                  <p class="empty-subtitle">{{ 'settings.emailV2.provider.empty.subtitle' | translate }}</p>
                 </div>
               </td>
             </tr>

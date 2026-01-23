@@ -1,0 +1,323 @@
+<p-toast position="top-right"></p-toast>
+
+<div class="w-full h-[calc(100dvh-10.5rem)] md:h-[calc(100dvh-11.65rem)] overflow-y-auto border rounded-lg enclosing-container">
+  <div class="main-container">
+    <div class="settings-header">
+      <h2 class="settings-title">
+        <i class="pi pi-cloud"></i>
+        {{ 'settings.storage.title' | translate }}
+      </h2>
+      <p class="settings-description">
+        {{ 'settings.storage.description' | translate }}
+      </p>
+      <div class="storage-status">
+        <span class="storage-status-label">{{ 'shared.directoryPicker.storageType.label' | translate }}</span>
+        <span
+          class="storage-status-value"
+          [class.is-alist]="settings.enabled"
+          [class.is-local]="!settings.enabled">
+          {{ settings.enabled ? ('shared.directoryPicker.storageType.alist' | translate) : ('shared.directoryPicker.storageType.local' | translate) }}
+        </span>
+      </div>
+    </div>
+
+    <div class="settings-content">
+      <!-- AList 配置区块 -->
+      <div class="preferences-section">
+        <div class="section-header">
+          <h3 class="section-title">
+            <i class="pi pi-server"></i>
+            {{ 'settings.storage.alist.title' | translate }}
+          </h3>
+          <p class="section-description">
+            {{ 'settings.storage.alist.description' | translate }}
+          </p>
+        </div>
+
+        <div class="settings-card">
+          <form #alistForm="ngForm">
+            <!-- 启用 AList -->
+            <div class="setting-item">
+              <div class="setting-info">
+                <div class="setting-label-row">
+                  <label class="setting-label">{{ 'settings.storage.alist.enabled.label' | translate }}</label>
+                  <p-toggle-switch
+                    name="alistEnabled"
+                    [(ngModel)]="settings.enabled"
+                    (ngModelChange)="onToggleEnabled($event)"
+                    inputId="alistEnabled">
+                  </p-toggle-switch>
+                </div>
+                <p class="setting-description">
+                  {{ 'settings.storage.alist.enabled.description' | translate }}
+                </p>
+              </div>
+            </div>
+
+            <!-- AList 服务器地址 -->
+            <div class="setting-item">
+              <div class="setting-info">
+                <div class="setting-label-row">
+                  <label class="setting-label">{{ 'settings.storage.alist.baseUrl.label' | translate }}</label>
+                  <div class="token-input-group">
+                    <input
+                      pInputText
+                      id="baseUrl"
+                      name="baseUrl"
+                      [(ngModel)]="settings.baseUrl"
+                      [disabled]="!editMode"
+                      [placeholder]="'settings.storage.alist.baseUrl.placeholder' | translate"
+                      class="token-input"/>
+                    <p-button
+                      icon="pi pi-copy"
+                      outlined="true"
+                      severity="info"
+                      size="small"
+                      (onClick)="copyText(settings.baseUrl, 'settings.storage.clipboard.label.baseUrl')"
+                      [disabled]="!settings.baseUrl">
+                    </p-button>
+                  </div>
+                </div>
+                <p class="setting-description">
+                  {{ 'settings.storage.alist.baseUrl.description' | translate }}
+                </p>
+              </div>
+            </div>
+
+            <!-- AList 用户名 -->
+            <div class="setting-item">
+              <div class="setting-info">
+                <div class="setting-label-row">
+                  <label class="setting-label">{{ 'settings.storage.alist.username.label' | translate }}</label>
+                  <div class="token-input-group">
+                    <input
+                      pInputText
+                      id="alistUsername"
+                      name="alistUsername"
+                      [(ngModel)]="settings.username"
+                      [disabled]="!editMode"
+                      [placeholder]="'settings.storage.alist.username.placeholder' | translate"
+                      class="token-input"/>
+                    <p-button
+                      icon="pi pi-copy"
+                      outlined="true"
+                      severity="info"
+                      size="small"
+                      (onClick)="copyText(settings.username, 'settings.storage.clipboard.label.username')"
+                      [disabled]="!settings.username">
+                    </p-button>
+                  </div>
+                </div>
+                <p class="setting-description">
+                  {{ 'settings.storage.alist.username.description' | translate }}
+                </p>
+              </div>
+            </div>
+
+            <!-- AList 密码 -->
+            <div class="setting-item">
+              <div class="setting-info">
+                <div class="setting-label-row">
+                  <label class="setting-label">{{ 'settings.storage.alist.password.label' | translate }}</label>
+                  <div class="token-input-group">
+                    <input
+                      pInputText
+                      id="alistPassword"
+                      name="alistPassword"
+                      [type]="showPassword ? 'text' : 'password'"
+                      [(ngModel)]="settings.password"
+                      [disabled]="!editMode"
+                      [placeholder]="'settings.storage.alist.password.placeholder' | translate"
+                      class="token-input-password"/>
+                    <p-button
+                      icon="pi pi-copy"
+                      outlined="true"
+                      severity="info"
+                      size="small"
+                      (onClick)="copyText(settings.password, 'settings.storage.clipboard.label.password')"
+                      [disabled]="!settings.password">
+                    </p-button>
+                    <p-button
+                      [icon]="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"
+                      outlined="true"
+                      severity="info"
+                      size="small"
+                      (onClick)="toggleShowPassword()"
+                      [disabled]="!settings.password">
+                    </p-button>
+                  </div>
+                </div>
+                <p class="setting-description">
+                  {{ 'settings.storage.alist.password.description' | translate }}
+                </p>
+              </div>
+            </div>
+
+            <!-- AList Token -->
+            <div class="setting-item">
+              <div class="setting-info">
+                <div class="setting-label-row">
+                  <label class="setting-label">{{ 'settings.storage.alist.token.label' | translate }}</label>
+                  <div class="token-input-group">
+                    <input
+                      pInputText
+                      id="alistToken"
+                      name="alistToken"
+                      [type]="showToken ? 'text' : 'password'"
+                      [(ngModel)]="settings.token"
+                      [disabled]="!editMode"
+                      [placeholder]="'settings.storage.alist.token.placeholder' | translate"
+                      class="token-input-password"/>
+                    <p-button
+                      icon="pi pi-copy"
+                      outlined="true"
+                      severity="info"
+                      size="small"
+                      (onClick)="copyText(settings.token, 'settings.storage.clipboard.label.token')"
+                      [disabled]="!settings.token">
+                    </p-button>
+                    <p-button
+                      [icon]="showToken ? 'pi pi-eye-slash' : 'pi pi-eye'"
+                      outlined="true"
+                      severity="info"
+                      size="small"
+                      (onClick)="toggleShowToken()"
+                      [disabled]="!settings.token">
+                    </p-button>
+                  </div>
+                </div>
+                <p class="setting-description">
+                  {{ 'settings.storage.alist.token.description' | translate }}
+                </p>
+              </div>
+            </div>
+
+            <p-divider></p-divider>
+
+            <!-- 连接超时 -->
+            <div class="setting-item">
+              <div class="setting-info">
+                <div class="setting-label-row">
+                  <label class="setting-label">{{ 'settings.storage.alist.connectTimeout.label' | translate }}</label>
+                  <div class="timeout-input-group">
+                    <p-inputNumber
+                      id="connectTimeout"
+                      name="connectTimeout"
+                      [(ngModel)]="settings.connectTimeout"
+                      [disabled]="!editMode"
+                      [min]="1000"
+                      [max]="300000"
+                      [step]="1000"
+                      suffix=" ms"
+                      inputStyleClass="timeout-input">
+                    </p-inputNumber>
+                  </div>
+                </div>
+                <p class="setting-description">
+                  {{ 'settings.storage.alist.connectTimeout.description' | translate }}
+                </p>
+              </div>
+            </div>
+
+            <!-- 读取超时 -->
+            <div class="setting-item">
+              <div class="setting-info">
+                <div class="setting-label-row">
+                  <label class="setting-label">{{ 'settings.storage.alist.readTimeout.label' | translate }}</label>
+                  <div class="timeout-input-group">
+                    <p-inputNumber
+                      id="readTimeout"
+                      name="readTimeout"
+                      [(ngModel)]="settings.readTimeout"
+                      [disabled]="!editMode"
+                      [min]="1000"
+                      [max]="600000"
+                      [step]="1000"
+                      suffix=" ms"
+                      inputStyleClass="timeout-input">
+                    </p-inputNumber>
+                  </div>
+                </div>
+                <p class="setting-description">
+                  {{ 'settings.storage.alist.readTimeout.description' | translate }}
+                </p>
+              </div>
+            </div>
+
+            <!-- 启用重定向下载 -->
+            <div class="setting-item">
+              <div class="setting-info">
+                <div class="setting-label-row">
+                  <label class="setting-label">{{ 'settings.storage.alist.redirectDownload.label' | translate }}</label>
+                  <p-toggle-switch
+                    name="redirectDownload"
+                    [(ngModel)]="settings.enableRedirectDownload"
+                    (ngModelChange)="onToggleRedirectDownload($event)"
+                    [disabled]="!editMode"
+                    inputId="redirectDownload">
+                  </p-toggle-switch>
+                </div>
+                <p class="setting-description">
+                  {{ 'settings.storage.alist.redirectDownload.description' | translate }}
+                </p>
+              </div>
+            </div>
+
+            <p-divider></p-divider>
+
+            <!-- 操作按钮 -->
+            <div class="setting-item">
+              <div class="setting-info">
+                <div class="setting-label-row">
+                  <label class="setting-label">{{ 'settings.storage.alist.management.label' | translate }}</label>
+                  <div class="action-buttons">
+                    @if (editMode) {
+                      <p-button
+                        icon="pi pi-times"
+                        outlined="true"
+                        severity="secondary"
+                        [label]="'common.cancel' | translate"
+                        size="small"
+                        (onClick)="onCancel()">
+                      </p-button>
+                      <p-button
+                        icon="pi pi-save"
+                        outlined="true"
+                        severity="success"
+                        [label]="'common.save' | translate"
+                        size="small"
+                        (onClick)="onEditSave()"
+                        [disabled]="!canSave">
+                      </p-button>
+                    } @else {
+                      <p-button
+                        icon="pi pi-pencil"
+                        outlined="true"
+                        severity="warn"
+                        [label]="'settings.storage.alist.management.action.edit' | translate"
+                        size="small"
+                        (onClick)="onEditSave()">
+                      </p-button>
+                    }
+                    <p-button
+                      icon="pi pi-bolt"
+                      outlined="true"
+                      severity="info"
+                      [label]="'settings.storage.alist.management.action.test' | translate"
+                      size="small"
+                      (onClick)="testConnection()"
+                      [disabled]="!settings.baseUrl">
+                    </p-button>
+                  </div>
+                </div>
+                <p class="setting-description">
+                  {{ 'settings.storage.alist.management.description' | translate }}
+                </p>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

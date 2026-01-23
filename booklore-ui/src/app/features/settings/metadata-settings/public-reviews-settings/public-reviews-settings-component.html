@@ -2,7 +2,7 @@
   <div class="setting-item">
     <div class="setting-info">
       <div class="setting-label-row">
-        <label class="setting-label">Download Public Reviews</label>
+        <label class="setting-label">{{ 'settings.publicReviews.download.label' | translate }}</label>
         <p-toggleswitch
           [(ngModel)]="publicReviewSettings.downloadEnabled"
           (onChange)="onPublicReviewsToggle($event.checked)">
@@ -10,7 +10,7 @@
       </div>
       <p class="setting-description">
         <i class="pi pi-info-circle"></i>
-        Enable downloading user reviews from configured platforms (Amazon, Goodreads, Hardcover). Reviews will be stored with your books for offline access.
+        {{ 'settings.publicReviews.download.description' | translate }}
       </p>
     </div>
   </div>
@@ -19,7 +19,7 @@
     <div class="setting-item">
       <div class="setting-info">
         <div class="setting-label-row">
-          <label class="setting-label">Auto Download on Book Open</label>
+          <label class="setting-label">{{ 'settings.publicReviews.autoDownload.label' | translate }}</label>
           <p-toggleswitch
             [(ngModel)]="publicReviewSettings.autoDownloadEnabled"
             (onChange)="onAutoDownloadToggle($event.checked)">
@@ -27,15 +27,15 @@
         </div>
         <p class="setting-description">
           <i class="pi pi-info-circle"></i>
-          Automatically fetch reviews when you open a book's details page. When disabled, reviews will only be downloaded manually or during metadata refresh, reducing background network activity and improving performance.
+          {{ 'settings.publicReviews.autoDownload.description' | translate }}
         </p>
       </div>
     </div>
 
     <div class="review-sources-section">
       <div class="sources-header">
-        <h4 class="subsection-title">Review Sources</h4>
-        <p class="subsection-description">Configure which platforms to download reviews from and set limits for each source.</p>
+        <h4 class="subsection-title">{{ 'settings.publicReviews.sources.title' | translate }}</h4>
+        <p class="subsection-description">{{ 'settings.publicReviews.sources.description' | translate }}</p>
       </div>
 
       <div class="providers-list">
@@ -51,7 +51,7 @@
                   </p-toggleswitch>
                   @if (provider.enabled) {
                     <div class="max-reviews-control">
-                      <label class="max-reviews-label">Max Reviews:</label>
+                      <label class="max-reviews-label">{{ 'settings.publicReviews.sources.maxReviews.label' | translate }}</label>
                       <input
                         type="number"
                         class="max-reviews-input"
@@ -59,7 +59,7 @@
                         max="10"
                         [(ngModel)]="provider.maxReviews"
                         (blur)="onMaxReviewsChange(provider.provider, provider.maxReviews)"
-                        title="Number of reviews to download (1-10)">
+                        [title]="'settings.publicReviews.title.maxReviewsHint' | translate">
                     </div>
                   }
                 </div>
@@ -71,7 +71,7 @@
         @if (publicReviewSettings.providers.length === 0) {
           <div class="no-providers-message">
             <i class="pi pi-exclamation-triangle"></i>
-            <span>No review sources available. Please ensure metadata providers are configured in the Provider Settings section above.</span>
+            <span>{{ 'settings.publicReviews.sources.empty' | translate }}</span>
           </div>
         }
       </div>

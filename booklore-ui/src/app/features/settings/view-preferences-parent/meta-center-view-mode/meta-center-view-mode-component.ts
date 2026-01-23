@@ -5,12 +5,14 @@ import {UserService} from '../../user-management/user.service';
 import {MessageService} from 'primeng/api';
 import {filter, take, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-meta-center-view-mode-component',
   imports: [
     Tooltip,
-    FormsModule
+    FormsModule,
+    TranslateModule
   ],
   templateUrl: './meta-center-view-mode-component.html',
   styleUrl: './meta-center-view-mode-component.scss'
@@ -21,6 +23,7 @@ export class MetaCenterViewModeComponent implements OnInit, OnDestroy {
 
   private userService = inject(UserService);
   private messageService = inject(MessageService);
+  private translateService = inject(TranslateService);
   private readonly destroy$ = new Subject<void>();
 
   ngOnInit(): void {
@@ -64,8 +67,8 @@ export class MetaCenterViewModeComponent implements OnInit, OnDestroy {
 
     this.messageService.add({
       severity: 'success',
-      summary: 'Preferences Updated',
-      detail: 'Your metadata center view preference has been saved.',
+      summary: this.translateService.instant('settings.toast.preferencesUpdated.summary'),
+      detail: this.translateService.instant('settings.metaCenterViewMode.toast.viewModeSaved.detail'),
       life: 1500,
     });
   }
@@ -79,8 +82,8 @@ export class MetaCenterViewModeComponent implements OnInit, OnDestroy {
 
     this.messageService.add({
       severity: 'success',
-      summary: 'Preferences Updated',
-      detail: 'Your series view mode preference has been saved.',
+      summary: this.translateService.instant('settings.toast.preferencesUpdated.summary'),
+      detail: this.translateService.instant('settings.metaCenterViewMode.toast.seriesViewModeSaved.detail'),
       life: 1500,
     });
   }

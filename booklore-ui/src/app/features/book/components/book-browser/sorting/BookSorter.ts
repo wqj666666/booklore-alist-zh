@@ -1,33 +1,42 @@
 import {SortDirection, SortOption} from '../../../model/sort.model';
 
+export type SortOptionWithKey = SortOption & { labelKey: string };
+
 export class BookSorter {
   selectedSort: SortOption | undefined = undefined;
 
-  sortOptions: SortOption[] = [
-    {label: 'Title', field: 'title', direction: SortDirection.ASCENDING},
-    {label: 'Title + Series', field: 'titleSeries', direction: SortDirection.ASCENDING},
-    {label: 'File Name', field: 'fileName', direction: SortDirection.ASCENDING},
-    {label: 'Author', field: 'author', direction: SortDirection.ASCENDING},
-    {label: 'Author + Series', field: 'authorSeries', direction: SortDirection.ASCENDING},
-    {label: 'Last Read', field: 'lastReadTime', direction: SortDirection.ASCENDING},
-    {label: 'Personal Rating', field: 'personalRating', direction: SortDirection.ASCENDING},
-    {label: 'Added On', field: 'addedOn', direction: SortDirection.ASCENDING},
-    {label: 'File Size', field: 'fileSizeKb', direction: SortDirection.ASCENDING},
-    {label: 'Locked', field: 'locked', direction: SortDirection.ASCENDING},
-    {label: 'Publisher', field: 'publisher', direction: SortDirection.ASCENDING},
-    {label: 'Published Date', field: 'publishedDate', direction: SortDirection.ASCENDING},
-    {label: 'Amazon Rating', field: 'amazonRating', direction: SortDirection.ASCENDING},
-    {label: 'Amazon #', field: 'amazonReviewCount', direction: SortDirection.ASCENDING},
-    {label: 'Goodreads Rating', field: 'goodreadsRating', direction: SortDirection.ASCENDING},
-    {label: 'Goodreads #', field: 'goodreadsReviewCount', direction: SortDirection.ASCENDING},
-    {label: 'Hardcover Rating', field: 'hardcoverRating', direction: SortDirection.ASCENDING},
-    {label: 'Hardcover #', field: 'hardcoverReviewCount', direction: SortDirection.ASCENDING},
-    {label: 'Ranobedb Rating', field: 'ranobedbRating', direction: SortDirection.ASCENDING},
-    {label: 'Pages', field: 'pageCount', direction: SortDirection.ASCENDING},
-    {label: 'Random', field: 'random', direction: SortDirection.ASCENDING},
+  sortOptions: SortOptionWithKey[] = [
+    {labelKey: 'book.browser.sort.title', label: '', field: 'title', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.titleSeries', label: '', field: 'titleSeries', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.fileName', label: '', field: 'fileName', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.author', label: '', field: 'author', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.authorSeries', label: '', field: 'authorSeries', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.lastRead', label: '', field: 'lastReadTime', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.personalRating', label: '', field: 'personalRating', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.addedOn', label: '', field: 'addedOn', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.fileSize', label: '', field: 'fileSizeKb', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.locked', label: '', field: 'locked', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.publisher', label: '', field: 'publisher', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.publishedDate', label: '', field: 'publishedDate', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.amazonRating', label: '', field: 'amazonRating', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.amazonReviewCount', label: '', field: 'amazonReviewCount', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.goodreadsRating', label: '', field: 'goodreadsRating', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.goodreadsReviewCount', label: '', field: 'goodreadsReviewCount', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.hardcoverRating', label: '', field: 'hardcoverRating', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.hardcoverReviewCount', label: '', field: 'hardcoverReviewCount', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.ranobedbRating', label: '', field: 'ranobedbRating', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.pageCount', label: '', field: 'pageCount', direction: SortDirection.ASCENDING},
+    {labelKey: 'book.browser.sort.random', label: '', field: 'random', direction: SortDirection.ASCENDING},
   ];
 
   constructor(private applySortOption: (sort: SortOption) => void) {
+  }
+
+  updateLabels(getLabel: (key: string) => string): void {
+    this.sortOptions = this.sortOptions.map(opt => ({
+      ...opt,
+      label: getLabel(opt.labelKey) || opt.label
+    }));
   }
 
   sortBooks(field: string): void {

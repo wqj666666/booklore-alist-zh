@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {DynamicDialogRef} from 'primeng/dynamicdialog';
 import {LibraryService} from '../../../book/service/library.service';
 import {Observable} from 'rxjs';
@@ -21,6 +21,8 @@ import {DialogLauncherService} from '../../../../shared/services/dialog-launcher
 import {SortService} from '../../../book/service/sort.service';
 import {PageTitleService} from "../../../../shared/service/page-title.service";
 import {SortDirection, SortOption} from '../../../book/model/sort.model';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {Subscription} from 'rxjs';
 
 const DEFAULT_MAX_ITEMS = 20;
 
@@ -33,11 +35,12 @@ const DEFAULT_MAX_ITEMS = 20;
     DashboardScrollerComponent,
     AsyncPipe,
     ProgressSpinner,
-    TooltipModule
+    TooltipModule,
+    TranslateModule
   ],
   standalone: true
 })
-export class MainDashboardComponent implements OnInit {
+export class MainDashboardComponent implements OnInit, OnDestroy {
 
   private bookService = inject(BookService);
   private dialogLauncher = inject(DialogLauncherService);
@@ -47,6 +50,9 @@ export class MainDashboardComponent implements OnInit {
   private ruleEvaluatorService = inject(BookRuleEvaluatorService);
   private sortService = inject(SortService);
   private pageTitle = inject(PageTitleService);
+  private translateService = inject(TranslateService);
+
+  private langSub?: Subscription;
 
   bookState$ = this.bookService.bookState$;
   dashboardConfig$ = this.dashboardConfigService.config$;
@@ -60,7 +66,10 @@ export class MainDashboardComponent implements OnInit {
   ScrollerType = ScrollerType;
 
   ngOnInit(): void {
-    this.pageTitle.setPageTitle('Dashboard');
+    this.pageTitle.setPageTitle(this.translateService.instant('dashboard.pageTitle'));
+    this.langSub = this.translateService.onLangChange.subscribe(() => {
+      this.pageTitle.setPageTitle(this.translateService.instant('dashboard.pageTitle'));
+    });
 
     this.dashboardConfig$.subscribe(() => {
       this.scrollerBooksCache.clear();
@@ -69,6 +78,10 @@ export class MainDashboardComponent implements OnInit {
     this.magicShelfService.shelvesState$.subscribe(() => {
       this.scrollerBooksCache.clear();
     });
+  }
+
+  ngOnDestroy(): void {
+    this.langSub?.unsubscribe();
   }
 
   private getLastReadBooks(maxItems: number, sortBy?: string): Observable<Book[]> {

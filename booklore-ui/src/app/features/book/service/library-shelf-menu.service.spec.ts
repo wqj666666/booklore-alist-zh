@@ -15,6 +15,7 @@ import {Shelf} from '../model/shelf.model';
 import {MetadataRefreshType} from '../../metadata/model/request/metadata-refresh-type.enum';
 import {of, throwError} from 'rxjs';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {TranslateService} from '@ngx-translate/core';
 
 describe('LibraryShelfMenuService', () => {
   let service: LibraryShelfMenuService;
@@ -28,6 +29,7 @@ describe('LibraryShelfMenuService', () => {
   let magicShelfService: any;
   let userService: any;
   let loadingService: any;
+  let translateServiceMock: any;
 
   const mockLibrary: Library = {id: 1, name: 'Lib1'} as Library;
   const mockShelf: Shelf = {id: 2, name: 'Shelf1'} as Shelf;
@@ -63,6 +65,39 @@ describe('LibraryShelfMenuService', () => {
       show: vi.fn().mockReturnValue('loader-id'),
       hide: vi.fn()
     };
+    translateServiceMock = {
+      instant: vi.fn((key: string, params?: Record<string, any>) => {
+        const dictionary: Record<string, string> = {
+          'book.browser.entityMenu.options': 'Options',
+          'book.browser.entityMenu.library.edit': 'Edit Library',
+          'book.browser.entityMenu.library.rescan.label': 'Re-scan Library',
+          'book.browser.entityMenu.library.customFetchMetadata': 'Custom Fetch Metadata',
+          'book.browser.entityMenu.library.autoFetchMetadata': 'Auto Fetch Metadata',
+          'book.browser.entityMenu.library.delete.label': 'Delete Library',
+          'book.browser.entityMenu.shelf.edit': 'Edit Shelf',
+          'book.browser.entityMenu.shelf.delete.label': 'Delete Shelf',
+          'book.browser.entityMenu.magicShelf.edit': 'Edit Magic Shelf',
+          'book.browser.entityMenu.magicShelf.delete.label': 'Delete Magic Shelf',
+          'book.browser.entityMenu.toast.success.summary': 'Success',
+          'book.browser.entityMenu.toast.failed.summary': 'Failed',
+          'book.browser.entityMenu.library.rescan.toast.scheduled': 'Library refresh scheduled',
+          'book.browser.entityMenu.library.rescan.toast.failed': 'Failed to refresh library',
+          'book.browser.entityMenu.library.delete.toast.deleted': 'Library was deleted',
+          'book.browser.entityMenu.library.delete.toast.failed': 'Failed to delete library',
+          'book.browser.entityMenu.shelf.delete.toast.deleted': 'Shelf was deleted',
+          'book.browser.entityMenu.shelf.delete.toast.failed': 'Failed to delete shelf',
+          'book.browser.entityMenu.magicShelf.delete.toast.deleted': 'Magic shelf was deleted',
+          'book.browser.entityMenu.magicShelf.delete.toast.failed': 'Failed to delete shelf',
+          'common.confirm': 'Confirmation',
+          'common.cancel': 'Cancel',
+          'common.yes': 'Yes',
+        };
+        if (dictionary[key]) return dictionary[key];
+        if (key.endsWith('.confirmMessage')) return `Confirm ${params?.['name'] ?? ''}`.trim();
+        if (key.endsWith('.deleting')) return `Deleting ${params?.['name'] ?? ''}`.trim();
+        return key;
+      })
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -76,7 +111,8 @@ describe('LibraryShelfMenuService', () => {
         {provide: DialogLauncherService, useValue: dialogLauncherService},
         {provide: MagicShelfService, useValue: magicShelfService},
         {provide: UserService, useValue: userService},
-        {provide: LoadingService, useValue: loadingService}
+        {provide: LoadingService, useValue: loadingService},
+        {provide: TranslateService, useValue: translateServiceMock}
       ]
     });
 

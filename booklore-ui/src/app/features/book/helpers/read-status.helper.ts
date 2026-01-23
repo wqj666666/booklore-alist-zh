@@ -72,6 +72,32 @@ export class ReadStatusHelper {
     }
   }
 
+  getReadStatusLabelKey(readStatus: ReadStatus | undefined): string {
+    if (!readStatus) return '';
+    switch (readStatus) {
+      case ReadStatus.UNREAD:
+        return 'book.readStatus.unread';
+      case ReadStatus.READ:
+        return 'book.readStatus.read';
+      case ReadStatus.READING:
+        return 'book.readStatus.currentlyReading';
+      case ReadStatus.RE_READING:
+        return 'book.readStatus.reReading';
+      case ReadStatus.PARTIALLY_READ:
+        return 'book.readStatus.partiallyRead';
+      case ReadStatus.PAUSED:
+        return 'book.readStatus.paused';
+      case ReadStatus.ABANDONED:
+        return 'book.readStatus.abandoned';
+      case ReadStatus.WONT_READ:
+        return 'book.readStatus.wontRead';
+      case ReadStatus.UNSET:
+        return 'book.readStatus.unset';
+      default:
+        return '';
+    }
+  }
+
   shouldShowStatusIcon(readStatus: ReadStatus | undefined): boolean {
     return !!(readStatus && readStatus !== ReadStatus.UNREAD && readStatus !== ReadStatus.UNSET);
   }

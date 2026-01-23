@@ -3,12 +3,14 @@ import {FormsModule} from '@angular/forms';
 import {ReaderPreferencesService} from '../reader-preferences.service';
 import {PageSpread, UserSettings} from '../../user-management/user.service';
 import {TooltipModule} from 'primeng/tooltip';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-pdf-reader-preferences-component',
   imports: [
     FormsModule,
-    TooltipModule
+    TooltipModule,
+    TranslateModule
   ],
   templateUrl: './pdf-reader-preferences-component.html',
   styleUrl: './pdf-reader-preferences-component.scss'
@@ -19,16 +21,16 @@ export class PdfReaderPreferencesComponent {
   @Input() userSettings!: UserSettings;
 
   readonly spreads: {name: string; key: PageSpread; icon: string}[] = [
-    {name: 'Even', key: 'even', icon: 'pi pi-align-left'},
-    {name: 'Odd', key: 'odd', icon: 'pi pi-align-right'},
-    {name: 'None', key: 'off', icon: 'pi pi-minus'}
+    {name: 'settings.readerPreferences.options.pageSpread.even', key: 'even', icon: 'pi pi-align-left'},
+    {name: 'settings.readerPreferences.options.pageSpread.odd', key: 'odd', icon: 'pi pi-align-right'},
+    {name: 'settings.readerPreferences.options.pageSpread.none', key: 'off', icon: 'pi pi-minus'}
   ];
 
   readonly zooms: {name: string; key: string; icon: string}[] = [
-    {name: 'Auto Zoom', key: 'auto', icon: 'pi pi-sparkles'},
-    {name: 'Page Fit', key: 'page-fit', icon: 'pi pi-window-maximize'},
-    {name: 'Page Width', key: 'page-width', icon: 'pi pi-arrows-h'},
-    {name: 'Actual Size', key: 'page-actual', icon: 'pi pi-expand'}
+    {name: 'settings.readerPreferences.options.zoom.auto', key: 'auto', icon: 'pi pi-sparkles'},
+    {name: 'settings.readerPreferences.options.zoom.pageFit', key: 'page-fit', icon: 'pi pi-window-maximize'},
+    {name: 'settings.readerPreferences.options.zoom.pageWidth', key: 'page-width', icon: 'pi pi-arrows-h'},
+    {name: 'settings.readerPreferences.options.zoom.actualSize', key: 'page-actual', icon: 'pi pi-expand'}
   ];
 
   get selectedSpread(): 'even' | 'odd' | 'off' {

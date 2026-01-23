@@ -1,13 +1,13 @@
 import {Component, ElementRef, inject, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import ePub from 'epubjs';
+import ePub, {Book as EpubJsBook, Location as EpubJsLocation, Navigation as EpubJsNavigation, Rendition as EpubJsRendition, TocItem as EpubJsTocItem} from 'epubjs';
 import {Drawer} from 'primeng/drawer';
-import {firstValueFrom, forkJoin, Subscription} from 'rxjs';
+import {firstValueFrom, forkJoin, Subject, Subscription} from 'rxjs';
 import {Button} from 'primeng/button';
 import {InputText} from 'primeng/inputtext';
 import {CommonModule, Location} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
-import {Book, BookSetting} from '../../../book/model/book.model';
+import {Book, BookSetting, EpubViewerSetting} from '../../../book/model/book.model';
 import {BookService} from '../../../book/service/book.service';
 import {Select} from 'primeng/select';
 import {UserService} from '../../../settings/user-management/user.service';
@@ -27,13 +27,15 @@ import {BookmarkEditDialogComponent} from './bookmark-edit-dialog.component';
 import {BookmarkViewDialogComponent} from './bookmark-view-dialog.component';
 import {CustomFontService} from '../../../../shared/service/custom-font.service';
 import {CustomFont} from '../../../../shared/model/custom-font.model';
-import {addCustomFontsToDropdown} from '../../../../shared/util/custom-font.util';
+import {addCustomFontsToDropdown, FontDropdownItem} from '../../../../shared/util/custom-font.util';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-epub-reader',
   templateUrl: './epub-reader.component.html',
   styleUrls: ['./epub-reader.component.scss'],
-  imports: [CommonModule, FormsModule, Drawer, Button, Select, ProgressSpinner, Tooltip, Slider, PrimeTemplate, Tabs, TabList, Tab, TabPanels, TabPanel, IconField, InputIcon, BookmarkEditDialogComponent, BookmarkViewDialogComponent, InputText],
+  imports: [CommonModule, FormsModule, Drawer, Button, Select, ProgressSpinner, Tooltip, Slider, PrimeTemplate, Tabs, TabList, Tab, TabPanels, TabPanel, IconField, InputIcon, BookmarkEditDialogComponent, BookmarkViewDialogComponent, InputText, TranslateModule],
   standalone: true
 })
 export class EpubReaderComponent implements OnInit, OnDestroy {
@@ -52,6 +54,7 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
   isDeletingBookmark = false;
   isEditingBookmark = false;
   private routeSubscription?: Subscription;
+  private destroy$ = new Subject<void>();
 
   filterText = '';
   viewDialogVisible = false;
@@ -75,11 +78,10 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
   editingBookmark: BookMark | null = null;
   showEditBookmarkDialog = false;
 
-  private book: any;
+  private book!: EpubJsBook;
   private epubArrayBuffer: ArrayBuffer | null = null;
-  private rendition: any;
-  private keyListener: (e: KeyboardEvent) => void = () => {
-  };
+  private rendition!: EpubJsRendition;
+  private keyListener: (e: KeyboardEvent) => void = () => undefined;
 
   fontSize?: number = 100;
   selectedFlow?: string = 'paginated';
@@ -93,31 +95,24 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
   customFontsReady = false;
   private customFontBlobUrls = new Map<number, string>();
 
-  fontTypes: any[] = [
-    {label: "Publisher's Default", value: null},
-    {label: 'Serif', value: 'serif'},
-    {label: 'Sans Serif', value: 'sans-serif'},
-    {label: 'Roboto', value: 'roboto'},
-    {label: 'Cursive', value: 'cursive'},
-    {label: 'Monospace', value: 'monospace'},
-  ];
+  fontTypes: FontDropdownItem[] = [];
 
-  themes: any[] = [
-    {label: 'White', value: EpubTheme.WHITE},
-    {label: 'Black', value: EpubTheme.BLACK},
-    {label: 'Grey', value: EpubTheme.GREY},
-    {label: 'Sepia', value: EpubTheme.SEPIA},
-    {label: 'Green', value: EpubTheme.GREEN},
-    {label: 'Lavender', value: EpubTheme.LAVENDER},
-    {label: 'Cream', value: EpubTheme.CREAM},
-    {label: 'Light Blue', value: EpubTheme.LIGHT_BLUE},
-    {label: 'Peach', value: EpubTheme.PEACH},
-    {label: 'Mint', value: EpubTheme.MINT},
-    {label: 'Dark Slate', value: EpubTheme.DARK_SLATE},
-    {label: 'Dark Olive', value: EpubTheme.DARK_OLIVE},
-    {label: 'Dark Purple', value: EpubTheme.DARK_PURPLE},
-    {label: 'Dark Teal', value: EpubTheme.DARK_TEAL},
-    {label: 'Dark Brown', value: EpubTheme.DARK_BROWN},
+  themes: {labelKey: string; value: EpubTheme}[] = [
+    {labelKey: 'readers.epub.theme.white', value: EpubTheme.WHITE},
+    {labelKey: 'readers.epub.theme.black', value: EpubTheme.BLACK},
+    {labelKey: 'readers.epub.theme.grey', value: EpubTheme.GREY},
+    {labelKey: 'readers.epub.theme.sepia', value: EpubTheme.SEPIA},
+    {labelKey: 'readers.epub.theme.green', value: EpubTheme.GREEN},
+    {labelKey: 'readers.epub.theme.lavender', value: EpubTheme.LAVENDER},
+    {labelKey: 'readers.epub.theme.cream', value: EpubTheme.CREAM},
+    {labelKey: 'readers.epub.theme.lightBlue', value: EpubTheme.LIGHT_BLUE},
+    {labelKey: 'readers.epub.theme.peach', value: EpubTheme.PEACH},
+    {labelKey: 'readers.epub.theme.mint', value: EpubTheme.MINT},
+    {labelKey: 'readers.epub.theme.darkSlate', value: EpubTheme.DARK_SLATE},
+    {labelKey: 'readers.epub.theme.darkOlive', value: EpubTheme.DARK_OLIVE},
+    {labelKey: 'readers.epub.theme.darkPurple', value: EpubTheme.DARK_PURPLE},
+    {labelKey: 'readers.epub.theme.darkTeal', value: EpubTheme.DARK_TEAL},
+    {labelKey: 'readers.epub.theme.darkBrown', value: EpubTheme.DARK_BROWN},
   ];
 
   private route = inject(ActivatedRoute);
@@ -130,10 +125,25 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
   private bookMarkService = inject(BookMarkService);
   private readingSessionService = inject(ReadingSessionService);
   private customFontService = inject(CustomFontService);
+  private translate = inject(TranslateService);
+
+  private readonly baseFontTypeKeys: {labelKey: string; value: string | null}[] = [
+    {labelKey: 'readers.epub.font.publisherDefault', value: null},
+    {labelKey: 'readers.epub.font.serif', value: 'serif'},
+    {labelKey: 'readers.epub.font.sansSerif', value: 'sans-serif'},
+    {labelKey: 'readers.epub.font.roboto', value: 'roboto'},
+    {labelKey: 'readers.epub.font.cursive', value: 'cursive'},
+    {labelKey: 'readers.epub.font.monospace', value: 'monospace'},
+  ];
 
   epub!: Book;
 
   ngOnInit(): void {
+    this.rebuildFontTypes();
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.rebuildFontTypes());
+
     this.routeSubscription = this.route.paramMap.subscribe(async (params) => {
       this.isLoading = true;
       const bookId = +params.get('bookId')!;
@@ -202,13 +212,28 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
         error: () => {
           this.messageService.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to load the book',
+            summary: this.translate.instant('readers.toast.errorSummary'),
+            detail: this.translate.instant('readers.epub.toast.loadBookFailedFallback'),
           });
           this.isLoading = false;
         },
       });
     });
+  }
+
+  private rebuildFontTypes(): void {
+    const preserved = this.fontTypes.filter(item =>
+      typeof item.value === 'string' && (item.value.startsWith('custom:') || item.value === 'separator')
+    );
+
+    this.fontTypes = this.baseFontTypeKeys.map(item => ({
+      label: this.translate.instant(item.labelKey),
+      value: item.value
+    }));
+
+    for (const item of preserved) {
+      this.fontTypes.push(item);
+    }
   }
 
   get filteredBookmarks(): BookMark[] {
@@ -412,19 +437,19 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
   }
 
   private updateViewerSetting(): void {
-    const epubSettings: any = {};
+    const epubSettings: Partial<EpubViewerSetting> = {};
 
     if (this.selectedTheme) epubSettings.theme = this.selectedTheme;
     if (this.selectedFontType) epubSettings.font = this.selectedFontType;
-    if (this.fontSize) epubSettings.fontSize = this.fontSize;
+    if (this.fontSize != null) epubSettings.fontSize = this.fontSize;
     if (this.selectedFlow) epubSettings.flow = this.selectedFlow;
     if (this.selectedSpread === 'single' || this.selectedSpread === 'double') epubSettings.spread = this.selectedSpread;
-    if (this.lineHeight) epubSettings.lineHeight = this.lineHeight;
-    if (this.letterSpacing) epubSettings.letterSpacing = this.letterSpacing;
+    if (this.lineHeight != null) epubSettings.lineHeight = this.lineHeight;
+    if (this.letterSpacing != null) epubSettings.letterSpacing = this.letterSpacing;
     if (this.selectedCustomFontId != null) epubSettings.customFontId = this.selectedCustomFontId;
 
     const bookSetting: BookSetting = {
-      epubSettings: epubSettings
+      epubSettings: epubSettings as EpubViewerSetting
     };
 
     this.bookService.updateViewerSetting(bookSetting, this.epub.id).subscribe();
@@ -672,7 +697,7 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
 
   private trackProgress(): void {
     if (!this.book || !this.rendition) return;
-    this.rendition.on('relocated', (location: any) => {
+    this.rendition.on('relocated', (location: EpubJsLocation) => {
       this.updateCurrentChapter(location);
       const cfi = location.end.cfi;
       this.currentCfi = location.start.cfi;
@@ -710,8 +735,8 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
       return this.book.locations.generate(1600);
     }).then(() => {
       this.locationsReady = true;
-      if (this.rendition.currentLocation()) {
-        const location = this.rendition.currentLocation();
+      const location = this.rendition.currentLocation();
+      if (location) {
         const cfi = location.end.cfi;
         const percentage = this.book.locations.percentageFromCfi(cfi);
         this.progressPercentage = Math.round(percentage * 1000) / 10;
@@ -736,7 +761,7 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
 
     this.book = ePub(this.epubArrayBuffer);
 
-    this.book.loaded.navigation.then((nav: any) => {
+    this.book.loaded.navigation.then((nav: EpubJsNavigation) => {
       this.chapters = this.extractChapters(nav.toc, 0);
     });
 
@@ -813,6 +838,9 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+
     if (this.readingSessionService.isSessionActive()) {
       this.readingSessionService.endSession(
         this.currentCfi || undefined,
@@ -857,9 +885,7 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
 
   onBookClick(event: MouseEvent): void {
 
-    const clickX = event.clientX;
     const clickY = event.clientY;
-    const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
 
     if (this.isMobileDevice()) {
@@ -886,7 +912,7 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
     this.startHeaderAutoHide();
   }
 
-  onHeaderZoneClick(event: MouseEvent): void {
+  onHeaderZoneClick(): void {
     if (!this.showHeader) {
       this.showHeader = true;
       this.clearHeaderTimeout();
@@ -966,7 +992,7 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
     }
   }
 
-  private updateCurrentChapter(location: any): void {
+  private updateCurrentChapter(location: EpubJsLocation | null): void {
     if (!location) return;
     const chapter = getChapter(this.book, location);
     if (chapter) {
@@ -977,7 +1003,7 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
     }
   }
 
-  private extractChapters(toc: any[], level: number): { label: string; href: string; level: number }[] {
+  private extractChapters(toc: EpubJsTocItem[], level: number): { label: string; href: string; level: number }[] {
     const chapters: { label: string; href: string; level: number }[] = [];
 
     for (const item of toc) {
@@ -1003,14 +1029,14 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
     if (this.isCurrentLocationBookmarked()) {
       this.messageService.add({
         severity: 'info',
-        summary: 'Info',
-        detail: 'Bookmark already exists at this location',
+        summary: this.translate.instant('readers.toast.infoSummary'),
+        detail: this.translate.instant('readers.epub.toast.bookmarkAlreadyExists'),
       });
       return;
     }
 
     this.isAddingBookmark = true;
-    const title = this.currentChapter || 'Untitled Bookmark';
+    const title = this.currentChapter || this.translate.instant('readers.epub.bookmarks.untitled');
     const request = {
       bookId: this.epub.id,
       cfi: this.currentCfi,
@@ -1024,16 +1050,16 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
         this.updateBookmarkStatus();
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: 'Bookmark created successfully',
+          summary: this.translate.instant('readers.toast.successSummary'),
+          detail: this.translate.instant('readers.epub.toast.bookmarkCreated'),
         });
         this.isAddingBookmark = false;
       },
       error: () => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to create bookmark',
+          summary: this.translate.instant('readers.toast.errorSummary'),
+          detail: this.translate.instant('readers.epub.toast.bookmarkCreateFailed'),
         });
         this.isAddingBookmark = false;
       },
@@ -1044,7 +1070,7 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
     if (this.isDeletingBookmark) {
       return;
     }
-    if (!confirm('Are you sure you want to delete this bookmark?')) {
+    if (!confirm(this.translate.instant('readers.epub.confirm.deleteBookmark'))) {
       return;
     }
 
@@ -1055,16 +1081,16 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
         this.updateBookmarkStatus();
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: 'Bookmark deleted successfully',
+          summary: this.translate.instant('readers.toast.successSummary'),
+          detail: this.translate.instant('readers.epub.toast.bookmarkDeleted'),
         });
         this.isDeletingBookmark = false;
       },
       error: () => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to delete bookmark',
+          summary: this.translate.instant('readers.toast.errorSummary'),
+          detail: this.translate.instant('readers.epub.toast.bookmarkDeleteFailed'),
         });
         this.isDeletingBookmark = false;
       },
@@ -1115,8 +1141,8 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
         }
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: 'Bookmark updated successfully',
+          summary: this.translate.instant('readers.toast.successSummary'),
+          detail: this.translate.instant('readers.epub.toast.bookmarkUpdated'),
         });
         this.showEditBookmarkDialog = false;
         this.editingBookmark = null;
@@ -1125,8 +1151,8 @@ export class EpubReaderComponent implements OnInit, OnDestroy {
       error: () => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to update bookmark',
+          summary: this.translate.instant('readers.toast.errorSummary'),
+          detail: this.translate.instant('readers.epub.toast.bookmarkUpdateFailed'),
         });
         this.showEditBookmarkDialog = false;
         this.editingBookmark = null;

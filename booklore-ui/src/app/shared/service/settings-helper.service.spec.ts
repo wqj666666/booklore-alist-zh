@@ -5,11 +5,13 @@ import {of, throwError} from 'rxjs';
 import {SettingsHelperService} from './settings-helper.service';
 import {AppSettingsService} from './app-settings.service';
 import {MessageService} from 'primeng/api';
+import {TranslateService} from '@ngx-translate/core';
 
 describe('SettingsHelperService', () => {
   let service: SettingsHelperService;
   let appSettingsServiceMock: any;
   let messageServiceMock: any;
+  let translateServiceMock: any;
 
   beforeEach(() => {
     appSettingsServiceMock = {
@@ -18,12 +20,24 @@ describe('SettingsHelperService', () => {
     messageServiceMock = {
       add: vi.fn()
     };
+    translateServiceMock = {
+      instant: vi.fn((key: string) => {
+        const dictionary: Record<string, string> = {
+          'settings.toast.saved.summary': 'Settings Saved',
+          'settings.toast.saved.detail': 'The settings were successfully saved!',
+          'settings.toast.saveError.summary': 'Error',
+          'settings.toast.saveError.detail': 'There was an error saving the settings.',
+        };
+        return dictionary[key] ?? key;
+      })
+    };
 
     TestBed.configureTestingModule({
       providers: [
         SettingsHelperService,
         {provide: AppSettingsService, useValue: appSettingsServiceMock},
-        {provide: MessageService, useValue: messageServiceMock}
+        {provide: MessageService, useValue: messageServiceMock},
+        {provide: TranslateService, useValue: translateServiceMock}
       ]
     });
 

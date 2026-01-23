@@ -7,7 +7,7 @@
       [src]="coverImageUrl"
       class="book-cover"
       [class.loaded]="isImageLoaded"
-      [alt]="'Cover of ' + displayTitle"
+      [alt]="'book.card.a11y.coverAlt' | translate:{ title: (displayTitle || '') }"
       loading="lazy"
       decoding="async"
       (load)="onImageLoad()"/>
@@ -19,19 +19,34 @@
     }
 
     @if (book.seriesCount && book.seriesCount >= 1) {
-      <div class="series-items-count-overlay" [pTooltip]="seriesCountTooltip" tooltipPosition="right">
+      <div class="series-items-count-overlay" [pTooltip]="'book.card.tooltip.seriesCollapsed' | translate:{ count: book.seriesCount }" tooltipPosition="right">
         <i class="pi pi-book" style="font-size: 0.65rem; margin-right: 2px;"></i>{{ book.seriesCount }}
       </div>
     }
 
     @if (_isSeriesViewActive) {
-      <p-button [rounded]="true" icon="pi pi-info" class="info-btn" (click)="openSeriesInfo()"></p-button>
+      <p-button
+        [rounded]="true"
+        icon="pi pi-info"
+        class="info-btn"
+        (click)="openSeriesInfo()"
+        [ariaLabel]="'book.card.a11y.viewSeriesDetails' | translate"></p-button>
     } @else {
-      <p-button [rounded]="true" icon="pi pi-info" class="info-btn" (click)="openBookInfo(book)"></p-button>
+      <p-button
+        [rounded]="true"
+        icon="pi pi-info"
+        class="info-btn"
+        (click)="openBookInfo(book)"
+        [ariaLabel]="'book.card.a11y.viewDetails' | translate"></p-button>
     }
 
     @if (!_isSeriesViewActive && _canReadBook) {
-      <p-button [rounded]="true" icon="pi pi-book" class="read-btn" (click)="readBook(book)"></p-button>
+      <p-button
+        [rounded]="true"
+        icon="pi pi-book"
+        class="read-btn"
+        (click)="readBook(book)"
+        [ariaLabel]="'book.card.a11y.readBook' | translate"></p-button>
     }
 
     @if (isCheckboxEnabled) {
@@ -40,7 +55,8 @@
         class="select-checkbox"
         (click)="captureMouseEvent($event)"
         [ngModel]="isSelected"
-        (onChange)="toggleSelection($event)">
+        (onChange)="toggleSelection($event)"
+        [ariaLabel]="'book.card.a11y.selectBook' | translate:{ title: (displayTitle || '') }">
       </p-checkbox>
     }
 
@@ -79,14 +95,14 @@
       @if (_shouldShowStatusIcon) {
         <div class="read-status-indicator"
              [ngClass]="_readStatusClass"
-             [pTooltip]="readStatusTooltip"
+             [pTooltip]="readStatusTooltipKey | translate"
              tooltipPosition="bottom">
           <i [class]="_readStatusIcon" style="font-size: 0.9rem"></i>
         </div>
       }
       <h4 class="book-title m-0 pl-2"
           tooltipPosition="bottom"
-          [pTooltip]="titleTooltip">
+          [pTooltip]="'book.card.tooltip.title' | translate:{ title: (displayTitle || '') }">
         {{ displayTitle }}
       </h4>
       <p-tieredmenu #menu [model]="items" [popup]="true" appendTo="body" (onShow)="onMenuShow()" (onHide)="onMenuHide()"></p-tieredmenu>
@@ -95,7 +111,8 @@
         size="small"
         [text]="true"
         (click)="onMenuToggle($event, menu)"
-        icon="pi pi-ellipsis-v">
+        icon="pi pi-ellipsis-v"
+        [ariaLabel]="'book.card.a11y.openActionsMenu' | translate">
       </p-button>
     </div>
   }

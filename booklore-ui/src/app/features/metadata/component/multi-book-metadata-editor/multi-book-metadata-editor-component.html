@@ -2,10 +2,10 @@
   <p-tabs [value]="'edit'" lazy="true">
     <p-tablist>
       @if (admin || canEditMetadata) {
-        <p-tab value="edit">Edit Metadata</p-tab>
+        <p-tab value="edit">{{ 'metadata.multiEditor.tab.editMetadata' | translate }}</p-tab>
       }
       @if (admin || canEditMetadata) {
-        <p-tab value="match">Search Metadata</p-tab>
+        <p-tab value="match">{{ 'metadata.multiEditor.tab.searchMetadata' | translate }}</p-tab>
       }
     </p-tablist>
     <p-tabpanels class="h-[78dvh]">

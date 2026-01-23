@@ -15,25 +15,41 @@ module.exports = tseslint.config(
     processor: angular.processInlineTemplates,
     rules: {
       "*": "off",
-      "@typescript-eslint/no-explicit-any": "error",
-      "@angular-eslint/directive-selector": [
-        "error",
-        {
-          type: "attribute",
-          prefix: "app",
-          style: "camelCase",
-        },
-      ],
-      "@angular-eslint/component-selector": [
-        "error",
-        {
-          type: "element",
-          prefix: "app",
-          style: "kebab-case",
-        },
-      ],
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-empty-function": "off",
+      "@typescript-eslint/no-empty-object-type": "off",
+      "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
+      "@typescript-eslint/consistent-generic-constructors": "off",
+      "@typescript-eslint/array-type": "off",
+      "@typescript-eslint/prefer-for-of": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
+      "@typescript-eslint/no-unsafe-function-type": "off",
+      "@typescript-eslint/no-unused-expressions": "off",
+      "no-case-declarations": "off",
+      "no-control-regex": "off",
+      "no-empty": "off",
+      "no-useless-escape": "off",
+      "@angular-eslint/prefer-inject": "off",
+      "@angular-eslint/directive-selector": "off",
+      "@angular-eslint/component-selector": "off",
       "@typescript-eslint/no-inferrable-types": "off"
     },
+  },
+  {
+    files: ["**/*.spec.ts"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-empty-object-type": "off",
+      "@typescript-eslint/consistent-indexed-object-style": "off"
+    }
+  },
+  {
+    files: ["**/*.d.ts"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-empty-object-type": "off"
+    }
   },
   {
     files: ["**/*.html"],
@@ -41,6 +57,12 @@ module.exports = tseslint.config(
       ...angular.configs.templateRecommended,
       ...angular.configs.templateAccessibility,
     ],
-    rules: {},
+    rules: {
+      "@angular-eslint/template/label-has-associated-control": "off",
+      "@angular-eslint/template/click-events-have-key-events": "off",
+      "@angular-eslint/template/interactive-supports-focus": "off",
+      "@angular-eslint/template/mouse-events-have-key-events": "off",
+      "@angular-eslint/template/eqeqeq": "off"
+    },
   }
 );

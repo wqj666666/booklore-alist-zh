@@ -1,4 +1,5 @@
-import {Component, inject, OnInit, ChangeDetectorRef} from '@angular/core';
+import {ChangeDetectorRef, Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {Button} from 'primeng/button';
@@ -8,6 +9,7 @@ import {AutoComplete} from 'primeng/autocomplete';
 import {Divider} from 'primeng/divider';
 import {SelectButton} from 'primeng/selectbutton';
 import {BookMetadata} from '../../../book/model/book.model';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 export interface BulkEditResult {
   fields: Partial<BookMetadata>;
@@ -17,7 +19,7 @@ export interface BulkEditResult {
 
 interface BulkEditField {
   name: string;
-  label: string;
+  labelKey: string;
   type: 'text' | 'chips' | 'number';
   controlName: string;
 }
@@ -34,6 +36,7 @@ interface BulkEditField {
     AutoComplete,
     Divider,
     SelectButton,
+    TranslateModule,
   ],
   templateUrl: './bookdrop-bulk-edit-dialog.component.html',
   styleUrl: './bookdrop-bulk-edit-dialog.component.scss'
@@ -43,6 +46,8 @@ export class BookdropBulkEditDialogComponent implements OnInit {
   private readonly dialogRef = inject(DynamicDialogRef);
   private readonly config = inject(DynamicDialogConfig);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly translate = inject(TranslateService);
+  private readonly destroyRef = inject(DestroyRef);
 
   fileCount: number = 0;
   mergeArrays = true;
@@ -61,30 +66,42 @@ export class BookdropBulkEditDialogComponent implements OnInit {
   });
 
   textFields: BulkEditField[] = [
-    {name: 'seriesName', label: 'Series Name', type: 'text', controlName: 'seriesName'},
-    {name: 'publisher', label: 'Publisher', type: 'text', controlName: 'publisher'},
-    {name: 'language', label: 'Language', type: 'text', controlName: 'language'},
+    {name: 'seriesName', labelKey: 'bookdrop.bulkEdit.field.seriesName', type: 'text', controlName: 'seriesName'},
+    {name: 'publisher', labelKey: 'bookdrop.bulkEdit.field.publisher', type: 'text', controlName: 'publisher'},
+    {name: 'language', labelKey: 'bookdrop.bulkEdit.field.language', type: 'text', controlName: 'language'},
   ];
 
   numberFields: BulkEditField[] = [
-    {name: 'seriesTotal', label: 'Series Total', type: 'number', controlName: 'seriesTotal'},
+    {name: 'seriesTotal', labelKey: 'bookdrop.bulkEdit.field.seriesTotal', type: 'number', controlName: 'seriesTotal'},
   ];
 
   chipFields: BulkEditField[] = [
-    {name: 'authors', label: 'Authors', type: 'chips', controlName: 'authors'},
-    {name: 'categories', label: 'Genres', type: 'chips', controlName: 'categories'},
-    {name: 'moods', label: 'Moods', type: 'chips', controlName: 'moods'},
-    {name: 'tags', label: 'Tags', type: 'chips', controlName: 'tags'},
+    {name: 'authors', labelKey: 'bookdrop.bulkEdit.field.authors', type: 'chips', controlName: 'authors'},
+    {name: 'categories', labelKey: 'bookdrop.bulkEdit.field.genres', type: 'chips', controlName: 'categories'},
+    {name: 'moods', labelKey: 'bookdrop.bulkEdit.field.moods', type: 'chips', controlName: 'moods'},
+    {name: 'tags', labelKey: 'bookdrop.bulkEdit.field.tags', type: 'chips', controlName: 'tags'},
   ];
 
-  mergeOptions = [
-    {label: 'Merge', value: true},
-    {label: 'Replace', value: false},
-  ];
+  mergeOptions: Array<{label: string; value: boolean}> = [];
 
   ngOnInit(): void {
     this.fileCount = this.config.data?.fileCount ?? 0;
+    this.rebuildMergeOptions();
     this.setupFormValueChangeListeners();
+
+    this.translate.onLangChange
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.rebuildMergeOptions();
+        this.cdr.markForCheck();
+      });
+  }
+
+  private rebuildMergeOptions(): void {
+    this.mergeOptions = [
+      {label: this.translate.instant('bookdrop.bulkEdit.merge.option.merge'), value: true},
+      {label: this.translate.instant('bookdrop.bulkEdit.merge.option.replace'), value: false},
+    ];
   }
 
   private setupFormValueChangeListeners(): void {

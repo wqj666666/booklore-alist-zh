@@ -29,18 +29,18 @@ export class UserChartConfigService {
   private readonly STORAGE_KEY = 'userStatsChartConfig';
 
   private readonly defaultCharts: UserChartConfig[] = [
-    {id: 'heatmap', title: 'Reading Session Heatmap', component: ReadingSessionHeatmapComponent, enabled: true, sizeClass: 'chart-full', order: 0},
-    {id: 'favorite-days', title: 'Favorite Reading Days', component: FavoriteDaysChartComponent, enabled: true, sizeClass: 'chart-medium', order: 1},
-    {id: 'peak-hours', title: 'Peak Reading Hours', component: PeakHoursChartComponent, enabled: true, sizeClass: 'chart-medium', order: 2},
-    {id: 'timeline', title: 'Reading Session Timeline', component: ReadingSessionTimelineComponent, enabled: true, sizeClass: 'chart-full', order: 3},
-    {id: 'reading-heatmap', title: 'Reading Activity Heatmap', component: ReadingHeatmapChartComponent, enabled: true, sizeClass: 'chart-small-square', order: 4},
-    {id: 'personal-rating', title: 'Personal Rating Distribution', component: PersonalRatingChartComponent, enabled: true, sizeClass: 'chart-small-square', order: 5},
-    {id: 'reading-progress', title: 'Reading Progress Distribution', component: ReadingProgressChartComponent, enabled: true, sizeClass: 'chart-small-square', order: 6},
-    {id: 'read-status', title: 'Reading Status Distribution', component: ReadStatusChartComponent, enabled: true, sizeClass: 'chart-small-square', order: 7},
-    {id: 'genre-stats', title: 'Genre Statistics', component: GenreStatsChartComponent, enabled: true, sizeClass: 'chart-medium', order: 8},
-    {id: 'completion-timeline', title: 'Completion Timeline', component: CompletionTimelineChartComponent, enabled: true, sizeClass: 'chart-medium', order: 9},
-    {id: 'reading-dna', title: 'Reading DNA Profile', component: ReadingDNAChartComponent, enabled: true, sizeClass: 'chart-medium', order: 10},
-    {id: 'reading-habits', title: 'Reading Habits Analysis', component: ReadingHabitsChartComponent, enabled: true, sizeClass: 'chart-medium', order: 11},
+    {id: 'heatmap', title: 'stats.user.charts.heatmap', component: ReadingSessionHeatmapComponent, enabled: true, sizeClass: 'chart-full', order: 0},
+    {id: 'favorite-days', title: 'stats.user.charts.favoriteDays', component: FavoriteDaysChartComponent, enabled: true, sizeClass: 'chart-medium', order: 1},
+    {id: 'peak-hours', title: 'stats.user.charts.peakHours', component: PeakHoursChartComponent, enabled: true, sizeClass: 'chart-medium', order: 2},
+    {id: 'timeline', title: 'stats.user.charts.timeline', component: ReadingSessionTimelineComponent, enabled: true, sizeClass: 'chart-full', order: 3},
+    {id: 'reading-heatmap', title: 'stats.user.charts.readingHeatmap', component: ReadingHeatmapChartComponent, enabled: true, sizeClass: 'chart-small-square', order: 4},
+    {id: 'personal-rating', title: 'stats.user.charts.personalRating', component: PersonalRatingChartComponent, enabled: true, sizeClass: 'chart-small-square', order: 5},
+    {id: 'reading-progress', title: 'stats.user.charts.readingProgress', component: ReadingProgressChartComponent, enabled: true, sizeClass: 'chart-small-square', order: 6},
+    {id: 'read-status', title: 'stats.user.charts.readStatus', component: ReadStatusChartComponent, enabled: true, sizeClass: 'chart-small-square', order: 7},
+    {id: 'genre-stats', title: 'stats.user.charts.genreStats', component: GenreStatsChartComponent, enabled: true, sizeClass: 'chart-medium', order: 8},
+    {id: 'completion-timeline', title: 'stats.user.charts.completionTimeline', component: CompletionTimelineChartComponent, enabled: true, sizeClass: 'chart-medium', order: 9},
+    {id: 'reading-dna', title: 'stats.user.charts.readingDna', component: ReadingDNAChartComponent, enabled: true, sizeClass: 'chart-medium', order: 10},
+    {id: 'reading-habits', title: 'stats.user.charts.readingHabits', component: ReadingHabitsChartComponent, enabled: true, sizeClass: 'chart-medium', order: 11},
   ];
 
   private chartsSubject = new BehaviorSubject<UserChartConfig[]>(this.loadChartConfig());

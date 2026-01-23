@@ -5,22 +5,49 @@
     </div>
   }
       @if (isDrawerVisible) {
-        <div class="drawer-backdrop" (click)="isDrawerVisible = false; startHeaderAutoHide()"></div>
+        <div
+          class="drawer-backdrop"
+          tabindex="0"
+          role="button"
+          (click)="isDrawerVisible = false; startHeaderAutoHide()"
+          (keydown.enter)="isDrawerVisible = false; startHeaderAutoHide()"
+          (keydown.space)="isDrawerVisible = false; startHeaderAutoHide()"></div>
       }
       @if (isSettingsDrawerVisible) {
-        <div class="drawer-backdrop" (click)="isSettingsDrawerVisible = false; startHeaderAutoHide()"></div>
+        <div
+          class="drawer-backdrop"
+          tabindex="0"
+          role="button"
+          (click)="isSettingsDrawerVisible = false; startHeaderAutoHide()"
+          (keydown.enter)="isSettingsDrawerVisible = false; startHeaderAutoHide()"
+          (keydown.space)="isSettingsDrawerVisible = false; startHeaderAutoHide()"></div>
       }
-      <div style="position: absolute; top: 0; left: 0; right: 0; height: 80px; z-index: 1000; pointer-events: auto;" (mouseenter)="onHeaderZoneEnter()" (mouseleave)="onHeaderZoneLeave()" (click)="onHeaderZoneClick($event)"></div>
-      <div class="epub-header" [class.hidden]="!showHeader" (click)="$event.stopPropagation()">
+      <div
+        style="position: absolute; top: 0; left: 0; right: 0; height: 80px; z-index: 1000; pointer-events: auto;"
+        tabindex="0"
+        role="button"
+        (mouseenter)="onHeaderZoneEnter()"
+        (mouseleave)="onHeaderZoneLeave()"
+        (click)="onHeaderZoneClick()"
+        (keydown.enter)="onHeaderZoneClick()"
+        (keydown.space)="onHeaderZoneClick()"></div>
+      <div
+        class="epub-header"
+        [class.hidden]="!showHeader"
+        tabindex="0"
+        role="button"
+        (click)="$event.stopPropagation()"
+        (keydown.enter)="$event.stopPropagation()"
+        (keydown.space)="$event.stopPropagation()">
         <div class="header-left">
           <p-button size="small" class="menu-toggle-button" (click)="toggleDrawer(); $event.stopPropagation()" icon="pi pi-bars" severity="secondary"></p-button>
           <div class="progress-info">
-            <span class="progress-percentage"><span class="progress-label">Progress:  </span>{{ progressPercentage }}%</span>
+            <span class="progress-percentage"><span class="progress-label">{{ 'readers.epub.header.progress' | translate }} </span>{{ progressPercentage }}%</span>
           </div>
           <p-drawer [(visible)]="isDrawerVisible" [modal]="false" [position]="'left'" [style]="{ width: '320px' }" (click)="$event.stopPropagation()">
             <ng-template pTemplate="header">
               <div class="drawer-header">
-                <span class="drawer-title">Table of Contents</span>
+                <span class="drawer-title">{{ 'readers.epub.drawer.tableOfContents' | translate }}</span>
               </div>
             </ng-template>
             <p-tabs value="0">
@@ -28,13 +55,13 @@
                 <p-tab value="0">
                   <div class="tab-header">
                     <i class="pi pi-book"></i>
-                    <span>Chapters</span>
+                    <span>{{ 'readers.epub.drawer.tabs.chapters' | translate }}</span>
                   </div>
                 </p-tab>
                 <p-tab value="1">
                   <div class="tab-header">
                     <i class="pi pi-bookmark"></i>
-                    <span>Bookmarks</span>
+                    <span>{{ 'readers.epub.drawer.tabs.bookmarks' | translate }}</span>
                   </div>
                 </p-tab>
               </p-tablist>
@@ -43,10 +70,15 @@
                   <div class="tab-content">
                     <ul class="chapter-list">
                       @for (chapter of chapters; track chapter) {
-                        <li (click)="navigateToChapter(chapter); $event.stopPropagation()"
-                            class="chapter-item"
-                            [class.current-chapter]="chapter.href === currentChapterHref"
-                            [style.padding-left.rem]="chapter.level * 1.5 + 0.75">
+                        <li
+                          (click)="navigateToChapter(chapter); $event.stopPropagation()"
+                          (keydown.enter)="navigateToChapter(chapter); $event.stopPropagation()"
+                          (keydown.space)="navigateToChapter(chapter); $event.stopPropagation()"
+                          tabindex="0"
+                          role="button"
+                          class="chapter-item"
+                          [class.current-chapter]="chapter.href === currentChapterHref"
+                          [style.padding-left.rem]="chapter.level * 1.5 + 0.75">
                           <i class="pi pi-chevron-right chapter-icon"></i>
                           <span class="chapter-label">{{ chapter.label }}</span>
                         </li>
@@ -63,7 +95,7 @@
                           pInputText
                           type="text"
                           [(ngModel)]="filterText"
-                          placeholder="Search bookmarks..."
+                          [placeholder]="'readers.epub.bookmarks.searchPlaceholder' | translate"
                           class="w-full p-inputtext-sm"
                           (click)="$event.stopPropagation()">
                       </p-iconfield>
@@ -71,34 +103,40 @@
                     @if (filteredBookmarks.length === 0) {
                       <div class="empty-state">
                         <i class="pi pi-bookmark"></i>
-                        <p>No bookmarks found</p>
-                        <span>{{ filterText ? 'Try a different search term' : 'Tap the bookmark icon to save your place' }}</span>
+                        <p>{{ 'readers.epub.bookmarks.empty.title' | translate }}</p>
+                        <span>{{ filterText ? ('readers.epub.bookmarks.empty.withFilter' | translate) : ('readers.epub.bookmarks.empty.noFilter' | translate) }}</span>
                       </div>
                     } @else {
                       <ul class="bookmark-list">
                         @for (bookmark of filteredBookmarks; track bookmark.id) {
-                          <li class="bookmark-item" (click)="navigateToBookmark(bookmark); $event.stopPropagation()">
+                          <li
+                            class="bookmark-item"
+                            (click)="navigateToBookmark(bookmark); $event.stopPropagation()"
+                            (keydown.enter)="navigateToBookmark(bookmark); $event.stopPropagation()"
+                            (keydown.space)="navigateToBookmark(bookmark); $event.stopPropagation()"
+                            tabindex="0"
+                            role="button">
                             <i class="pi pi-bookmark-fill bookmark-icon" [style.color]="bookmark.color || 'var(--primary-color)'"></i>
                             <span class="bookmark-label">{{ bookmark.title }}</span>
                             <div class="bookmark-actions">
                               <button
                                 class="bookmark-action-btn"
                                 (click)="openViewDialog(bookmark); $event.stopPropagation()"
-                                pTooltip="View Details"
+                                [pTooltip]="'readers.epub.tooltip.viewDetails' | translate"
                                 tooltipPosition="bottom">
                                 <i class="pi pi-info-circle"></i>
                               </button>
                               <button
                                 class="bookmark-action-btn"
                                 (click)="openEditBookmarkDialog(bookmark); $event.stopPropagation()"
-                                pTooltip="Edit"
+                                [pTooltip]="'readers.epub.tooltip.editBookmark' | translate"
                                 tooltipPosition="bottom">
                                 <i class="pi pi-pencil"></i>
                               </button>
                               <button
                                 class="bookmark-action-btn delete"
                                 (click)="deleteBookmark(bookmark.id); $event.stopPropagation()"
-                                pTooltip="Delete"
+                                [pTooltip]="'readers.epub.tooltip.deleteBookmark' | translate"
                                 tooltipPosition="bottom">
                                 <i class="pi pi-trash"></i>
                               </button>
@@ -119,7 +157,7 @@
         <div class="header-right">
           <div class="flex gap-4">
             @if (!locationsReady) {
-              <div class="location-indicator" pTooltip="Saving progress not ready yet">
+              <div class="location-indicator" [pTooltip]="'readers.epub.tooltip.savingProgressNotReady' | translate">
                 <span class="dot"></span>
               </div>
             }
@@ -135,18 +173,18 @@
               <p-drawer [(visible)]="isSettingsDrawerVisible" [modal]="false" [position]="'right'" [style]="{ width: '340px' }" (click)="$event.stopPropagation()">
                 <ng-template pTemplate="header">
                   <div class="drawer-header">
-                    <span class="drawer-title">Reader Settings</span>
+                    <span class="drawer-title">{{ 'readers.epub.settings.title' | translate }}</span>
                   </div>
                 </ng-template>
                 <div class="settings-container">
                   <div class="settings-card">
                     <div class="card-header">
                       <i class="pi pi-text-height"></i>
-                      <span>Typography</span>
+                      <span>{{ 'readers.epub.settings.typography.title' | translate }}</span>
                     </div>
                     <div class="card-content">
                       <div class="setting-row">
-                        <label>Font Size</label>
+                        <span>{{ 'readers.epub.settings.typography.fontSize' | translate }}</span>
                         <div class="font-size-controls">
                           <button class="control-btn" (click)="decreaseFontSize()">
                             <i class="pi pi-minus"></i>
@@ -158,7 +196,7 @@
                         </div>
                       </div>
                       <div class="setting-row">
-                        <label for="font-type">Font Family</label>
+                        <label for="font-type">{{ 'readers.epub.settings.typography.fontFamily' | translate }}</label>
                         <p-select
                           appendTo="body"
                           id="font-type"
@@ -167,11 +205,11 @@
                           (onChange)="changeFontType()"
                           [style]="{ width: '100%' }"
                           [loading]="!customFontsReady"
-                          placeholder="Loading fonts...">
+                          [placeholder]="'readers.epub.settings.typography.loadingFonts' | translate">
                         </p-select>
                       </div>
                       <div class="setting-row">
-                        <label>Line Height</label>
+                        <span>{{ 'readers.epub.settings.typography.lineHeight' | translate }}</span>
                         <div class="slider-container">
                           <span class="slider-value">{{ lineHeight }}</span>
                           <p-slider
@@ -185,7 +223,7 @@
                         </div>
                       </div>
                       <div class="setting-row">
-                        <label>Letter Spacing</label>
+                        <span>{{ 'readers.epub.settings.typography.letterSpacing' | translate }}</span>
                         <div class="slider-container">
                           <span class="slider-value">{{ letterSpacing ?? 0 }} em</span>
                           <p-slider
@@ -203,11 +241,11 @@
                   <div class="settings-card">
                     <div class="card-header">
                       <i class="pi pi-palette"></i>
-                      <span>Appearance</span>
+                      <span>{{ 'readers.epub.settings.appearance.title' | translate }}</span>
                     </div>
                     <div class="card-content">
                       <div class="setting-row">
-                        <label>Theme</label>
+                        <span>{{ 'readers.epub.settings.appearance.theme' | translate }}</span>
                         <div class="theme-selector">
                           @for (theme of themes; track theme) {
                             <button
@@ -216,8 +254,8 @@
                               [class.selected]="selectedTheme === theme.value"
                               [style.background-color]="getThemeColor(theme.value)"
                               (click)="selectTheme(theme.value)"
-                              [attr.aria-label]="theme.label"
-                              [pTooltip]="theme.label"
+                              [attr.aria-label]="theme.labelKey | translate"
+                              [pTooltip]="theme.labelKey | translate"
                               tooltipPosition="bottom">
                               @if (selectedTheme === theme.value) {
                                 <i class="pi pi-check"></i>
@@ -231,45 +269,45 @@
                   <div class="settings-card">
                     <div class="card-header">
                       <i class="pi pi-file"></i>
-                      <span>Layout</span>
+                      <span>{{ 'readers.epub.settings.layout.title' | translate }}</span>
                     </div>
                     <div class="card-content">
                       <div class="setting-row">
-                        <label>Reading Mode</label>
+                        <span>{{ 'readers.epub.settings.layout.readingMode' | translate }}</span>
                         <div class="toggle-group">
                           <button
                             class="toggle-option"
                             [class.active]="selectedFlow === 'paginated'"
                             (click)="selectedFlow = 'paginated'; changeScrollMode()">
                             <i class="pi pi-book"></i>
-                            <span>Paginated</span>
+                            <span>{{ 'readers.epub.settings.layout.paginated' | translate }}</span>
                           </button>
                           <button
                             class="toggle-option"
                             [class.active]="selectedFlow === 'scrolled'"
                             (click)="selectedFlow = 'scrolled'; changeScrollMode()">
                             <i class="pi pi-align-justify"></i>
-                            <span>Scrolled</span>
+                            <span>{{ 'readers.epub.settings.layout.scrolled' | translate }}</span>
                           </button>
                         </div>
                       </div>
                       @if (selectedFlow === 'paginated' && !isMobileDevice()) {
                         <div class="setting-row">
-                          <label>Page Spread</label>
+                          <span>{{ 'readers.epub.settings.layout.pageSpread' | translate }}</span>
                           <div class="toggle-group">
                             <button
                               class="toggle-option"
                               [class.active]="selectedSpread === 'single'"
                               (click)="selectedSpread = 'single'; changeSpreadMode()">
                               <i class="pi pi-file"></i>
-                              <span>Single</span>
+                              <span>{{ 'readers.epub.settings.layout.single' | translate }}</span>
                             </button>
                             <button
                               class="toggle-option"
                               [class.active]="selectedSpread === 'double'"
                               (click)="selectedSpread = 'double'; changeSpreadMode()">
                               <i class="pi pi-copy"></i>
-                              <span>Double</span>
+                              <span>{{ 'readers.epub.settings.layout.double' | translate }}</span>
                             </button>
                           </div>
                         </div>
@@ -284,7 +322,7 @@
               icon="pi pi-times"
               (click)="closeReader(); $event.stopPropagation()"
               severity="secondary"
-              pTooltip="Close Reader"
+              [pTooltip]="'readers.epub.tooltip.closeReader' | translate"
               tooltipPosition="bottom">
             </p-button>
           </div>
@@ -294,7 +332,9 @@
            #epubContainer
            [class.paginated-mode]="selectedFlow === 'paginated'"
            (click)="onBookClick($event)"
-           (mousemove)="onBookMouseMove($event)"></div>
+           (mousemove)="onBookMouseMove($event)"
+           (keydown)="onBookTouch()"
+           tabindex="0"></div>
       @if (selectedFlow !== 'scrolled') {
         <button class="epub-controls-left" [class.visible]="showControls" [class.dark-theme]="selectedTheme === 'black' || selectedTheme === 'grey'" (click)="prevPage(); onBookTouch()">←</button>
       }

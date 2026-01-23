@@ -1,4 +1,4 @@
-import {Component, inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {BaseChartDirective} from 'ng2-charts';
 import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
@@ -7,6 +7,7 @@ import {ChartConfiguration, ChartData} from 'chart.js';
 import {BookService} from '../../../book/service/book.service';
 import {Book} from '../../../book/model/book.model';
 import {BookState} from '../../../book/model/state/book-state.model';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 interface MatrixDataPoint {
   x: number; // month (0-11)
@@ -20,20 +21,20 @@ interface YearMonthData {
   count: number;
 }
 
-const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
 type HeatmapChartData = ChartData<'matrix', MatrixDataPoint[], string>;
 
 @Component({
   selector: 'app-reading-heatmap-chart',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective],
+  imports: [CommonModule, TranslateModule, BaseChartDirective],
   templateUrl: './reading-heatmap-chart.component.html',
   styleUrls: ['./reading-heatmap-chart.component.scss']
 })
 export class ReadingHeatmapChartComponent implements OnInit, OnDestroy {
   private readonly bookService = inject(BookService);
+  private readonly translate = inject(TranslateService);
   private readonly destroy$ = new Subject<void>();
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
   public readonly chartType = 'matrix' as const;
 
@@ -65,13 +66,17 @@ export class ReadingHeatmapChartComponent implements OnInit, OnDestroy {
         callbacks: {
           title: (context) => {
             const point = context[0].raw as MatrixDataPoint;
-            const year = this.yearLabels[point.y];
-            const month = MONTH_NAMES[point.x];
-            return `${month} ${year}`;
+            const year = Number(this.yearLabels[point.y]);
+            const monthIndex = point.x;
+            const date = new Date(year, monthIndex, 1);
+            return date.toLocaleDateString(this.getLocale(), {year: 'numeric', month: 'short'});
           },
           label: (context) => {
             const point = context.raw as MatrixDataPoint;
-            return `${point.v} book${point.v === 1 ? '' : 's'} read`;
+            if (point.v === 1) {
+              return this.translate.instant('stats.user.readingHeatmap.tooltip.booksReadOne', {count: point.v});
+            }
+            return this.translate.instant('stats.user.readingHeatmap.tooltip.booksReadMany', {count: point.v});
           }
         }
       },
@@ -92,7 +97,7 @@ export class ReadingHeatmapChartComponent implements OnInit, OnDestroy {
         position: 'bottom',
         ticks: {
           stepSize: 1,
-          callback: (value) => MONTH_NAMES[value as number] || '',
+          callback: (value) => this.formatMonthShort(value as number),
           color: '#ffffff',
           font: {
             family: "'Inter', sans-serif",
@@ -121,7 +126,7 @@ export class ReadingHeatmapChartComponent implements OnInit, OnDestroy {
   private readonly chartDataSubject = new BehaviorSubject<HeatmapChartData>({
     labels: [],
     datasets: [{
-      label: 'Books Read',
+      label: this.translate.instant('stats.user.readingHeatmap.datasetLabel'),
       data: []
     }]
   });
@@ -142,6 +147,18 @@ export class ReadingHeatmapChartComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         const stats = this.calculateHeatmapData();
         this.updateChartData(stats);
+      });
+
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        const current = this.chartDataSubject.value;
+        const dataset = current.datasets?.[0];
+        this.chartDataSubject.next({
+          ...current,
+          datasets: dataset ? [{...dataset, label: this.translate.instant('stats.user.readingHeatmap.datasetLabel')}] : []
+        });
+        this.chart?.chart?.update();
       });
   }
 
@@ -177,7 +194,7 @@ export class ReadingHeatmapChartComponent implements OnInit, OnDestroy {
     this.chartDataSubject.next({
       labels: [],
       datasets: [{
-        label: 'Books Read',
+        label: this.translate.instant('stats.user.readingHeatmap.datasetLabel'),
         data: heatmapData,
         backgroundColor: (context) => {
           const point = context.raw as MatrixDataPoint;
@@ -241,6 +258,15 @@ export class ReadingHeatmapChartComponent implements OnInit, OnDestroy {
         return {year, month, count};
       })
       .sort((a, b) => a.year - b.year || a.month - b.month);
+  }
+
+  private formatMonthShort(monthIndex: number): string {
+    const date = new Date(2024, monthIndex, 1);
+    return date.toLocaleDateString(this.getLocale(), {month: 'short'});
+  }
+
+  private getLocale(): string {
+    return this.translate.currentLang || this.translate.defaultLang || 'zh-CN';
   }
 }
 

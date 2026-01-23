@@ -7,13 +7,15 @@ import {SettingsHelperService} from '../../../../shared/service/settings-helper.
 import {Observable} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
 import {Tooltip} from 'primeng/tooltip';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-metadata-persistence-settings-component',
   imports: [
     ToggleSwitch,
     FormsModule,
-    Tooltip
+    Tooltip,
+    TranslateModule
   ],
   templateUrl: './metadata-persistence-settings-component.html',
   styleUrl: './metadata-persistence-settings-component.scss'
@@ -41,6 +43,7 @@ export class MetadataPersistenceSettingsComponent implements OnInit {
 
   private readonly appSettingsService = inject(AppSettingsService);
   private readonly settingsHelper = inject(SettingsHelperService);
+  private readonly translateService = inject(TranslateService);
 
   readonly appSettings$: Observable<AppSettings | null> = this.appSettingsService.appSettings$;
 
@@ -73,7 +76,11 @@ export class MetadataPersistenceSettingsComponent implements OnInit {
       next: (settings) => this.initializeSettings(settings),
       error: (error) => {
         console.error('Failed to load settings:', error);
-        this.settingsHelper.showMessage('error', 'Error', 'Failed to load settings.');
+        this.settingsHelper.showMessage(
+          'error',
+          this.translateService.instant('settings.toast.loadError.summary'),
+          this.translateService.instant('settings.toast.loadError.detail')
+        );
       }
     });
   }

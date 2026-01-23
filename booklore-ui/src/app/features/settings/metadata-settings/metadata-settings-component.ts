@@ -11,6 +11,7 @@ import {ToggleSwitch} from 'primeng/toggleswitch';
 import {MetadataMatchWeightsComponent} from '../global-preferences/metadata-match-weights/metadata-match-weights-component';
 import {MetadataPersistenceSettingsComponent} from './metadata-persistence-settings/metadata-persistence-settings-component';
 import {PublicReviewsSettingsComponent} from './public-reviews-settings/public-reviews-settings-component';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-metadata-settings-component',
@@ -22,7 +23,8 @@ import {PublicReviewsSettingsComponent} from './public-reviews-settings/public-r
     MetadataMatchWeightsComponent,
     ToggleSwitch,
     MetadataPersistenceSettingsComponent,
-    PublicReviewsSettingsComponent
+    PublicReviewsSettingsComponent,
+    TranslateModule
   ],
   templateUrl: './metadata-settings-component.html',
   styleUrl: './metadata-settings-component.scss'
@@ -34,6 +36,7 @@ export class MetadataSettingsComponent implements OnInit {
 
   private readonly appSettingsService = inject(AppSettingsService);
   private readonly settingsHelper = inject(SettingsHelperService);
+  private readonly translateService = inject(TranslateService);
 
   readonly appSettings$: Observable<AppSettings | null> = this.appSettingsService.appSettings$;
 
@@ -59,7 +62,11 @@ export class MetadataSettingsComponent implements OnInit {
       next: (settings) => this.initializeSettings(settings),
       error: (error) => {
         console.error('Failed to load settings:', error);
-        this.settingsHelper.showMessage('error', 'Error', 'Failed to load settings.');
+        this.settingsHelper.showMessage(
+          'error',
+          this.translateService.instant('settings.toast.loadError.summary'),
+          this.translateService.instant('settings.toast.loadError.detail')
+        );
       }
     });
   }

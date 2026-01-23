@@ -2,7 +2,7 @@
   <img
     [src]="urlHelper.getThumbnailUrl(book.id, book.metadata?.coverUpdatedOn)"
     class="book-cover"
-    alt="Cover of {{ book.metadata?.title }}"
+    [attr.alt]="'book.cardLite.a11y.coverAlt' | translate:{ title: (book.metadata?.title || '') }"
     loading="lazy"/>
     
   @if (showSeriesNumber && !book.seriesCount && book.metadata?.seriesNumber != null) {

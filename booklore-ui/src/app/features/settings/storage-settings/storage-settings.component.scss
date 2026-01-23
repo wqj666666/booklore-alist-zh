@@ -1,0 +1,225 @@
+.enclosing-container {
+  border-color: var(--p-content-border-color);
+}
+
+.main-container {
+  padding: 1.5rem;
+}
+
+.settings-header {
+  margin-bottom: 1.5rem;
+}
+
+.settings-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--p-text-color);
+  margin: 0 0 0.5rem 0;
+
+  i {
+    color: var(--p-primary-color);
+  }
+}
+
+.settings-description {
+  color: var(--p-text-muted-color);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.storage-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  font-size: 0.8125rem;
+}
+
+.storage-status-label {
+  color: var(--p-text-muted-color);
+}
+
+.storage-status-value {
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  background: var(--p-surface-200);
+  color: var(--p-text-color);
+}
+
+.storage-status-value.is-alist {
+  background: color-mix(in srgb, var(--p-primary-color) 20%, transparent);
+  color: var(--p-primary-color);
+}
+
+.storage-status-value.is-local {
+  background: color-mix(in srgb, var(--p-surface-300) 30%, transparent);
+  color: var(--p-text-color);
+}
+
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.preferences-section {
+  background: var(--p-content-background);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.section-header {
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--p-text-color);
+  margin: 0 0 0.25rem 0;
+
+  i {
+    color: var(--p-primary-color);
+    font-size: 0.875rem;
+  }
+}
+
+.section-description {
+  color: var(--p-text-muted-color);
+  font-size: 0.8125rem;
+  margin: 0;
+}
+
+.settings-card {
+  background: var(--p-surface-ground);
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.setting-item {
+  padding: 0.75rem 0;
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+.setting-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.setting-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.setting-label {
+  font-weight: 500;
+  color: var(--p-text-color);
+  font-size: 0.875rem;
+}
+
+.setting-description {
+  color: var(--p-text-muted-color);
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+.token-input-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.token-input {
+  width: 280px;
+  font-family: monospace;
+  font-size: 0.8125rem;
+
+  @media (max-width: 640px) {
+    width: 100%;
+  }
+}
+
+.token-input-password {
+  width: 220px;
+  font-family: monospace;
+  font-size: 0.8125rem;
+
+  @media (max-width: 640px) {
+    width: 100%;
+  }
+}
+
+.timeout-input-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+:host ::ng-deep .timeout-input {
+  width: 140px;
+  font-family: monospace;
+  font-size: 0.8125rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.error-message {
+  color: var(--p-red-500);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.access-denied-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--p-surface-ground);
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 0.5rem;
+
+  i {
+    font-size: 2rem;
+    color: var(--p-orange-500);
+  }
+}
+
+.access-denied-content {
+  h3 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--p-text-color);
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--p-text-muted-color);
+  }
+}

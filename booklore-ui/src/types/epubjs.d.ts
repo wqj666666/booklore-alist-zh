@@ -31,6 +31,8 @@ declare module 'epubjs' {
     total: number;
     generate(chars: number): Promise<void>;
     percentageFromCfi(cfi: string): number;
+    save(): string;
+    load(data: string): void;
   }
 
   export interface SpineItem {
@@ -52,6 +54,7 @@ declare module 'epubjs' {
     override(property: string, value: string): void;
     font(name: string): void;
     fontSize(size: string): void;
+    default(theme: any): void;
   }
 
   export interface Rendition {
@@ -87,6 +90,7 @@ declare module 'epubjs' {
     }): Rendition;
     canonical(href: string): string;
     epubProgress?: { cfi: string };
+    destroy(): void;
   }
 
   export class EpubCFI {

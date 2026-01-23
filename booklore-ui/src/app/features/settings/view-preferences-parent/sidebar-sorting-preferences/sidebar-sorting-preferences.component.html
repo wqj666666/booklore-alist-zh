@@ -2,10 +2,10 @@
   <div class="settings-header">
     <h2 class="settings-title">
       <i class="pi pi-sort-alt"></i>
-      Sidebar Library and Shelf Sorting Preference
+      {{ 'settings.sidebarSortingPreferences.title' | translate }}
     </h2>
     <p class="settings-description">
-      Configure sorting options for your library and shelves names shown in the left menu sidebar.
+      {{ 'settings.sidebarSortingPreferences.description' | translate }}
     </p>
   </div>
 
@@ -16,7 +16,7 @@
           <div class="setting-info">
             <div class="setting-label-row">
               <label class="setting-label">
-                Library
+                {{ 'settings.sidebarSortingPreferences.label.library' | translate }}
               </label>
               <p-select
                 size="small"
@@ -24,11 +24,11 @@
                 [(ngModel)]="selectedLibrarySorting"
                 (ngModelChange)="onLibrarySortingChange()"
                 appendTo="body"
-                placeholder="Select Sorting">
+                [placeholder]="'settings.sidebarSortingPreferences.placeholder.selectSorting' | translate">
               </p-select>
             </div>
             <p class="setting-description">
-              Choose how library names are sorted and displayed in the sidebar.
+              {{ 'settings.sidebarSortingPreferences.description.library' | translate }}
             </p>
           </div>
         </div>
@@ -37,7 +37,7 @@
           <div class="setting-info">
             <div class="setting-label-row">
               <label class="setting-label">
-                Shelf
+                {{ 'settings.sidebarSortingPreferences.label.shelf' | translate }}
               </label>
               <p-select
                 size="small"
@@ -45,11 +45,11 @@
                 [(ngModel)]="selectedShelfSorting"
                 (ngModelChange)="onShelfSortingChange()"
                 appendTo="body"
-                placeholder="Select Sorting">
+                [placeholder]="'settings.sidebarSortingPreferences.placeholder.selectSorting' | translate">
               </p-select>
             </div>
             <p class="setting-description">
-              Choose how shelf names are sorted and displayed in the sidebar.
+              {{ 'settings.sidebarSortingPreferences.description.shelf' | translate }}
             </p>
           </div>
         </div>
@@ -58,7 +58,7 @@
           <div class="setting-info">
             <div class="setting-label-row">
               <label class="setting-label">
-                Magic Shelf
+                {{ 'settings.sidebarSortingPreferences.label.magicShelf' | translate }}
               </label>
               <p-select
                 size="small"
@@ -66,11 +66,11 @@
                 [(ngModel)]="selectedMagicShelfSorting"
                 (ngModelChange)="onMagicShelfSortingChange()"
                 appendTo="body"
-                placeholder="Select Sorting">
+                [placeholder]="'settings.sidebarSortingPreferences.placeholder.selectSorting' | translate">
               </p-select>
             </div>
             <p class="setting-description">
-              Choose how magic shelf names are sorted and displayed in the sidebar.
+              {{ 'settings.sidebarSortingPreferences.description.magicShelf' | translate }}
             </p>
           </div>
         </div>

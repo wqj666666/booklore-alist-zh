@@ -7,6 +7,7 @@ import {ButtonModule} from 'primeng/button';
 import {Divider} from 'primeng/divider';
 import {Tooltip} from 'primeng/tooltip';
 import {MessageService} from 'primeng/api';
+import {TranslateModule} from '@ngx-translate/core';
 
 import {MetadataBatchProgressNotification, MetadataBatchStatus, MetadataBatchStatusLabels} from '../../model/metadata-batch-progress.model';
 import {MetadataProgressService} from '../../service/metadata-progress.service';
@@ -20,7 +21,7 @@ import {DialogLauncherService} from '../../services/dialog-launcher.service';
   templateUrl: './metadata-progress-widget-component.html',
   styleUrls: ['./metadata-progress-widget-component.scss'],
   standalone: true,
-  imports: [KeyValuePipe, ProgressBarModule, ButtonModule, Divider, Tooltip, Tag]
+  imports: [KeyValuePipe, ProgressBarModule, ButtonModule, Divider, Tooltip, Tag, TranslateModule]
 })
 export class MetadataProgressWidgetComponent implements OnInit, OnDestroy {
   activeTasks: Record<string, MetadataBatchProgressNotification> = {};

@@ -5,6 +5,7 @@ import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {AccordionModule} from 'primeng/accordion';
 import {MessageService} from 'primeng/api';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 import {Library} from '../../book/model/library.model';
 import {LibraryService} from '../../book/service/library.service';
@@ -17,7 +18,7 @@ import {MetadataAdvancedFetchOptionsComponent} from '../../metadata/component/me
 @Component({
   selector: 'app-library-metadata-settings-component',
   standalone: true,
-  imports: [CommonModule, FormsModule, MetadataAdvancedFetchOptionsComponent, AccordionModule, ExternalDocLinkComponent],
+  imports: [CommonModule, FormsModule, MetadataAdvancedFetchOptionsComponent, AccordionModule, ExternalDocLinkComponent, TranslateModule],
   templateUrl: './library-metadata-settings.component.html',
   styleUrls: ['./library-metadata-settings.component.scss']
 })
@@ -25,6 +26,7 @@ export class LibraryMetadataSettingsComponent implements OnInit {
   private libraryService = inject(LibraryService);
   private appSettingsService = inject(AppSettingsService);
   private messageService = inject(MessageService);
+  private translateService = inject(TranslateService);
 
   libraries$: Observable<Library[]> = this.libraryService.libraryState$.pipe(
     map(state => state.libraries || [])
@@ -86,12 +88,12 @@ export class LibraryMetadataSettingsComponent implements OnInit {
 
     this.appSettingsService.saveSettings(settingsToSave).subscribe({
       next: () => {
-        this.showMessage('success', 'Settings Saved', 'Default metadata options have been saved successfully.');
+        this.showMessage('success', 'settings.libraryMetadata.toast.saveDefaultSuccess.summary', 'settings.libraryMetadata.toast.saveDefaultSuccess.detail');
         this.updateLibrariesUsingDefaults();
       },
       error: (error) => {
         console.error('Error saving default metadata options:', error);
-        this.showMessage('error', 'Save Failed', 'Failed to save default metadata options. Please try again.');
+        this.showMessage('error', 'settings.libraryMetadata.toast.saveDefaultError.summary', 'settings.libraryMetadata.toast.saveDefaultError.detail');
       }
     });
   }
@@ -110,11 +112,11 @@ export class LibraryMetadataSettingsComponent implements OnInit {
 
     this.appSettingsService.saveSettings(settingsToSave).subscribe({
       next: () => {
-        this.showMessage('success', 'Settings Saved', 'Library metadata options have been saved successfully.');
+        this.showMessage('success', 'settings.libraryMetadata.toast.saveLibrarySuccess.summary', 'settings.libraryMetadata.toast.saveLibrarySuccess.detail');
       },
       error: (error) => {
         console.error('Error saving library metadata options:', error);
-        this.showMessage('error', 'Save Failed', 'Failed to save library metadata options. Please try again.');
+        this.showMessage('error', 'settings.libraryMetadata.toast.saveLibraryError.summary', 'settings.libraryMetadata.toast.saveLibraryError.detail');
       }
     });
   }
@@ -128,11 +130,11 @@ export class LibraryMetadataSettingsComponent implements OnInit {
     });
   }
 
-  private showMessage(severity: 'success' | 'error', summary: string, detail: string) {
+  private showMessage(severity: 'success' | 'error', summaryKey: string, detailKey: string) {
     this.messageService.add({
       severity,
-      summary,
-      detail,
+      summary: this.translateService.instant(summaryKey),
+      detail: this.translateService.instant(detailKey),
       life: 5000
     });
   }

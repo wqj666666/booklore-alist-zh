@@ -4,11 +4,13 @@ import {EnvironmentInjector, runInInjectionContext} from '@angular/core';
 import {MessageService} from 'primeng/api';
 import {TableColumnPreferenceService} from './table-column-preference.service';
 import {TableColumnPreference, UserService} from '../../../settings/user-management/user.service';
+import {TranslateService} from '@ngx-translate/core';
 
 describe('TableColumnPreferenceService', () => {
   let service: TableColumnPreferenceService;
   let userServiceMock: any;
   let messageServiceMock: any;
+  let translateServiceMock: any;
 
   const allColumns = [
     {field: 'readStatus', header: 'Read'},
@@ -48,12 +50,43 @@ describe('TableColumnPreferenceService', () => {
     messageServiceMock = {
       add: vi.fn()
     };
+    translateServiceMock = {
+      instant: vi.fn((key: string) => {
+        const dictionary: Record<string, string> = {
+          'book.table.column.readStatus': 'Read',
+          'book.table.column.title': 'Title',
+          'book.table.column.authors': 'Authors',
+          'book.table.column.publisher': 'Publisher',
+          'book.table.column.seriesName': 'Series',
+          'book.table.column.seriesNumber': 'Series #',
+          'book.table.column.categories': 'Genres',
+          'book.table.column.publishedDate': 'Published',
+          'book.table.column.lastReadTime': 'Last Read',
+          'book.table.column.addedOn': 'Added',
+          'book.table.column.fileSizeKb': 'File Size',
+          'book.table.column.language': 'Language',
+          'book.table.column.isbn': 'ISBN',
+          'book.table.column.pageCount': 'Pages',
+          'book.table.column.amazonRating': 'Amazon',
+          'book.table.column.amazonReviewCount': 'AZ #',
+          'book.table.column.goodreadsRating': 'Goodreads',
+          'book.table.column.goodreadsReviewCount': 'GR #',
+          'book.table.column.hardcoverRating': 'Hardcover',
+          'book.table.column.hardcoverReviewCount': 'HC #',
+          'book.table.column.ranobedbRating': 'Ranobedb',
+          'book.browser.columns.toast.preferencesSaved.summary': 'Preferences Saved',
+          'book.browser.columns.toast.preferencesSaved.detail': 'Preferences have been saved.',
+        };
+        return dictionary[key] ?? key;
+      })
+    };
 
     TestBed.configureTestingModule({
       providers: [
         TableColumnPreferenceService,
         {provide: UserService, useValue: userServiceMock},
-        {provide: MessageService, useValue: messageServiceMock}
+        {provide: MessageService, useValue: messageServiceMock},
+        {provide: TranslateService, useValue: translateServiceMock}
       ]
     });
 

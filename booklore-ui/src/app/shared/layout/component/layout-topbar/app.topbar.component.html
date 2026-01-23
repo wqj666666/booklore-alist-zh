@@ -32,21 +32,21 @@
         @if (userService.userState$ | async; as userState) {
           @if (userState.user?.permissions?.canAccessBookdrop || userState.user?.permissions?.admin) {
             <li>
-              <a class="topbar-item" (click)="navigateToBookdrop()" pTooltip="Bookdrop" tooltipPosition="bottom">
+              <a class="topbar-item" (click)="navigateToBookdrop()" [pTooltip]="'menu.bookdrop' | translate" tooltipPosition="bottom">
                 <i class="pi pi-inbox text-surface-100"></i>
               </a>
             </li>
           }
           @if (userState.user?.permissions?.canManageLibrary || userState.user?.permissions?.admin) {
             <li>
-              <a class="topbar-item" (click)="openLibraryCreatorDialog()" pTooltip="Create New Library" tooltipPosition="bottom">
+              <a class="topbar-item" (click)="openLibraryCreatorDialog()" [pTooltip]="'menu.createLibrary' | translate" tooltipPosition="bottom">
                 <i class="pi pi-plus-circle text-surface-100"></i>
               </a>
             </li>
           }
           @if (userState.user?.permissions?.canUpload || userState.user?.permissions?.admin) {
             <li>
-              <a class="topbar-item" (click)="openFileUploadDialog()" pTooltip="Upload Book" tooltipPosition="bottom">
+              <a class="topbar-item" (click)="openFileUploadDialog()" [pTooltip]="'menu.uploadBook' | translate" tooltipPosition="bottom">
                 <i class="pi pi-upload text-surface-100"></i>
               </a>
             </li>
@@ -74,14 +74,14 @@
         @if (userService.userState$ | async; as userState) {
           @if (userState.user?.permissions?.canManageLibrary || userState.user?.permissions?.admin) {
             <li>
-              <a class="topbar-item" (click)="navigateToMetadataManager()" pTooltip="Metadata Manager" tooltipPosition="bottom">
+              <a class="topbar-item" (click)="navigateToMetadataManager()" [pTooltip]="'menu.metadataManager' | translate" tooltipPosition="bottom">
                 <i class="pi pi-sparkles text-surface-100"></i>
               </a>
             </li>
           }
         }
         <li>
-          <a class="topbar-item" (click)="navigateToSettings()" pTooltip="Settings" tooltipPosition="bottom">
+          <a class="topbar-item" (click)="navigateToSettings()" [pTooltip]="'menu.settings' | translate" tooltipPosition="bottom">
             <i class="pi pi-cog text-surface-100"></i>
           </a>
         </li>
@@ -103,7 +103,7 @@
               [ngStyle]="{ color: iconColor }"
               style="font-size: 1.25rem"
               [class.pulsating]="iconPulsating"
-              aria-label="Unified Notification Icon"
+              [attr.aria-label]="'a11y.unifiedNotificationIcon' | translate"
             ></i>
           </button>
 
@@ -123,6 +123,17 @@
           </span>
           <span style="inset: 1px; border-radius: 4px" class="absolute z-2 bg-surface-900 transition-all"></span>
           <i class="pi pi-heart z-10"></i>
+        </li>
+        <li>
+          <button
+            class="topbar-item"
+            (click)="languageMenu.toggle($event)"
+            [pTooltip]="'menu.language' | translate"
+            tooltipPosition="bottom"
+          >
+            <i class="pi pi-language text-surface-100"></i>
+          </button>
+          <p-menu #languageMenu [model]="languageMenuItems" [popup]="true" appendTo="body" />
         </li>
         <li class="relative">
           <button type="button"
@@ -144,7 +155,7 @@
              href="https://booklore.org/docs/getting-started"
              target="_blank"
              rel="noopener noreferrer"
-             pTooltip="Documentation"
+             [pTooltip]="'menu.documentation' | translate"
              tooltipPosition="bottom">
             <i class="pi pi-info-circle text-surface-100"></i>
           </a>
@@ -154,7 +165,7 @@
         @if (userService.userState$ | async; as userState) {
           @if (!userState.user?.permissions?.demoUser) {
             <li>
-              <button class="topbar-item" (click)="openUserProfileDialog()" pTooltip="Profile" tooltipPosition="bottom">
+              <button class="topbar-item" (click)="openUserProfileDialog()" [pTooltip]="'menu.profile' | translate" tooltipPosition="bottom">
                 <i class="pi pi-user text-surface-100"></i>
               </button>
             </li>
@@ -162,7 +173,7 @@
         }
 
         <li>
-          <button class="topbar-item" (click)="logout()" pTooltip="Logout" tooltipPosition="left">
+          <button class="topbar-item" (click)="logout()" [pTooltip]="'menu.logout' | translate" tooltipPosition="left">
             <i class="pi pi-sign-out text-surface-100"></i>
           </button>
         </li>
@@ -185,7 +196,7 @@
                   (click)="navigateToBookdrop(); mobileMenu.hide()"
                 >
                   <i class="pi pi-inbox text-surface-100"></i>
-                  Bookdrop
+                  {{ 'menu.bookdrop' | translate }}
                 </button>
               </li>
             }
@@ -196,7 +207,7 @@
                   (click)="openLibraryCreatorDialog(); mobileMenu.hide()"
                 >
                   <i class="pi pi-plus-circle text-surface-100"></i>
-                  Create Library
+                  {{ 'menu.createLibrary' | translate }}
                 </button>
               </li>
             }
@@ -207,7 +218,7 @@
                   (click)="openFileUploadDialog(); mobileMenu.hide()"
                 >
                   <i class="pi pi-upload text-surface-100"></i>
-                  Upload Book
+                  {{ 'menu.uploadBook' | translate }}
                 </button>
               </li>
             }
@@ -224,7 +235,7 @@
                   <rect x="9" y="6" width="2.5" height="13" rx="0.5" fill="#10b981"/>
                   <rect x="13" y="8" width="2.5" height="11" rx="0.5" fill="#3b82f6"/>
                 </svg>
-                Charts
+                {{ 'menu.charts' | translate }}
               </button>
               @if (shouldShowStatsMenu) {
                 <p-menu #statsMenuMobile [model]="statsMenuItems" [popup]="true" />
@@ -239,7 +250,7 @@
                   (click)="navigateToMetadataManager(); mobileMenu.hide()"
                 >
                   <i class="pi pi-sparkles text-surface-100"></i>
-                  Metadata Manager
+                  {{ 'menu.metadataManager' | translate }}
                 </button>
               </li>
             }
@@ -250,7 +261,25 @@
               (click)="navigateToSettings(); mobileMenu.hide()"
             >
               <i class="pi pi-cog text-surface-100"></i>
-              Settings
+              {{ 'menu.settings' | translate }}
+            </button>
+          </li>
+          <li>
+            <button
+              class="flex items-center gap-2 w-full text-left p-2 hover:bg-surface-200 dark:hover:bg-surface-700 rounded"
+              (click)="setLanguage('zh-CN'); mobileMenu.hide()"
+            >
+              <i class="pi text-surface-100" [ngClass]="currentLanguage === 'zh-CN' ? 'pi-check' : 'pi-language'"></i>
+              {{ 'language.zhCN' | translate }}
+            </button>
+          </li>
+          <li>
+            <button
+              class="flex items-center gap-2 w-full text-left p-2 hover:bg-surface-200 dark:hover:bg-surface-700 rounded"
+              (click)="setLanguage('en'); mobileMenu.hide()"
+            >
+              <i class="pi text-surface-100" [ngClass]="currentLanguage === 'en' ? 'pi-check' : 'pi-language'"></i>
+              {{ 'language.en' | translate }}
             </button>
           </li>
           <li>
@@ -260,7 +289,7 @@
               target="_blank"
               rel="noopener noreferrer">
               <i class="pi pi-info-circle text-surface-100"></i>
-              Documentation
+              {{ 'menu.documentation' | translate }}
             </a>
           </li>
           <li>
@@ -269,7 +298,7 @@
               (click)="openGithubSupportDialog(); mobileMenu.hide()"
             >
               <i class="pi pi-thumbs-up text-surface-100"></i>
-              Support BookLore
+              {{ 'menu.supportBooklore' | translate }}
             </button>
           </li>
 
@@ -281,7 +310,7 @@
                   (click)="openUserProfileDialog(); mobileMenu.hide()"
                 >
                   <i class="pi pi-user text-surface-100"></i>
-                  Profile
+                  {{ 'menu.profile' | translate }}
                 </button>
               </li>
             }
@@ -293,7 +322,7 @@
               (click)="logout(); mobileMenu.hide()"
             >
               <i class="pi pi-sign-out text-surface-100"></i>
-              Logout
+              {{ 'menu.logout' | translate }}
             </button>
           </li>
         </ul>

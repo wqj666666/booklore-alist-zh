@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Button} from 'primeng/button';
 import {NgTemplateOutlet} from '@angular/common';
@@ -20,6 +20,10 @@ import {CheckboxChangeEvent, CheckboxModule} from "primeng/checkbox";
 import {UserService} from "../../settings/user-management/user.service";
 import {IconDisplayComponent} from '../../../shared/components/icon-display/icon-display.component';
 import {BookService} from '../../book/service/book.service';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {ReadStatusHelper} from '../../book/helpers/read-status.helper';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 export type RuleOperator =
   | 'equals'
@@ -73,7 +77,7 @@ export type RuleField =
 
 
 interface FullFieldConfig {
-  label: string;
+  labelKey: string;
   type?: FieldType;
   max?: number;
 }
@@ -115,36 +119,36 @@ export type GroupFormGroup = FormGroup<{
 }>;
 
 const FIELD_CONFIGS: Record<RuleField, FullFieldConfig> = {
-  library: {label: 'Library'},
-  readStatus: {label: 'Read Status'},
-  dateFinished: {label: 'Date Finished', type: 'date'},
-  lastReadTime: {label: 'Last Read Time', type: 'date'},
-  metadataScore: {label: 'Metadata Score', type: 'decimal', max: 100},
-  title: {label: 'Title'},
-  authors: {label: 'Authors'},
-  categories: {label: 'Categories'},
-  moods: {label: 'Moods'},
-  tags: {label: 'Tags'},
-  publisher: {label: 'Publisher'},
-  publishedDate: {label: 'Published Date', type: 'date'},
-  personalRating: {label: 'Personal Rating', type: 'decimal', max: 10},
-  pageCount: {label: 'Page Count', type: 'number'},
-  language: {label: 'Language'},
-  isbn13: {label: 'ISBN-13'},
-  isbn10: {label: 'ISBN-10'},
-  seriesName: {label: 'Series Name'},
-  seriesNumber: {label: 'Series Number', type: 'number'},
-  seriesTotal: {label: 'Books in Series', type: 'number'},
-  fileSize: {label: 'File Size (Kb)', type: 'number'},
-  fileType: {label: 'File Type'},
-  subtitle: {label: 'Subtitle'},
-  amazonRating: {label: 'Amazon Rating', type: 'decimal', max: 5},
-  amazonReviewCount: {label: 'Amazon Review Count', type: 'number'},
-  goodreadsRating: {label: 'Goodreads Rating', type: 'decimal', max: 5},
-  goodreadsReviewCount: {label: 'Goodreads Review Count', type: 'number'},
-  hardcoverRating: {label: 'Hardcover Rating', type: 'decimal', max: 5},
-  hardcoverReviewCount: {label: 'Hardcover Review Count', type: 'number'},
-  ranobedbRating: {label: 'Ranobedb Rating', type: 'decimal', max: 5}
+  library: {labelKey: 'magicShelf.field.library'},
+  readStatus: {labelKey: 'magicShelf.field.readStatus'},
+  dateFinished: {labelKey: 'magicShelf.field.dateFinished', type: 'date'},
+  lastReadTime: {labelKey: 'magicShelf.field.lastReadTime', type: 'date'},
+  metadataScore: {labelKey: 'magicShelf.field.metadataScore', type: 'decimal', max: 100},
+  title: {labelKey: 'magicShelf.field.title'},
+  authors: {labelKey: 'magicShelf.field.authors'},
+  categories: {labelKey: 'magicShelf.field.genre'},
+  moods: {labelKey: 'magicShelf.field.moods'},
+  tags: {labelKey: 'magicShelf.field.tags'},
+  publisher: {labelKey: 'magicShelf.field.publisher'},
+  publishedDate: {labelKey: 'magicShelf.field.publishedDate', type: 'date'},
+  personalRating: {labelKey: 'magicShelf.field.personalRating', type: 'decimal', max: 10},
+  pageCount: {labelKey: 'magicShelf.field.pageCount', type: 'number'},
+  language: {labelKey: 'magicShelf.field.language'},
+  isbn13: {labelKey: 'magicShelf.field.isbn13'},
+  isbn10: {labelKey: 'magicShelf.field.isbn10'},
+  seriesName: {labelKey: 'magicShelf.field.seriesName'},
+  seriesNumber: {labelKey: 'magicShelf.field.seriesNumber', type: 'number'},
+  seriesTotal: {labelKey: 'magicShelf.field.seriesTotal', type: 'number'},
+  fileSize: {labelKey: 'magicShelf.field.fileSizeKb', type: 'number'},
+  fileType: {labelKey: 'magicShelf.field.fileType'},
+  subtitle: {labelKey: 'magicShelf.field.subtitle'},
+  amazonRating: {labelKey: 'magicShelf.field.amazonRating', type: 'decimal', max: 5},
+  amazonReviewCount: {labelKey: 'magicShelf.field.amazonReviewCount', type: 'number'},
+  goodreadsRating: {labelKey: 'magicShelf.field.goodreadsRating', type: 'decimal', max: 5},
+  goodreadsReviewCount: {labelKey: 'magicShelf.field.goodreadsReviewCount', type: 'number'},
+  hardcoverRating: {labelKey: 'magicShelf.field.hardcoverRating', type: 'decimal', max: 5},
+  hardcoverReviewCount: {labelKey: 'magicShelf.field.hardcoverReviewCount', type: 'number'},
+  ranobedbRating: {labelKey: 'magicShelf.field.ranobedbRating', type: 'decimal', max: 5}
 };
 
 @Component({
@@ -163,10 +167,11 @@ const FIELD_CONFIGS: Record<RuleField, FullFieldConfig> = {
     MultiSelect,
     AutoComplete,
     CheckboxModule,
-    IconDisplayComponent
+    IconDisplayComponent,
+    TranslateModule
   ]
 })
-export class MagicShelfComponent implements OnInit {
+export class MagicShelfComponent implements OnInit, OnDestroy {
 
   numericFieldConfigMap = new Map<RuleField, FieldConfig>(
     Object.entries(FIELD_CONFIGS)
@@ -174,19 +179,9 @@ export class MagicShelfComponent implements OnInit {
       .map(([key, config]) => [key as RuleField, {type: config.type!, max: config.max}])
   );
 
-  conditionOptions: { label: string; value: 'and' | 'or' }[] = [
-    {label: 'AND', value: 'and'},
-    {label: 'OR', value: 'or'},
-  ];
+  conditionOptions: { label: string; value: 'and' | 'or' }[] = [];
 
-  fieldOptions = Object.entries(FIELD_CONFIGS).map(([key, config]) => {
-    // Use "Genre" instead of "Categories" for user-facing label
-    const label = key === 'categories' ? 'Genre' : config.label;
-    return {
-      label: label,
-      value: key as RuleField
-    };
-  });
+  fieldOptions: { label: string; value: RuleField }[] = [];
 
   fileType: { label: string; value: string }[] = [
     {label: 'PDF', value: 'pdf'},
@@ -196,10 +191,7 @@ export class MagicShelfComponent implements OnInit {
     {label: 'CB7', value: 'cb7'}
   ];
 
-  readStatusOptions = Object.entries(ReadStatus).map(([key, value]) => ({
-    label: key.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()),
-    value
-  }));
+  readStatusOptions: { label: string; value: ReadStatus }[] = [];
 
   libraries: Library[] = [];
   libraryOptions: { label: string; value: number }[] = [];
@@ -215,6 +207,7 @@ export class MagicShelfComponent implements OnInit {
   shelfId: number | null = null;
   isAdmin: boolean = false;
   editMode!: boolean;
+  private readonly destroy$ = new Subject<void>();
 
   libraryService = inject(LibraryService);
   bookService = inject(BookService);
@@ -224,6 +217,8 @@ export class MagicShelfComponent implements OnInit {
   config = inject(DynamicDialogConfig);
   userService = inject(UserService);
   private iconPicker = inject(IconPickerService);
+  private translateService = inject(TranslateService);
+  private readStatusHelper = inject(ReadStatusHelper);
 
   selectedIcon: IconSelection | null = null;
 
@@ -236,8 +231,11 @@ export class MagicShelfComponent implements OnInit {
     const id = this.config?.data?.id;
     this.editMode = !!this.config?.data?.editMode;
 
+    this.rebuildStaticOptions();
+    this.translateService.onLangChange.pipe(takeUntil(this.destroy$)).subscribe(() => this.rebuildStaticOptions());
+
     // Load available categories from book metadata
-    this.bookService.bookState$.subscribe(state => {
+    this.bookService.bookState$.pipe(takeUntil(this.destroy$)).subscribe(state => {
       if (state.loaded && state.books) {
         // Extract unique categories from all books
         const categoriesSet = new Set<string>();
@@ -288,6 +286,11 @@ export class MagicShelfComponent implements OnInit {
     }));
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   buildGroupFromData(data: GroupRule): GroupFormGroup {
     const rulesArray = new FormArray<FormGroup>([]);
 
@@ -325,31 +328,31 @@ export class MagicShelfComponent implements OnInit {
 
   getOperatorOptionsForField(field: RuleField | null | undefined) {
     const baseOperators = [
-      {label: 'Equals', value: 'equals'},
-      {label: '≠ Not Equal', value: 'not_equals'},
-      {label: 'Empty', value: 'is_empty'},
-      {label: 'Not Empty', value: 'is_not_empty'},
+      {label: this.translateService.instant('magicShelf.operator.equals'), value: 'equals'},
+      {label: this.translateService.instant('magicShelf.operator.notEquals'), value: 'not_equals'},
+      {label: this.translateService.instant('magicShelf.operator.isEmpty'), value: 'is_empty'},
+      {label: this.translateService.instant('magicShelf.operator.isNotEmpty'), value: 'is_not_empty'},
     ];
 
     const multiValueOperators = [
-      {label: 'Includes Any', value: 'includes_any'},
-      {label: 'Excludes All', value: 'excludes_all'},
-      {label: 'Includes All', value: 'includes_all'},
+      {label: this.translateService.instant('magicShelf.operator.includesAny'), value: 'includes_any'},
+      {label: this.translateService.instant('magicShelf.operator.excludesAll'), value: 'excludes_all'},
+      {label: this.translateService.instant('magicShelf.operator.includesAll'), value: 'includes_all'},
     ];
 
     const textOperators = [
-      {label: 'Contains', value: 'contains'},
-      {label: 'Doesn\'t Contain', value: 'does_not_contain'},
-      {label: 'Starts With', value: 'starts_with'},
-      {label: 'Ends With', value: 'ends_with'},
+      {label: this.translateService.instant('magicShelf.operator.contains'), value: 'contains'},
+      {label: this.translateService.instant('magicShelf.operator.doesNotContain'), value: 'does_not_contain'},
+      {label: this.translateService.instant('magicShelf.operator.startsWith'), value: 'starts_with'},
+      {label: this.translateService.instant('magicShelf.operator.endsWith'), value: 'ends_with'},
     ];
 
     const comparisonOperators = [
-      {label: '> Greater Than', value: 'greater_than'},
-      {label: '≥ Greater or Equal', value: 'greater_than_equal_to'},
-      {label: '< Less Than', value: 'less_than'},
-      {label: '≤ Less or Equal', value: 'less_than_equal_to'},
-      {label: 'Between', value: 'in_between'},
+      {label: this.translateService.instant('magicShelf.operator.greaterThan'), value: 'greater_than'},
+      {label: this.translateService.instant('magicShelf.operator.greaterThanEqualTo'), value: 'greater_than_equal_to'},
+      {label: this.translateService.instant('magicShelf.operator.lessThan'), value: 'less_than'},
+      {label: this.translateService.instant('magicShelf.operator.lessThanEqualTo'), value: 'less_than_equal_to'},
+      {label: this.translateService.instant('magicShelf.operator.inBetween'), value: 'in_between'},
     ];
 
     if (!field) return [...baseOperators, ...multiValueOperators];
@@ -502,7 +505,11 @@ export class MagicShelfComponent implements OnInit {
 
   submit() {
     if (!this.hasAtLeastOneValidRule(this.group)) {
-      this.messageService.add({severity: 'warn', summary: 'Validation Error', detail: 'You must add at least one valid rule before saving.'});
+      this.messageService.add({
+        severity: 'warn',
+        summary: this.translateService.instant('magicShelf.toast.validationError.summary'),
+        detail: this.translateService.instant('magicShelf.toast.validationError.detail')
+      });
       return;
     }
 
@@ -518,7 +525,11 @@ export class MagicShelfComponent implements OnInit {
       group: cleanedGroup
     }).subscribe({
       next: (savedShelf) => {
-        this.messageService.add({severity: 'success', summary: 'Success', detail: 'Magic shelf saved successfully.'});
+        this.messageService.add({
+          severity: 'success',
+          summary: this.translateService.instant('magicShelf.toast.saved.summary'),
+          detail: this.translateService.instant('magicShelf.toast.saved.detail')
+        });
         if (savedShelf?.id) {
           this.shelfId = savedShelf.id;
           this.form.patchValue({
@@ -531,8 +542,8 @@ export class MagicShelfComponent implements OnInit {
       error: (err) => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: err?.error?.message || 'Failed to save magic shelf.'
+          summary: this.translateService.instant('magicShelf.toast.saveFailed.summary'),
+          detail: err?.error?.message || this.translateService.instant('magicShelf.toast.saveFailed.detail')
         });
       }
     });
@@ -540,5 +551,25 @@ export class MagicShelfComponent implements OnInit {
 
   cancel() {
     this.ref.close();
+  }
+
+  private rebuildStaticOptions(): void {
+    this.conditionOptions = [
+      {label: this.translateService.instant('magicShelf.condition.and'), value: 'and'},
+      {label: this.translateService.instant('magicShelf.condition.or'), value: 'or'},
+    ];
+
+    this.fieldOptions = Object.entries(FIELD_CONFIGS).map(([key, config]) => ({
+      label: this.translateService.instant(config.labelKey),
+      value: key as RuleField
+    }));
+
+    this.readStatusOptions = Object.values(ReadStatus).map((value) => {
+      const labelKey = this.readStatusHelper.getReadStatusLabelKey(value);
+      return {
+        label: labelKey ? this.translateService.instant(labelKey) : value,
+        value
+      };
+    });
   }
 }

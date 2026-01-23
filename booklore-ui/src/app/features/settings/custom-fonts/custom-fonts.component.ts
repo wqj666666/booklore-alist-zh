@@ -10,11 +10,12 @@ import {Tooltip} from 'primeng/tooltip';
 import {DialogService, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {FontUploadDialogComponent} from './font-upload-dialog/font-upload-dialog.component';
 import {Skeleton} from 'primeng/skeleton';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-custom-fonts',
   standalone: true,
-  imports: [CommonModule, Button, ConfirmDialog, Tooltip, Skeleton],
+  imports: [CommonModule, Button, ConfirmDialog, Tooltip, Skeleton, TranslateModule],
   templateUrl: './custom-fonts.component.html',
   styleUrls: ['./custom-fonts.component.scss'],
   providers: [ConfirmationService, DialogService]
@@ -31,7 +32,8 @@ export class CustomFontsComponent implements OnInit {
     private customFontService: CustomFontService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private translateService: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -59,8 +61,8 @@ export class CustomFontsComponent implements OnInit {
       console.error('Failed to load fonts:', error);
       this.messageService.add({
         severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to load custom fonts'
+        summary: this.translateService.instant('settings.customFonts.toast.loadFailed.summary'),
+        detail: this.translateService.instant('settings.customFonts.toast.loadFailed.detail')
       });
       this.isLoading = false;
       this.fontsLoadedInBrowser = true;
@@ -71,8 +73,8 @@ export class CustomFontsComponent implements OnInit {
     if (this.customFonts.length >= this.maxFonts) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Quota Exceeded',
-        detail: `Maximum ${this.maxFonts} fonts allowed per user`
+        summary: this.translateService.instant('settings.customFonts.toast.quotaExceeded.summary'),
+        detail: this.translateService.instant('settings.customFonts.toast.quotaExceeded.detail', {max: this.maxFonts})
       });
       return;
     }
@@ -101,8 +103,8 @@ export class CustomFontsComponent implements OnInit {
 
   deleteFont(font: CustomFont): void {
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete the font "${font.fontName}"?`,
-      header: 'Delete Font',
+      message: this.translateService.instant('settings.customFonts.confirm.delete.message', {fontName: font.fontName}),
+      header: this.translateService.instant('settings.customFonts.confirm.delete.header'),
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.customFontService.deleteFont(font.id).subscribe({
@@ -110,16 +112,16 @@ export class CustomFontsComponent implements OnInit {
             this.customFonts = this.customFonts.filter(f => f.id !== font.id);
             this.messageService.add({
               severity: 'success',
-              summary: 'Success',
-              detail: `Font "${font.fontName}" deleted successfully`
+              summary: this.translateService.instant('settings.customFonts.toast.deleteSuccess.summary'),
+              detail: this.translateService.instant('settings.customFonts.toast.deleteSuccess.detail', {fontName: font.fontName})
             });
           },
           error: (error) => {
             console.error('Failed to delete font:', error);
             this.messageService.add({
               severity: 'error',
-              summary: 'Delete Failed',
-              detail: 'Failed to delete font'
+              summary: this.translateService.instant('settings.customFonts.toast.deleteFailed.summary'),
+              detail: this.translateService.instant('settings.customFonts.toast.deleteFailed.detail')
             });
           }
         });

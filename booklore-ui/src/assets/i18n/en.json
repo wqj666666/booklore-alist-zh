@@ -1,0 +1,5076 @@
+{
+  "app": {
+    "name": "Booklore"
+  },
+  "common": {
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "cancel": "Cancel",
+    "close": "Close",
+    "save": "Save",
+    "delete": "Delete",
+    "search": "Search",
+    "loading": "Loading",
+    "none": "None",
+    "na": "N/A"
+  },
+  "a11y": {
+    "unifiedNotificationIcon": "Notifications",
+    "logoAlt": "Booklore logo"
+  },
+  "language": {
+    "zhCN": "简体中文",
+    "en": "English"
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome Back",
+      "subtitle": "Sign in to continue your journey",
+      "form": {
+        "usernameLabel": "Username",
+        "usernamePlaceholder": "Enter your username",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "Enter your password"
+      },
+      "actions": {
+        "signIn": "Sign In"
+      },
+      "errors": {
+        "cannotConnect": "Cannot connect to the server. Please check your connection and try again.",
+        "unexpected": "An unexpected error occurred. Please try again.",
+        "oidcInitiationFailed": "Failed to initiate OIDC login. Please try again or use local login."
+      },
+      "oidc": {
+        "orContinueWith": "or continue with",
+        "redirectingTo": "Redirecting to {{provider}}...",
+        "havingTroubleUseLocal": "Having trouble with {{provider}}? Use local login",
+        "reEnableLogin": "Re-enable {{provider}} login"
+      },
+      "oidcWarning": {
+        "title": "OIDC Authentication Issues",
+        "retryOidc": "Retry OIDC",
+        "useLocalLogin": "Use Local Login",
+        "autoDisabledAfterFailures": "{{provider}} authentication has been automatically disabled after {{errorCount}} consecutive failures (including timeouts). You can retry or continue with local login.",
+        "manuallyDisabled": "{{provider}} authentication has been manually disabled. You can re-enable it or continue with local login.",
+        "encounteredErrors": "{{provider}} authentication encountered {{errorCount}} error(s), possibly due to timeouts or server issues."
+      }
+    },
+    "setup": {
+      "title": "Welcome to Booklore",
+      "subtitle": "Setup your initial admin account to get started",
+      "form": {
+        "usernameLabel": "Username",
+        "usernamePlaceholder": "Choose a username",
+        "fullNameLabel": "Full Name",
+        "fullNamePlaceholder": "Enter your full name",
+        "emailLabel": "Email Address",
+        "emailPlaceholder": "Enter your email address",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "Create a secure password"
+      },
+      "validation": {
+        "usernameRequired": "Username is required",
+        "nameRequired": "Name is required",
+        "emailRequired": "Valid email is required",
+        "passwordMinLength": "Minimum 6 characters required"
+      },
+      "actions": {
+        "creatingAccount": "Creating Account...",
+        "createAdminAccount": "Create Admin Account"
+      },
+      "success": {
+        "createdRedirecting": "Admin account created successfully! Redirecting..."
+      },
+      "errors": {
+        "createAdminFailed": "Failed to create admin user. Try again."
+      }
+    },
+    "changePassword": {
+      "title": "Change Password",
+      "subtitle": "Update your password to keep your account secure",
+      "form": {
+        "currentPasswordLabel": "Current Password",
+        "currentPasswordPlaceholder": "Enter your current password",
+        "newPasswordLabel": "New Password",
+        "newPasswordPlaceholder": "Enter your new password",
+        "confirmNewPasswordLabel": "Confirm New Password",
+        "confirmNewPasswordPlaceholder": "Confirm your new password"
+      },
+      "validation": {
+        "newPasswordsDoNotMatch": "New passwords do not match"
+      },
+      "actions": {
+        "updatePassword": "Update Password"
+      },
+      "errors": {
+        "allFieldsRequired": "All fields are required.",
+        "newPasswordsDoNotMatch": "New passwords do not match.",
+        "newPasswordSameAsCurrent": "New password cannot be the same as the current password."
+      },
+      "success": {
+        "passwordChanged": "Password changed successfully!"
+      },
+      "toast": {
+        "failedSummary": "Password Change Failed",
+        "unknownError": "An unknown error occurred."
+      }
+    }
+  },
+  "shared": {
+    "directoryPicker": {
+      "header": {
+        "title": "Select Directories",
+        "description": "Choose one or more directories from your file system"
+      },
+      "currentPath": {
+        "label": "Current Path:"
+      },
+      "search": {
+        "placeholder": "Search folders..."
+      },
+      "selectionBadge": {
+        "one": "{{count}} folder selected",
+        "other": "{{count}} folders selected"
+      },
+      "loading": "Loading directories...",
+      "empty": {
+        "noMatches": {
+          "title": "No Matches Found",
+          "descriptionLine1": "No folders match your search criteria.",
+          "descriptionLine2": "Try adjusting your search terms."
+        },
+        "directoryEmpty": {
+          "title": "Directory is Empty",
+          "description": "This directory doesn't contain any subfolders."
+        }
+      },
+      "listHeader": {
+        "countAvailable": {
+          "one": "{{count}} folder available",
+          "other": "{{count}} folders available"
+        }
+      },
+      "footer": {
+        "selectionInfo": {
+          "one": "{{count}} folder will be selected",
+          "other": "{{count}} folders will be selected"
+        }
+      },
+      "actions": {
+        "selectDirectories": "Select Directories"
+      },
+      "tooltip": {
+        "goUpOneLevel": "Go up one level"
+      },
+      "storageType": {
+        "label": "Storage Type:",
+        "local": "Local",
+        "alist": "AList"
+      }
+    },
+    "bookUploader": {
+      "title": "Upload Books",
+      "description": "Upload your books to a library or the bookdrop folder",
+      "section": {
+        "uploadDestination": "Upload Destination",
+        "librarySelection": "Library Selection",
+        "selectFiles": "Select Files"
+      },
+      "destinationOption": {
+        "library": "Library",
+        "bookdrop": "Bookdrop"
+      },
+      "field": {
+        "library": {
+          "label": "Library",
+          "placeholder": "Select Library"
+        },
+        "subpath": {
+          "label": "Subpath",
+          "placeholder": "Select Subpath"
+        }
+      },
+      "action": {
+        "choose": "Choose",
+        "upload": "Upload",
+        "clear": "Clear"
+      },
+      "hint": {
+        "chooseOrDrag": "Click \"{{chooseLabel}}\" to select files or drag and drop them below"
+      },
+      "empty": {
+        "title": "Drag and Drop Files",
+        "supportedFormats": "Supported formats",
+        "maxFileSize": "Maximum file size: {{size}} per file"
+      },
+      "status": {
+        "tooLarge": "Too Large",
+        "ready": "Ready",
+        "uploading": "Uploading",
+        "uploaded": "Uploaded",
+        "failed": "Failed"
+      },
+      "error": {
+        "fileExceedsMaxSize": "File exceeds maximum size of {{size}}",
+        "uploadFailedUnknown": "Upload failed due to an unknown error."
+      },
+      "toast": {
+        "missingData": {
+          "summary": "Missing Data",
+          "detail": "Please select a library and subpath before uploading."
+        },
+        "fileTooLarge": {
+          "summary": "File Too Large",
+          "detail": "{{fileName}} exceeds the maximum file size of {{size}}"
+        }
+      },
+      "tooltip": {
+        "chooseFilesToUpload": "Choose files to upload",
+        "startUploadingSelectedFiles": "Start uploading selected files",
+        "clearSelectedFiles": "Clear selected files",
+        "fileTooLarge": "File too large",
+        "uploadFailed": "Upload failed"
+      }
+    },
+    "metadataProgressWidget": {
+      "tooltip": {
+        "cancelTask": "Cancel this task",
+        "discardFetchedMetadata": "Preserve current metadata, discard new fetched metadata"
+      }
+    },
+    "fileMover": {
+      "a11y": {
+        "success": "Success"
+      }
+    },
+    "externalDocLink": {
+      "tooltip": {
+        "viewDocumentation": "View documentation"
+      }
+    },
+    "iconPicker": {
+      "title": {
+        "remove": "Remove"
+      }
+    }
+  },
+  "magicShelf": {
+    "a11y": {
+      "selectedShelfIcon": "Selected shelf icon",
+      "deleteGroup": "Delete group",
+      "removeRule": "Remove rule"
+    },
+    "title": {
+      "edit": "Edit Magic Shelf",
+      "create": "Magic Shelf Builder"
+    },
+    "description": "Create smart shelves with custom rules to automatically organize your books",
+    "form": {
+      "nameLabel": "Magic Shelf Name",
+      "namePlaceholder": "E.g. Rom-Zom-Coms, Fast & Furious, Missing Metadata",
+      "iconLabel": "Shelf Icon",
+      "iconClickToChange": "Click to change",
+      "iconSelect": "Select Icon",
+      "publicLabel": "Public"
+    },
+    "actions": {
+      "saveFilter": "Save Filter"
+    },
+    "group": {
+      "conditionLabel": "Condition:",
+      "addRule": "Add Rule",
+      "addGroup": "Add Group"
+    },
+    "condition": {
+      "and": "AND",
+      "or": "OR"
+    },
+    "rule": {
+      "fieldPlaceholder": "Field",
+      "operatorPlaceholder": "Operator",
+      "startYear": "Start Year",
+      "endYear": "End Year",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "startValue": "Start Value",
+      "endValue": "End Value",
+      "value": "Value",
+      "selectStatuses": "Select Statuses",
+      "selectFileTypes": "Select File Types",
+      "selectLibraries": "Select Libraries",
+      "selectGenres": "Select Genres",
+      "enterValues": "Enter values (press Enter)",
+      "selectStatus": "Select Status",
+      "selectFileType": "Select File Type",
+      "selectLibrary": "Select Library",
+      "selectGenre": "Select Genre"
+    },
+    "field": {
+      "library": "Library",
+      "readStatus": "Read Status",
+      "dateFinished": "Date Finished",
+      "lastReadTime": "Last Read Time",
+      "metadataScore": "Metadata Score",
+      "title": "Title",
+      "subtitle": "Subtitle",
+      "authors": "Authors",
+      "genre": "Genre",
+      "moods": "Moods",
+      "tags": "Tags",
+      "publisher": "Publisher",
+      "publishedDate": "Published Date",
+      "personalRating": "Personal Rating",
+      "pageCount": "Page Count",
+      "language": "Language",
+      "isbn13": "ISBN-13",
+      "isbn10": "ISBN-10",
+      "seriesName": "Series Name",
+      "seriesNumber": "Series Number",
+      "seriesTotal": "Books in Series",
+      "fileSizeKb": "File Size (Kb)",
+      "fileType": "File Type",
+      "amazonRating": "Amazon Rating",
+      "amazonReviewCount": "Amazon Review Count",
+      "goodreadsRating": "Goodreads Rating",
+      "goodreadsReviewCount": "Goodreads Review Count",
+      "hardcoverRating": "Hardcover Rating",
+      "hardcoverReviewCount": "Hardcover Review Count",
+      "ranobedbRating": "Ranobedb Rating"
+    },
+    "operator": {
+      "equals": "Equals",
+      "notEquals": "≠ Not Equal",
+      "isEmpty": "Empty",
+      "isNotEmpty": "Not Empty",
+      "includesAny": "Includes Any",
+      "excludesAll": "Excludes All",
+      "includesAll": "Includes All",
+      "contains": "Contains",
+      "doesNotContain": "Doesn't Contain",
+      "startsWith": "Starts With",
+      "endsWith": "Ends With",
+      "greaterThan": "> Greater Than",
+      "greaterThanEqualTo": "≥ Greater or Equal",
+      "lessThan": "< Less Than",
+      "lessThanEqualTo": "≤ Less or Equal",
+      "inBetween": "Between"
+    },
+    "toast": {
+      "validationError": {
+        "summary": "Validation Error",
+        "detail": "You must add at least one valid rule before saving."
+      },
+      "saved": {
+        "summary": "Success",
+        "detail": "Magic shelf saved successfully."
+      },
+      "saveFailed": {
+        "summary": "Error",
+        "detail": "Failed to save magic shelf."
+      }
+    }
+  },
+  "libraryCreator": {
+    "header": {
+      "createTitle": "Create New Library",
+      "editTitle": "Edit Library",
+      "subtitle": "Set up a new library to organize and manage your book collection"
+    },
+    "stepper": {
+      "libraryDetails": "Library Details",
+      "selectDirectories": "Select Directories"
+    },
+    "step1": {
+      "title": "Step 1: Library Information",
+      "description": "Set up your library name, icon, and import preferences",
+      "form": {
+        "libraryName": {
+          "label": "Library Name",
+          "placeholder": "e.g., My Personal Library"
+        },
+        "libraryIcon": {
+          "label": "Library Icon",
+          "chooseTitle": "Choose an Icon",
+          "chooseSubtitle": "Select from available icons",
+          "selectedLabel": "Selected Icon",
+          "customSuffix": " (Custom)"
+        },
+        "importMode": {
+          "label": "Import Mode",
+          "placeholder": "Choose scan mode"
+        },
+        "preferredFormat": {
+          "label": "Preferred Format",
+          "placeholder": "Select preferred format"
+        },
+        "monitorFolders": {
+          "label": "Monitor Folders",
+          "enabled": "Enabled",
+          "disabled": "Disabled"
+        }
+      },
+      "validation": {
+        "incomplete": "Please complete all required fields",
+        "ready": "Ready to proceed"
+      },
+      "actions": {
+        "continue": "Continue to Directories"
+      }
+    },
+    "step2": {
+      "title": "Step 2: Book Directories",
+      "description": "Add folders containing your book files",
+      "addFolder": {
+        "title": "Add Book Folder",
+        "subtitle": "Browse for directories"
+      },
+      "empty": {
+        "title": "No Folders Added Yet",
+        "descriptionLine1": "Click the button above to add folders containing your books.",
+        "descriptionLine2": "You can add multiple folders from different locations."
+      },
+      "folders": {
+        "countAdded": {
+          "one": "{{count}} folder added",
+          "other": "{{count}} folders added"
+        }
+      },
+      "validation": {
+        "needFolder": "Add at least one folder"
+      },
+      "actions": {
+        "back": "Back",
+        "create": "Create Library",
+        "update": "Update Library"
+      },
+      "storage": {
+        "label": "Storage Type",
+        "local": "Local Storage",
+        "alist": "AList Storage",
+        "alistPath": "AList Path",
+        "alistPathPlaceholder": "e.g., /remote-storage/library"
+      }
+    },
+    "option": {
+      "scanMode": {
+        "fileAsBook": "Each file is a book (Recommended)",
+        "folderAsBook": "Each folder is a book with extras (Deprecated)"
+      },
+      "bookFormat": {
+        "none": "None",
+        "epub": "EPUB",
+        "pdf": "PDF",
+        "cbx": "CBX/CBZ/CBR"
+      }
+    },
+    "toast": {
+      "nameExists": {
+        "summary": "Library Name Exists",
+        "detail": "This library name is already taken."
+      },
+      "updated": {
+        "summary": "Library Updated",
+        "detail": "The library was updated successfully."
+      },
+      "updateFailed": {
+        "summary": "Update Failed",
+        "detail": "An error occurred while updating the library. Please try again."
+      },
+      "created": {
+        "summary": "Library Created",
+        "detail": "The library was created successfully.",
+        "detailLarge": "Library created with {{count}} files. Loading in progress..."
+      },
+      "creationFailed": {
+        "summary": "Creation Failed",
+        "detail": "An error occurred while creating the library. Please try again."
+      }
+    },
+    "loading": {
+      "title": "Loading Library",
+      "processingPrefix": "Processing:",
+      "complete": "Library Loading Complete!",
+      "openLibrary": "Open Library"
+    },
+    "tooltip": {
+      "removeIcon": "Remove icon",
+      "scanModeInfo": "File as Book: Each file becomes a separate book.<br>Folder as Book: Each folder is treated as one book with multiple formats.",
+      "preferredFormatInfo": "If a folder has multiple formats, this determines the primary format to use",
+      "watchFoldersInfo": "Automatically detect and import new books when files are added to watched folders",
+      "removeFolder": "Remove folder"
+    }
+  },
+  "readers": {
+    "toast": {
+      "successSummary": "Success",
+      "errorSummary": "Error",
+      "infoSummary": "Info"
+    },
+    "epub": {
+      "tooltip": {
+        "viewDetails": "View details",
+        "editBookmark": "Edit",
+        "deleteBookmark": "Delete",
+        "savingProgressNotReady": "Saving progress not ready yet",
+        "closeReader": "Close Reader"
+      },
+      "header": {
+        "progress": "Progress:"
+      },
+      "drawer": {
+        "tableOfContents": "Table of Contents",
+        "tabs": {
+          "chapters": "Chapters",
+          "bookmarks": "Bookmarks"
+        }
+      },
+      "bookmarks": {
+        "searchPlaceholder": "Search bookmarks...",
+        "empty": {
+          "title": "No bookmarks found",
+          "withFilter": "Try a different search term",
+          "noFilter": "Tap the bookmark icon to save your place"
+        },
+        "untitled": "Untitled Bookmark"
+      },
+      "settings": {
+        "title": "Reader Settings",
+        "typography": {
+          "title": "Typography",
+          "fontSize": "Font Size",
+          "fontFamily": "Font Family",
+          "loadingFonts": "Loading fonts...",
+          "lineHeight": "Line Height",
+          "letterSpacing": "Letter Spacing"
+        },
+        "appearance": {
+          "title": "Appearance",
+          "theme": "Theme"
+        },
+        "layout": {
+          "title": "Layout",
+          "readingMode": "Reading Mode",
+          "paginated": "Paginated",
+          "scrolled": "Scrolled",
+          "pageSpread": "Page Spread",
+          "single": "Single",
+          "double": "Double"
+        }
+      },
+      "theme": {
+        "white": "White",
+        "black": "Black",
+        "grey": "Grey",
+        "sepia": "Sepia",
+        "green": "Green",
+        "lavender": "Lavender",
+        "cream": "Cream",
+        "lightBlue": "Light Blue",
+        "peach": "Peach",
+        "mint": "Mint",
+        "darkSlate": "Dark Slate",
+        "darkOlive": "Dark Olive",
+        "darkPurple": "Dark Purple",
+        "darkTeal": "Dark Teal",
+        "darkBrown": "Dark Brown"
+      },
+      "font": {
+        "publisherDefault": "Publisher's Default",
+        "serif": "Serif",
+        "sansSerif": "Sans Serif",
+        "roboto": "Roboto",
+        "cursive": "Cursive",
+        "monospace": "Monospace"
+      },
+      "confirm": {
+        "deleteBookmark": "Are you sure you want to delete this bookmark?"
+      },
+      "toast": {
+        "loadBookFailedFallback": "Failed to load the book",
+        "bookmarkAlreadyExists": "Bookmark already exists at this location",
+        "bookmarkCreated": "Bookmark created successfully",
+        "bookmarkCreateFailed": "Failed to create bookmark",
+        "bookmarkDeleted": "Bookmark deleted successfully",
+        "bookmarkDeleteFailed": "Failed to delete bookmark",
+        "bookmarkUpdated": "Bookmark updated successfully",
+        "bookmarkUpdateFailed": "Failed to update bookmark"
+      },
+      "bookmarkEditDialog": {
+        "title": "Edit Bookmark",
+        "fields": {
+          "title": {
+            "label": "Title",
+            "placeholder": "Enter bookmark title",
+            "required": "Title is required"
+          },
+          "color": {
+            "label": "Color"
+          },
+          "notes": {
+            "label": "Notes",
+            "placeholder": "Add notes about this bookmark"
+          },
+          "priority": {
+            "label": "Priority (1 = High, 5 = Low)"
+          }
+        }
+      },
+      "bookmarkViewDialog": {
+        "title": "View Bookmark",
+        "fields": {
+          "created": "Created",
+          "priority": "Priority",
+          "notes": "Notes"
+        },
+        "noNotes": "No notes added",
+        "priority": {
+          "highest": "Highest",
+          "high": "High",
+          "normal": "Normal",
+          "low": "Low",
+          "lowest": "Lowest"
+        }
+      }
+    },
+    "pdf": {
+      "title": {
+        "closePdfReader": "Close PDF Reader"
+      },
+      "toast": {
+        "loadBookFailedFallback": "Failed to load the book"
+      }
+    },
+    "cbx": {
+      "title": {
+        "firstPage": "First Page",
+        "previousPage": "Previous Page",
+        "nextPage": "Next Page",
+        "lastPage": "Last Page",
+        "fitMode": "Fit Mode",
+        "toggleScrollMode": "Toggle Scroll Mode",
+        "toggleSpreadDirection": "Toggle Spread Direction",
+        "toggleView": "Toggle View",
+        "toggleBackgroundColor": "Toggle Background Color",
+        "closeReader": "Close Reader",
+        "moreOptions": "More Options"
+      },
+      "fitMode": {
+        "fitPage": "Fit Page",
+        "fitWidth": "Fit Width",
+        "fitHeight": "Fit Height",
+        "actualSize": "Actual Size",
+        "automatic": "Automatic"
+      },
+      "series": {
+        "previousBook": "Previous Book",
+        "nextBook": "Next Book",
+        "continueToNextBook": "Continue to Next Book",
+        "noPreviousBookTooltip": "No Previous Book",
+        "noNextBookTooltip": "No Next Book",
+        "previousBookTooltip": "Previous Book: {{title}}",
+        "nextBookTooltip": "Next Book: {{title}}"
+      },
+      "page": {
+        "placeholder": "Page",
+        "go": "Go",
+        "of": "of"
+      },
+      "mobile": {
+        "fitMode": "Fit Mode",
+        "scrollMode": "Scroll Mode",
+        "spreadDirection": "Spread Direction",
+        "layout": "Layout",
+        "background": "Background",
+        "closeReader": "Close Reader"
+      },
+      "empty": {
+        "noPages": "No pages available."
+      },
+      "loading": {
+        "processingPages": "Processing pages... This may take a few seconds on first load. Future loads will be significantly faster."
+      },
+      "toast": {
+        "loadPagesFailedFallback": "Failed to load pages",
+        "loadBookFailedFallback": "Failed to load the book"
+      },
+      "a11y": {
+        "pageImageAlt": "Page image",
+        "pageNumberAlt": "Page {{page}}"
+      }
+    }
+  },
+  "book": {
+    "bulkActions": {
+      "tooltip": {
+        "metadataActions": "Metadata actions",
+        "assignToShelf": "Assign to shelf",
+        "lockUnlockMetadata": "Lock/Unlock metadata",
+        "organizeFiles": "Organize Files",
+        "moreActions": "More actions",
+        "selectAllBooks": "Select all books",
+        "deselectAllBooks": "Deselect all books",
+        "deleteSelectedBooks": "Delete selected books"
+      }
+    },
+    "browser": {
+      "title": {
+        "unshelvedBooks": "Unshelved Books",
+        "unshelvedFiltered": "Unshelved Books (Filtered)",
+        "filteredSuffix": " (Filtered)"
+      },
+      "entityType": {
+        "library": "Library",
+        "shelf": "Shelf",
+        "magicShelf": "Magic Shelf"
+      },
+      "entityMenu": {
+        "options": "Options",
+        "toast": {
+          "success": {
+            "summary": "Success"
+          },
+          "failed": {
+            "summary": "Failed"
+          }
+        },
+        "library": {
+          "edit": "Edit Library",
+          "rescan": {
+            "label": "Re-scan Library",
+            "confirmMessage": "Are you sure you want to refresh library: {{name}}?",
+            "toast": {
+              "scheduled": "Library refresh scheduled",
+              "failed": "Failed to refresh library"
+            }
+          },
+          "customFetchMetadata": "Custom Fetch Metadata",
+          "autoFetchMetadata": "Auto Fetch Metadata",
+          "delete": {
+            "label": "Delete Library",
+            "confirmMessage": "Are you sure you want to delete library: {{name}}?",
+            "deleting": "Deleting library '{{name}}'...",
+            "toast": {
+              "deleted": "Library was deleted",
+              "failed": "Failed to delete library"
+            }
+          }
+        },
+        "shelf": {
+          "edit": "Edit Shelf",
+          "delete": {
+            "label": "Delete Shelf",
+            "confirmMessage": "Are you sure you want to delete shelf: {{name}}?",
+            "toast": {
+              "deleted": "Shelf was deleted",
+              "failed": "Failed to delete shelf"
+            }
+          }
+        },
+        "magicShelf": {
+          "edit": "Edit Magic Shelf",
+          "delete": {
+            "label": "Delete Magic Shelf",
+            "confirmMessage": "Are you sure you want to delete magic shelf: {{name}}?",
+            "toast": {
+              "deleted": "Magic shelf was deleted",
+              "failed": "Failed to delete magic shelf"
+            }
+          }
+        }
+      },
+      "seriesCollapsed": {
+        "showingOne": "Showing 1 book (series collapsed)",
+        "showingMany": "Showing {{count}} books (series collapsed)"
+      },
+      "search": {
+        "placeholder": "Title, Author, Series, Genre, or ISBN..."
+      },
+      "display": {
+        "collapseSeries": "Collapse series",
+        "gridItemSize": "Grid item size"
+      },
+      "columns": {
+        "selectPlaceholder": "Select columns",
+        "setAsDefault": "Set as default",
+        "toast": {
+          "preferencesSaved": {
+            "summary": "Preferences saved",
+            "detail": "Your column preferences have been saved."
+          }
+        }
+      },
+      "filters": {
+        "activeCount": "{{count}} Active Filters"
+      },
+      "sort": {
+        "title": "Title",
+        "titleSeries": "Title + Series",
+        "fileName": "File Name",
+        "author": "Author",
+        "authorSeries": "Author + Series",
+        "lastRead": "Last Read",
+        "personalRating": "Personal Rating",
+        "addedOn": "Added On",
+        "fileSize": "File Size",
+        "locked": "Locked",
+        "publisher": "Publisher",
+        "publishedDate": "Published Date",
+        "amazonRating": "Amazon Rating",
+        "amazonReviewCount": "Amazon #",
+        "goodreadsRating": "Goodreads Rating",
+        "goodreadsReviewCount": "Goodreads #",
+        "hardcoverRating": "Hardcover Rating",
+        "hardcoverReviewCount": "Hardcover #",
+        "ranobedbRating": "RanobeDB Rating",
+        "pageCount": "Pages",
+        "random": "Random"
+      },
+      "bulkActions": {
+        "selected": "selected"
+      },
+      "empty": {
+        "noBooks": "No books found."
+      },
+      "error": {
+        "loadLibraryBooks": "Could not load library books.",
+        "loadShelfBooks": "Could not load shelf books.",
+        "loadBooks": "Could not load books."
+      },
+      "tooltip": {
+        "clearAppliedFilters": "Clear applied filters",
+        "visibleColumns": "Visible columns",
+        "displaySettings": "Display settings",
+        "selectSorting": "Select sorting",
+        "toggleGridTableView": "Toggle between Grid and Table view",
+        "toggleSidebarFilters": "Toggle sidebar filters",
+        "removeFromShelf": "Remove from this shelf"
+      }
+    },
+    "filter": {
+      "title": "Filters",
+      "mode": {
+        "and": "And",
+        "or": "Or",
+        "single": "Single"
+      },
+      "notice": {
+        "truncated": "Only showing the first {{limit}} values.",
+        "footer": "Only showing the first {{limit}} values per filter."
+      },
+      "type": {
+        "author": "Author",
+        "category": "Genre",
+        "series": "Series",
+        "publisher": "Publisher",
+        "readStatus": "Read Status",
+        "personalRating": "Personal Rating",
+        "publishedDate": "Published Year",
+        "matchScore": "Metadata Match Score",
+        "mood": "Mood",
+        "tag": "Tag",
+        "language": "Language",
+        "bookType": "Book Type",
+        "shelfStatus": "Shelf Status",
+        "fileSize": "File Size",
+        "pageCount": "Page Count",
+        "amazonRating": "Amazon Rating",
+        "goodreadsRating": "Goodreads Rating",
+        "hardcoverRating": "Hardcover Rating",
+        "ranobedbRating": "RanobeDB Rating"
+      },
+      "shelfStatus": {
+        "shelved": "Shelved",
+        "unshelved": "Unshelved"
+      },
+      "value": {
+        "fileSize": {
+          "lt1mb": "< 1 MB",
+          "mb1to10": "1–10 MB",
+          "mb10to50": "10–50 MB",
+          "mb50to100": "50–100 MB",
+          "mb250to500": "250–500 MB",
+          "gb05to1": "0.5–1 GB",
+          "gb1to2": "1–2 GB",
+          "gb5plus": "5+ GB"
+        },
+        "pageCount": {
+          "lt50": "< 50 pages",
+          "p50to100": "50–100 pages",
+          "p100to200": "100–200 pages",
+          "p200to400": "200–400 pages",
+          "p400to600": "400–600 pages",
+          "p600to1000": "600–1000 pages",
+          "p1000plus": "1000+ pages"
+        },
+        "rating": {
+          "r0to1": "0 to 1",
+          "r1to2": "1 to 2",
+          "r2to3": "2 to 3",
+          "r3to4": "3 to 4",
+          "r4to45": "4 to 4.5",
+          "r45plus": "4.5+"
+        },
+        "matchScore": {
+          "m95to100": "Outstanding (95–100%)",
+          "m90to94": "Excellent (90–94%)",
+          "m80to89": "Great (80–89%)",
+          "m70to79": "Good (70–79%)",
+          "m50to69": "Fair (50–69%)",
+          "m30to49": "Weak (30–49%)",
+          "m0to29": "Poor (0–29%)"
+        }
+      }
+    },
+    "shelfCreator": {
+      "tooltip": {
+        "removeIcon": "Remove icon"
+      }
+    },
+    "reviews": {
+      "a11y": {
+        "fetchReviews": "Fetch reviews",
+        "deleteReview": "Delete review",
+        "toggleReviewsLock": "Toggle reviews lock",
+        "fetchNewReviews": "Fetch new reviews",
+        "deleteAllReviews": "Delete all reviews",
+        "toggleAllSpoilers": "Toggle all spoilers",
+        "toggleSortOrder": "Toggle sort order"
+      },
+      "tooltip": {
+        "fetchReviews": "Fetch Reviews",
+        "loading": "Please wait while reviews are being fetched",
+        "enableReviewDownloads": "Enable review downloads in settings to use this feature",
+        "unlockReviews": "Unlock Reviews",
+        "lockReviews": "Lock Reviews",
+        "reviewsLocked": "Reviews are locked",
+        "fetchNewReviews": "Fetch New Reviews",
+        "deleteReview": "Delete Review",
+        "deleteAllReviews": "Delete All Reviews",
+        "hideAllSpoilers": "Hide All Spoilers",
+        "revealAllSpoilers": "Reveal All Spoilers",
+        "sortNewestFirst": "Sort by Newest First",
+        "sortOldestFirst": "Sort by Oldest First"
+      }
+    },
+    "notes": {
+      "tooltip": {
+        "addNewNote": "Add New Note",
+        "editNote": "Edit note",
+        "deleteNote": "Delete note"
+      }
+    },
+    "additionalFileUploader": {
+      "tooltip": {
+        "uploading": "Uploading",
+        "uploaded": "Uploaded",
+        "uploadFailed": "Upload failed"
+      }
+    },
+    "searcher": {
+      "placeholder": "Title, Author, Series, Genre, or ISBN...",
+      "a11y": {
+        "clearSearch": "Clear Search",
+        "bookCoverAlt": "Book cover"
+      }
+    },
+    "metadataRestoreDialog": {
+      "a11y": {
+        "backupCoverAlt": "Backup cover"
+      },
+      "description": "This will restore the embedded metadata and cover (if available) from a saved backup for the selected book.",
+      "section": {
+        "bookToRestore": "Book to Restore:",
+        "backupMetadataPreview": "Backup Metadata Preview:",
+        "backupCoverPreview": "Backup Cover Preview:"
+      },
+      "label": {
+        "id": "ID",
+        "currentTitle": "Current Title"
+      },
+      "empty": {
+        "noBackupTitle": "No backup available",
+        "noBackupDescription": "We couldn't find a saved backup for this book. Metadata and cover cannot be restored."
+      },
+      "button": {
+        "restore": "Restore"
+      },
+      "toast": {
+        "unknownError": "Unknown error",
+        "noBackupFound": {
+          "summary": "No Backup Found",
+          "detail": "Backup metadata could not be retrieved."
+        },
+        "restoreSuccessful": {
+          "summary": "Restore Successful",
+          "detail": "Metadata restored for book ID {{bookId}}"
+        },
+        "restoreFailed": {
+          "summary": "Restore Failed",
+          "detail": "Failed to restore metadata: {{message}}"
+        }
+      }
+    },
+    "table": {
+      "a11y": {
+        "bookCoverAlt": "Book cover"
+      },
+      "title": {
+        "locked": "Locked",
+        "unlocked": "Unlocked"
+      },
+      "column": {
+        "readStatus": "Read",
+        "title": "Title",
+        "authors": "Authors",
+        "publisher": "Publisher",
+        "seriesName": "Series",
+        "seriesNumber": "Series #",
+        "categories": "Genres",
+        "publishedDate": "Published Date",
+        "lastReadTime": "Last Read",
+        "addedOn": "Added On",
+        "fileSizeKb": "File Size",
+        "language": "Language",
+        "isbn": "ISBN",
+        "pageCount": "Pages",
+        "amazonRating": "Amazon",
+        "amazonReviewCount": "AZ #",
+        "goodreadsRating": "Goodreads",
+        "goodreadsReviewCount": "GR #",
+        "hardcoverRating": "Hardcover",
+        "hardcoverReviewCount": "HC #",
+        "ranobedbRating": "RanobeDB"
+      },
+      "tooltip": {
+        "status": "Status: {{status}}"
+      }
+    },
+    "card": {
+      "a11y": {
+        "coverAlt": "Cover of {{title}}",
+        "selectBook": "Select book: {{title}}",
+        "viewDetails": "View details",
+        "viewSeriesDetails": "View series details",
+        "readBook": "Read book",
+        "openActionsMenu": "Open actions menu"
+      },
+      "tooltip": {
+        "seriesCollapsed": "Series collapsed: {{count}} books",
+        "title": "Title: {{title}}"
+      },
+      "menu": {
+        "assignShelf": "Assign Shelf",
+        "viewDetails": "View Details",
+        "download": "Download",
+        "emailBook": "Email Book",
+        "quickSend": "Quick Send",
+        "customSend": "Custom Send",
+        "metadata": "Metadata",
+        "searchMetadata": "Search Metadata",
+        "autoFetch": "Auto Fetch",
+        "customFetch": "Custom Fetch",
+        "regenerateCoverFile": "Regenerate Cover (File)",
+        "generateCustomCover": "Generate Custom Cover",
+        "moreActions": "More Actions",
+        "organizeFile": "Organize File",
+        "readStatus": "Read Status",
+        "resetBookloreProgress": "Reset Booklore Progress",
+        "resetKoreaderProgress": "Reset KOReader Progress",
+        "bookFile": "Book File",
+        "book": "Book"
+      },
+      "confirm": {
+        "deleteBook": {
+          "header": "Confirm Deletion",
+          "message": "Are you sure you want to delete \"{{title}}\"?"
+        },
+        "deleteAdditionalFile": {
+          "header": "Confirm File Deletion",
+          "message": "Are you sure you want to delete the additional file \"{{fileName}}\"?"
+        }
+      },
+      "toast": {
+        "unknownError": "Unknown error",
+        "emailScheduled": {
+          "summary": "Success",
+          "detail": "The book sending has been scheduled."
+        },
+        "emailFailed": {
+          "summary": "Error",
+          "detail": "An error occurred while sending the book."
+        },
+        "coverRegenStarted": {
+          "summary": "Success",
+          "detail": "Cover regeneration started"
+        },
+        "coverRegenFailed": {
+          "summary": "Error",
+          "detail": "Failed to regenerate cover"
+        },
+        "customCoverGenerated": {
+          "summary": "Success",
+          "detail": "Cover generated successfully"
+        },
+        "customCoverFailed": {
+          "summary": "Error",
+          "detail": "Failed to generate cover"
+        },
+        "readStatusUpdated": {
+          "summary": "Read Status Updated",
+          "detail": "Marked as \"{{label}}\""
+        },
+        "readStatusUpdateFailed": {
+          "summary": "Update Failed",
+          "detail": "Could not update read status."
+        },
+        "bookloreProgressReset": {
+          "summary": "Progress Reset",
+          "detail": "Booklore reading progress has been reset."
+        },
+        "bookloreProgressResetFailed": {
+          "summary": "Failed",
+          "detail": "Could not reset Booklore progress."
+        },
+        "koreaderProgressReset": {
+          "summary": "Progress Reset",
+          "detail": "KOReader reading progress has been reset."
+        },
+        "koreaderProgressResetFailed": {
+          "summary": "Failed",
+          "detail": "Could not reset KOReader progress."
+        },
+        "deleteAdditionalFileSuccess": {
+          "summary": "Success",
+          "detail": "Additional file \"{{fileName}}\" deleted successfully"
+        },
+        "deleteAdditionalFileFailed": {
+          "summary": "Error",
+          "detail": "Failed to delete additional file: {{error}}"
+        }
+      }
+    },
+    "cardLite": {
+      "a11y": {
+        "coverAlt": "Cover of {{title}}"
+      }
+    },
+    "readStatus": {
+      "unread": "Unread",
+      "read": "Read",
+      "currentlyReading": "Currently Reading",
+      "reReading": "Re-reading",
+      "partiallyRead": "Partially Read",
+      "paused": "Paused",
+      "abandoned": "Abandoned",
+      "wontRead": "Won't Read",
+      "unset": "Unset"
+    }
+  },
+  "bookdrop": {
+    "review": {
+      "pageTitle": "Bookdrop",
+      "headerTitle": "Review Bookdrop Files",
+      "intro": "Review scanned files, optionally import fetched metadata, then finalize to move them into your library.",
+      "status": {
+        "loading": "Loading files...",
+        "saving": "Saving..."
+      },
+      "button": {
+        "rescan": "Rescan",
+        "importMetadata": "Import Metadata",
+        "bulkEdit": "Bulk Edit",
+        "extractPattern": "Extract Pattern",
+        "selectAll": "Select All",
+        "clearSelection": "Clear Selection",
+        "reset": "Reset",
+        "delete": "Delete",
+        "finalize": "Finalize"
+      },
+      "placeholder": {
+        "library": "Select Library",
+        "subpath": "Select Subpath"
+      },
+      "empty": {
+        "noFiles": "No files found"
+      },
+      "paginator": {
+        "report": "Showing {first} to {last} of {totalRecords} files"
+      },
+      "confirmReset": {
+        "header": "Reset changes?",
+        "message": "Are you sure you want to discard metadata changes for the selected file(s)?"
+      },
+      "confirmFinalize": {
+        "header": "Finalize import?",
+        "message": {
+          "one": "Finalize import for <strong>{{count}}</strong> selected file?",
+          "many": "Finalize import for <strong>{{count}}</strong> selected files?"
+        }
+      },
+      "confirmDelete": {
+        "header": "Delete files?",
+        "message": {
+          "one": "Permanently delete <strong>{{count}}</strong> selected file from Bookdrop?",
+          "many": "Permanently delete <strong>{{count}}</strong> selected files from Bookdrop?"
+        }
+      },
+      "tooltip": {
+        "viewDocumentation": "View documentation",
+        "rescanBookdrop": "Manually trigger a rescan of the Bookdrop folder",
+        "importFetchedMetadata": "Import fetched metadata for selected files",
+        "includeCoversOnImport": "Include book covers when importing fetched metadata",
+        "bulkEditSelected": "Edit metadata fields in bulk for selected files",
+        "extractPatternSelected": "Extract metadata from selected filenames using a pattern",
+        "specifyLibrarySubpath": "Specify library and subpath for selected files",
+        "applyLibrarySubpath": "Apply library and subpath to selected files",
+        "selectedFilesCount": "Number of files selected",
+        "selectAllAcrossPages": "Select all files across all pages",
+        "deselectAllAcrossPages": "Deselect all files across all pages",
+        "resetSelected": "Discard all changes made to metadata of selected files",
+        "deleteSelected": "Permanently delete selected Bookdrop files and discard any changes",
+        "finalizeSelected": "Move selected files into the chosen library and subpath",
+        "metadataApplied": "Fetched metadata has been applied.",
+        "metadataNotAvailable": "No fetched metadata available. Original metadata will be used.",
+        "metadataNotApplied": "Fetched metadata hasn’t been applied yet. Open metadata picker to review.",
+        "hideMetadata": "Hide metadata",
+        "reviewAndCopyFetchedMetadata": "Review and copy fetched metadata",
+        "showNoFetchedMetadata": "Show file metadata (no fetched metadata)"
+      },
+      "title": {
+        "originalCover": "Original cover",
+        "noCoverFound": "No cover found",
+        "fetchedCover": "Fetched cover",
+        "noCoverFetched": "No cover fetched"
+      },
+      "a11y": {
+        "originalCoverAlt": "Cover",
+        "fetchedCoverAlt": "Fetched cover"
+      },
+      "dialog": {
+        "bulkEdit": {
+          "header": {
+            "one": "Bulk Edit ({{count}} file)",
+            "many": "Bulk Edit ({{count}} files)"
+          }
+        },
+        "patternExtract": {
+          "header": "Extract Metadata from Filenames"
+        }
+      },
+      "toast": {
+        "resetNoFilesSelected": {
+          "summary": "No files selected",
+          "detail": "Please select files to reset."
+        },
+        "finalizeNoFilesSelected": {
+          "summary": "No files selected",
+          "detail": "Please select files to finalize."
+        },
+        "deleteNoFilesSelected": {
+          "summary": "No files selected",
+          "detail": "Please select files to delete."
+        },
+        "deleteSuccess": {
+          "summary": "Deleted",
+          "detail": "Selected files have been deleted."
+        },
+        "deleteFailed": {
+          "summary": "Delete failed",
+          "detail": "Unable to delete selected files."
+        },
+        "importComplete": {
+          "summary": "Import complete",
+          "detail": "Selected files have been finalized."
+        },
+        "importFailed": {
+          "summary": "Import failed",
+          "detail": "Unable to finalize selected files."
+        },
+        "rescanTriggered": {
+          "summary": "Rescan triggered",
+          "detail": "A rescan of the Bookdrop folder has been started."
+        },
+        "rescanFailed": {
+          "summary": "Rescan failed",
+          "detail": "Unable to trigger a rescan."
+        },
+        "bulkEditNoFilesSelected": {
+          "summary": "No files selected",
+          "detail": "Please select files to bulk edit."
+        },
+        "bulkEditApplied": {
+          "summary": "Bulk edit applied",
+          "detail": "Updated {{successfullyUpdated}} of {{totalFiles}} files."
+        },
+        "bulkEditApplyFailed": {
+          "summary": "Bulk edit failed",
+          "detail": "Unable to apply bulk edit."
+        },
+        "bulkEditFailed": {
+          "summary": "Bulk edit failed",
+          "detail": "Unable to load all pages for bulk edit."
+        },
+        "patternExtractNoFilesSelected": {
+          "summary": "No files selected",
+          "detail": "Please select files to extract metadata from."
+        },
+        "patternExtractionFailed": {
+          "summary": "Pattern extraction failed",
+          "detail": "Unable to apply extracted metadata."
+        },
+        "patternExtractionApplied": {
+          "summary": "Pattern extraction applied",
+          "detail": "Applied extracted metadata to {{count}} files."
+        }
+      }
+    },
+    "metadataPicker": {
+      "a11y": {
+        "imageAlt": "Image",
+        "bookThumbnailAlt": "Book thumbnail"
+      },
+      "tooltip": {
+        "copyMissing": "Copy missing fields from fetched metadata",
+        "overwriteAll": "Overwrite all fields with fetched metadata",
+        "resetOriginal": "Reset all fields to original values"
+      },
+      "header": {
+        "fileData": "File Data",
+        "fetchedData": "Fetched Data"
+      },
+      "placeholder": {
+        "noCoverImage": "No cover image",
+        "coverNotFound": "Cover image not found"
+      },
+      "error": {
+        "unableToFetchMetadata": "Unable to fetch metadata for this file"
+      },
+      "confirmReset": {
+        "header": "Reset Metadata Changes?",
+        "message": "Are you sure you want to reset all metadata changes made to this file?"
+      },
+      "field": {
+        "title": "Title",
+        "subtitle": "Subtitle",
+        "publisher": "Publisher",
+        "publishedDate": "Published Date",
+        "authors": "Authors",
+        "genres": "Genres",
+        "moods": "Moods",
+        "tags": "Tags",
+        "description": "Description",
+        "seriesName": "Series Name",
+        "seriesNumber": "Series Number",
+        "seriesTotal": "Series Total",
+        "language": "Language",
+        "isbn10": "ISBN-10",
+        "isbn13": "ISBN-13",
+        "asin": "Amazon ASIN",
+        "amazonReviewCount": "Amazon Review Count",
+        "amazonRating": "Amazon Rating",
+        "goodreadsId": "Goodreads ID",
+        "goodreadsReviewCount": "Goodreads Review Count",
+        "goodreadsRating": "Goodreads Rating",
+        "hardcoverId": "Hardcover ID",
+        "hardcoverBookId": "Hardcover Book ID",
+        "hardcoverReviewCount": "Hardcover Review Count",
+        "hardcoverRating": "Hardcover Rating",
+        "googleId": "Google ID",
+        "comicvineId": "Comicvine ID",
+        "ranobedbId": "Ranobedb ID",
+        "ranobedbRating": "Ranobedb Rating",
+        "pageCount": "Page Count"
+      }
+    },
+    "bulkEdit": {
+      "a11y": {
+        "enableField": "Enable {{field}}"
+      },
+      "info": {
+        "banner": "Select which fields to apply to <strong>{{count}}</strong> selected file(s). Only checked fields will be updated."
+      },
+      "section": {
+        "textFields": "Text Fields",
+        "numberFields": "Number Fields",
+        "arrayFields": "Array Fields"
+      },
+      "merge": {
+        "modeLabel": "Mode:",
+        "option": {
+          "merge": "Merge",
+          "replace": "Replace"
+        }
+      },
+      "helper": {
+        "addItem": "Type and press Enter to add each item."
+      },
+      "field": {
+        "seriesName": "Series Name",
+        "publisher": "Publisher",
+        "language": "Language",
+        "seriesTotal": "Series Total",
+        "authors": "Authors",
+        "genres": "Genres",
+        "moods": "Moods",
+        "tags": "Tags"
+      },
+      "button": {
+        "applySelected": "Apply to Selected"
+      }
+    },
+    "patternExtract": {
+      "a11y": {
+        "filenamePatternInput": "Filename pattern for metadata extraction",
+        "previewButton": "Preview pattern extraction on sample files"
+      },
+      "info": {
+        "banner": "Enter a pattern to extract metadata from filenames of <strong>{{count}}</strong> selected file(s). Use placeholders like <code>{SeriesName}</code> to capture values."
+      },
+      "section": {
+        "pattern": "Pattern",
+        "availablePlaceholders": "Available Placeholders",
+        "commonPatterns": "Common Patterns",
+        "previewSampleFiles": "Preview (Sample Files)"
+      },
+      "input": {
+        "placeholder": "e.g., {SeriesName} - Ch {SeriesNumber}"
+      },
+      "button": {
+        "preview": "Preview",
+        "extractAndApply": "Extract and Apply"
+      },
+      "status": {
+        "extracting": "Extracting metadata..."
+      },
+      "placeholder": {
+        "example": "(e.g., {{example}})",
+        "wildcard": {
+          "description": "Wildcard - skips any text (not a metadata field)"
+        },
+        "seriesName": {
+          "description": "Series or comic name"
+        },
+        "title": {
+          "description": "Book title"
+        },
+        "subtitle": {
+          "description": "Book subtitle"
+        },
+        "authors": {
+          "description": "Author name(s)"
+        },
+        "seriesNumber": {
+          "description": "Book number in series"
+        },
+        "published": {
+          "description": "Full date with format"
+        },
+        "publisher": {
+          "description": "Publisher name"
+        },
+        "language": {
+          "description": "Language code"
+        },
+        "seriesTotal": {
+          "description": "Total books in series"
+        },
+        "isbn10": {
+          "description": "ISBN-10 identifier"
+        },
+        "isbn13": {
+          "description": "ISBN-13 identifier"
+        },
+        "asin": {
+          "description": "Amazon ASIN"
+        }
+      },
+      "commonPatterns": {
+        "authorTitle": "Author - Title",
+        "titleAuthor": "Title - Author",
+        "titleYear": "Title (Year)",
+        "authorTitleYear": "Author - Title (Year)",
+        "seriesNumber": "Series #Number",
+        "seriesChapterNumber": "Series - Chapter Number",
+        "seriesVolNumber": "Series - Vol Number",
+        "tagSeriesChapterNumber": "[Tag] Series - Chapter Number",
+        "titleByAuthor": "Title by Author",
+        "seriesVolumeOfTotal": "Series vX (of Total)"
+      },
+      "preview": {
+        "error": {
+          "defaultMessage": "Pattern did not match",
+          "defaultTooltip": "Pattern did not match filename structure"
+        }
+      },
+      "toast": {
+        "success": {
+          "summary": "Extraction Complete",
+          "detail": "Successfully extracted metadata from {{successfullyExtracted}} of {{totalFiles}} files."
+        },
+        "failure": {
+          "summary": "Extraction Failed",
+          "detail": "An error occurred during pattern extraction."
+        }
+      }
+    },
+    "finalizeResult": {
+      "dialogHeader": "Import Summary",
+      "summary": {
+        "totalFiles": "Total Files",
+        "successfullyImported": "Successfully Imported",
+        "failed": "Failed",
+        "processedAt": "Processed at"
+      }
+    },
+    "widget": {
+      "pendingTitle": "Pending Bookdrop Files",
+      "lastUpdatedAt": "Last updated: {{date}}",
+      "reviewButton": "Review"
+    }
+  },
+  "menu": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "allBooks": "All Books",
+    "libraries": "Libraries",
+    "shelves": "Shelves",
+    "magicShelves": "Magic Shelves",
+    "favorites": "Favorites",
+    "unshelved": "Unshelved",
+    "bookdrop": "Bookdrop",
+    "createLibrary": "Create Library",
+    "uploadBook": "Upload Book",
+    "metadataManager": "Metadata Manager",
+    "settings": "Settings",
+    "language": "Language",
+    "documentation": "Documentation",
+    "supportBooklore": "Support BookLore",
+    "profile": "Profile",
+    "logout": "Logout",
+    "charts": "Charts",
+    "libraryStats": "Library Stats",
+    "readingStats": "Reading Stats",
+    "stats": "Stats"
+  },
+  "dashboard": {
+    "pageTitle": "Dashboard",
+    "customizeDashboard": "Customize Dashboard",
+    "noLibrary": {
+      "welcomeTitle": "Welcome to BookLore!",
+      "welcomeSubtitle": "Let's create your first library",
+      "description": "A library is where all your books live. Start building your digital collection today!",
+      "createLibrary": "Create Your Library"
+    },
+    "scrollerTypes": {
+      "continueReading": "Continue Reading",
+      "recentlyAdded": "Recently Added",
+      "discoverSomethingNew": "Discover Something New",
+      "magicShelf": "Magic Shelf",
+      "scroller": "Scroller"
+    },
+    "scroller": {
+      "noBooks": "No books found for this scroller.",
+      "failedToLoad": "Failed to load books! Please try refreshing the page."
+    },
+    "settings": {
+      "title": "Dashboard Configuration",
+      "description": "Add up to 5 scrollers from different book collections and customize their behavior",
+      "fields": {
+        "type": "Type",
+        "magicShelf": "Magic Shelf",
+        "sortField": "Sort Field",
+        "direction": "Direction",
+        "maxItems": "Max Items"
+      },
+      "placeholders": {
+        "selectType": "Select type",
+        "selectMagicShelf": "Select magic shelf",
+        "selectSortField": "Select field",
+        "selectDirection": "Select direction"
+      },
+      "actions": {
+        "addScroller": "Add Scroller",
+        "resetToDefault": "Reset to Default"
+      },
+      "sortFields": {
+        "title": "Title",
+        "titleSeries": "Title + Series",
+        "fileName": "File Name",
+        "dateAdded": "Date Added",
+        "author": "Author",
+        "authorSeries": "Author + Series",
+        "personalRating": "Personal Rating",
+        "publisher": "Publisher",
+        "publishedDate": "Published Date",
+        "lastRead": "Last Read",
+        "pages": "Pages"
+      },
+      "sortDirections": {
+        "ascending": "Ascending",
+        "descending": "Descending"
+      }
+    }
+  },
+  "stats": {
+    "title": {
+      "totalBooks": "Total books",
+      "totalAuthors": "Total authors",
+      "totalSeries": "Total series",
+      "totalPublishers": "Total publishers",
+      "totalSize": "Total size",
+      "dragToReorder": "Drag to reorder"
+    },
+    "library": {
+      "pageTitle": "Library Statistics",
+      "allLibraries": "All Libraries",
+      "unnamedLibrary": "Library {{id}}",
+      "selectorLabel": "Library Statistics",
+      "selectorPlaceholder": "Select a library",
+      "totals": {
+        "books": "Books",
+        "authors": "Authors",
+        "series": "Series",
+        "publishers": "Publishers",
+        "size": "Library Size"
+      },
+      "units": {
+        "bookCountOne": "{{count}} book",
+        "bookCountMany": "{{count}} books"
+      },
+      "chart": {
+        "common": {
+          "unknown": "Unknown",
+          "unknownTitle": "Unknown Title",
+          "unknownAuthor": "Unknown Author",
+          "unknownCategory": "Unknown Category",
+          "unknownSeries": "Unknown Series",
+          "uncategorized": "Uncategorized",
+          "axis": {
+            "numberOfBooks": "Number of Books"
+          },
+          "units": {
+            "mb": "MB"
+          },
+          "labels": {
+            "format": "Format",
+            "pages": "Pages"
+          }
+        },
+        "bookFormats": {
+          "types": {
+            "pdf": "PDF",
+            "epub": "EPUB",
+            "cbx": "CBX",
+            "unknown": "Unknown"
+          },
+          "tooltipLabel": "{{label}}: {{countLabel}} ({{percentage}}%)"
+        },
+        "topAuthors": {
+          "axis": {
+            "xTitle": "Authors"
+          },
+          "tooltipLabel": "{{status}}: {{countLabel}}",
+          "tooltipLabelWithAvgRating": "{{status}}: {{countLabel}} (Avg rating {{avgRating}})"
+        },
+        "topCategories": {
+          "axis": {
+            "xTitle": "Categories"
+          },
+          "tooltipLabel": "{{status}}: {{countLabel}}"
+        },
+        "topSeries": {
+          "datasetLabel": "Books",
+          "axis": {
+            "xTitle": "Number of Books"
+          }
+        },
+        "topBooksBySize": {
+          "datasetLabel": "File Size",
+          "axis": {
+            "xTitle": "File Size (MB)"
+          },
+          "tooltipLabel": "{{sizeInfo}} • {{formatLabel}}: {{bookType}} • {{pagesLabel}}: {{pageValue}}"
+        },
+        "languageDistribution": {
+          "tooltipLabel": "{{label}}: {{countLabel}} ({{percentage}}%)"
+        },
+        "languages": {
+          "english": "English",
+          "spanish": "Spanish",
+          "french": "French",
+          "german": "German",
+          "italian": "Italian",
+          "portuguese": "Portuguese",
+          "russian": "Russian",
+          "japanese": "Japanese",
+          "chinese": "Chinese",
+          "korean": "Korean",
+          "arabic": "Arabic"
+        },
+        "pageCount": {
+          "datasetLabel": "Books",
+          "axis": {
+            "xTitle": "Page Count Range",
+            "yTitle": "Number of Books"
+          },
+          "categories": {
+            "short": "0–199 pages",
+            "medium": "200–400 pages",
+            "long": "401–600 pages",
+            "veryLong": "601–800 pages",
+            "epic": "801+ pages"
+          }
+        },
+        "externalRating": {
+          "datasetLabel": "Books",
+          "tooltipTitle": "External rating: {{range}}",
+          "axis": {
+            "xTitle": "Rating Range",
+            "yTitle": "Number of Books"
+          }
+        },
+        "publicationYear": {
+          "datasetLabel": "Books Published",
+          "tooltipTitle": "Year {{year}}",
+          "tooltipLabel": "{{countLabel}}",
+          "axis": {
+            "xTitle": "Publication Year",
+            "yTitle": "Number of Books"
+          }
+        },
+        "bookMetadataScore": {
+          "categories": {
+            "excellent": "Excellent",
+            "veryGood": "Very Good",
+            "good": "Good",
+            "average": "Average",
+            "poor": "Poor",
+            "veryPoor": "Very Poor"
+          },
+          "tooltipLabel": "{{countLabel}} ({{percentage}}%) • Avg score {{averageScore}} • Range {{scoreRange}}"
+        },
+        "monthlyReadingPatterns": {
+          "datasets": {
+            "booksStarted": "Books Started",
+            "booksFinished": "Books Finished",
+            "booksAdded": "Books Added",
+            "avgProgress": "Average Progress",
+            "genreDiversity": "Genre Diversity"
+          },
+          "monthLabel": "{{month}} {{year}}",
+          "tooltips": {
+            "booksStarted": "Books started: {{count}} • Genres: {{genres}}",
+            "booksFinished": "Books finished: {{count}} • Reading time: {{minutes}} min",
+            "booksAdded": "Books added: {{count}}",
+            "avgProgress": "Average progress: {{percent}}%",
+            "genreDiversity": "Genre diversity: {{count}}"
+          },
+          "axis": {
+            "xTitle": "Month",
+            "yTitle": "Books",
+            "y1Title": "Percent / Diversity"
+          }
+        },
+        "readingVelocityTimeline": {
+          "datasets": {
+            "booksCompleted": "Books Completed",
+            "avgPagesPerDay": "Avg Pages/Day",
+            "avgRatingScaled": "Avg Rating",
+            "readingVelocity": "Reading Velocity"
+          },
+          "tooltips": {
+            "booksCompleted": "Completed: {{countLabel}} • Pages: {{totalPages}}",
+            "avgPagesPerDay": "Avg pages/day: {{value}} • Avg pages/book: {{averagePages}}",
+            "avgRating": "Avg rating: {{rating}} • {{countLabel}}",
+            "readingVelocity": "Velocity: {{value}} • Avg pages/day: {{avgPagesPerDay}}"
+          },
+          "axis": {
+            "xTitle": "Month",
+            "yTitle": "Books / Pages",
+            "y1Title": "Rating / Velocity"
+          }
+        }
+      },
+      "config": {
+        "header": "Chart Configuration",
+        "actions": {
+          "enableAll": "Enable All",
+          "disableAll": "Disable All",
+          "resetOrder": "Reset Order",
+          "resetPositions": "Reset Positions"
+        },
+        "categories": {
+          "small": "Small Charts",
+          "medium": "Medium Charts",
+          "large": "Large Charts",
+          "fullWidth": "Full Width Charts"
+        }
+      },
+      "charts": {
+        "bookFormats": "Book Formats",
+        "bookMetadataScore": "Book Metadata Score",
+        "languageDistribution": "Language Distribution",
+        "pageCount": "Page Count Distribution",
+        "topAuthors": "Top 25 Authors (with Reading Breakdown)",
+        "topCategories": "Top 25 Categories (with Reading Breakdown)",
+        "monthlyReadingPatterns": "Monthly Reading Patterns",
+        "readingVelocityTimeline": "Reading Velocity Timeline",
+        "topBooksBySize": "Top 20 Largest Books by File Size",
+        "topSeries": "Top 20 Series by Book Count",
+        "publicationYear": "Publication Year Timeline",
+        "externalRating": "External Rating Distribution"
+      },
+      "messages": {
+        "loading": "Loading statistics...",
+        "noData": "No data available.",
+        "noDataHint": "Make sure your library contains books with metadata."
+      }
+    },
+    "user": {
+      "title": "{{name}}'s Reading Statistics",
+      "actions": {
+        "customizeLayout": "Customize Layout",
+        "resetLayout": "Reset Layout",
+        "hideAll": "Hide All",
+        "showAll": "Show All"
+      },
+      "config": {
+        "header": "Chart Configuration"
+      },
+      "charts": {
+        "heatmap": "Reading Session Activity",
+        "favoriteDays": "Favorite Reading Days",
+        "peakHours": "Peak Reading Hours",
+        "timeline": "Reading Session Timeline",
+        "readingHeatmap": "Reading Activity Heatmap",
+        "personalRating": "Personal Rating Distribution",
+        "readingProgress": "Reading Progress Distribution",
+        "readStatus": "Reading Status Distribution",
+        "genreStats": "Reading by Genre",
+        "completionTimeline": "Reading Progress",
+        "readingDna": "Reading DNA Profile",
+        "readingHabits": "Reading Habits Analysis"
+      },
+      "units": {
+        "bookCountOne": "{{count}} book",
+        "bookCountMany": "{{count}} books",
+        "sessionCountOne": "{{count}} session",
+        "sessionCountMany": "{{count}} sessions",
+        "hourShort": "h",
+        "minuteShort": "m",
+        "secondShort": "s",
+        "hourCompact": "h",
+        "minuteCompact": "m",
+        "secondCompact": "s",
+        "dayShort": "d"
+      },
+      "timeline": {
+        "title": "Reading Session Timeline",
+        "subtitle": "Weekly overview of your reading sessions and patterns",
+        "actions": {
+          "previousWeek": "Previous week",
+          "nextWeek": "Next week"
+        },
+        "weekLabel": "Week {{week}}",
+        "select": {
+          "year": "Select Year",
+          "week": "Select Week"
+        },
+        "weekOption": "Week {{week}}",
+        "a11y": {
+          "bookCover": "Book Cover"
+        },
+        "sessionTitleFallback": "Reading Session",
+        "tooltip": {
+          "time": "Time:",
+          "duration": "Duration:"
+        },
+        "day": {
+          "mon": "Mon",
+          "tue": "Tue",
+          "wed": "Wed",
+          "thu": "Thu",
+          "fri": "Fri",
+          "sat": "Sat",
+          "sun": "Sun"
+        }
+      },
+      "heatmap": {
+        "title": "Reading Session Activity",
+        "subtitle": "Daily overview of your reading sessions across the year",
+        "actions": {
+          "previousYear": "Previous year",
+          "nextYear": "Next year"
+        },
+        "datasetLabel": "Reading Sessions",
+        "tooltip": {
+          "sessionCountOne": "1 reading session",
+          "sessionCountMany": "{{count}} reading sessions"
+        }
+      },
+      "readingHeatmap": {
+        "title": "Reading Activity Heatmap",
+        "subtitle": "Monthly reading activity over the past 10 years",
+        "datasetLabel": "Books Read",
+        "tooltip": {
+          "booksReadOne": "1 book read",
+          "booksReadMany": "{{count}} books read"
+        }
+      },
+      "personalRating": {
+        "title": "Personal Rating Distribution",
+        "subtitle": "Books by your rating (1–10)",
+        "axis": {
+          "rating": "Personal Rating",
+          "books": "Number of Books"
+        },
+        "datasetLabel": "Books by Personal Rating",
+        "tooltip": {
+          "title": "Personal Rating: {{rating}}"
+        }
+      },
+      "readingProgress": {
+        "title": "Reading Progress Distribution",
+        "subtitle": "Books by reading completion status",
+        "datasetLabel": "Books by Progress",
+        "range": {
+          "notStarted": "Not Started",
+          "justStarted": "Just Started",
+          "gettingIntoIt": "Getting Into It",
+          "halfwayThrough": "Halfway Through",
+          "almostFinished": "Almost Finished",
+          "completed": "Completed"
+        },
+        "tooltip": {
+          "descriptionWrapper": " ({{desc}})",
+          "label": "{{bookCount}}{{description}} - {{percentage}}%"
+        }
+      },
+      "readStatus": {
+        "title": "Reading Status Distribution",
+        "subtitle": "Books by their reading status",
+        "status": {
+          "unread": "Unread",
+          "currentlyReading": "Currently Reading",
+          "rereading": "Re-reading",
+          "read": "Read",
+          "partiallyRead": "Partially Read",
+          "paused": "Paused",
+          "wontRead": "Won't Read",
+          "abandoned": "Abandoned",
+          "noStatus": "No Status",
+          "unknown": "Unknown"
+        },
+        "tooltip": {
+          "label": "{{status}}: {{count}} ({{percentage}}%)"
+        }
+      },
+      "genre": {
+        "title": "Reading by Genre",
+        "subtitle": "Top genres by total reading time",
+        "axis": {
+          "genres": "Genres",
+          "timeRead": "Time Read",
+          "daysHours": "{{days}}{{dayUnit}} {{hours}}{{hourUnit}}",
+          "days": "{{days}}{{dayUnit}}",
+          "hoursMinutes": "{{hours}}{{hourUnit}} {{minutes}}{{minuteUnit}}",
+          "hours": "{{hours}}{{hourUnit}}",
+          "minutes": "{{minutes}}{{minuteUnit}}",
+          "seconds": "{{seconds}}{{secondUnit}}"
+        },
+        "datasetLabel": "Reading Time",
+        "tooltip": {
+          "label": "{{genre}}: {{time}}",
+          "timeHoursMinutes": "{{hours}}{{hourUnit}} {{minutes}}{{minuteUnit}}",
+          "timeMinutes": "{{minutes}}{{minuteUnit}}"
+        }
+      },
+      "favoriteDays": {
+        "title": "Favorite Reading Days",
+        "subtitle": "Reading sessions and duration by day of the week",
+        "filters": {
+          "selectYear": "Select Year",
+          "selectMonth": "Select Month",
+          "allYears": "All Years",
+          "allMonths": "All Months"
+        },
+        "axis": {
+          "dayOfWeek": "Day of Week",
+          "sessions": "Number of Sessions",
+          "durationHours": "Duration (hours)"
+        },
+        "dataset": {
+          "sessions": "Sessions",
+          "durationHours": "Duration (hours)"
+        },
+        "tooltip": {
+          "sessions": "Sessions: {{count}}",
+          "duration": "Duration: {{hours}}{{hourUnit}} {{minutes}}{{minuteUnit}}"
+        }
+      },
+      "peakHours": {
+        "title": "Peak Reading Hours",
+        "subtitle": "Reading activity by hour of the day",
+        "filters": {
+          "selectYear": "Select Year",
+          "selectMonth": "Select Month",
+          "allYears": "All Years",
+          "allMonths": "All Months"
+        },
+        "axis": {
+          "hourOfDay": "Hour of Day",
+          "sessions": "Number of Sessions",
+          "durationMinutes": "Duration (minutes)"
+        },
+        "dataset": {
+          "sessions": "Sessions",
+          "durationMinutes": "Duration (minutes)"
+        },
+        "tooltip": {
+          "sessions": "Sessions: {{count}}",
+          "duration": "Duration: {{hours}}{{hourUnit}} {{minutes}}{{minuteUnit}}"
+        }
+      },
+      "completionTimeline": {
+        "title": "Reading Progress",
+        "subtitle": "Monthly book completion statistics",
+        "actions": {
+          "previousYear": "Previous year",
+          "nextYear": "Next year"
+        },
+        "axis": {
+          "month": "Month",
+          "books": "Number of Books"
+        },
+        "series": {
+          "completed": "Completed",
+          "activeReading": "Active Reading",
+          "paused": "Paused",
+          "discontinued": "Discontinued"
+        },
+        "tooltip": {
+          "label": "{{series}}: {{count}}"
+        }
+      },
+      "readingDna": {
+        "title": "Reading DNA Profile",
+        "subtitle": "Your unique reading personality across 8 key dimensions",
+        "datasetLabel": "Reading DNA Profile",
+        "insights": {
+          "title": "Your Reading Personality Traits"
+        },
+        "trait": {
+          "adventurous": "Adventurous",
+          "perfectionist": "Perfectionist",
+          "intellectual": "Intellectual",
+          "emotional": "Emotional",
+          "patient": "Patient",
+          "social": "Social",
+          "nostalgic": "Nostalgic",
+          "ambitious": "Ambitious"
+        },
+        "description": {
+          "adventurous": "You explore diverse genres and experimental content",
+          "perfectionist": "You prefer high-quality books and finish what you start",
+          "intellectual": "You gravitate toward complex, educational material",
+          "emotional": "You connect emotionally with fiction and personal stories",
+          "patient": "You tackle long books and complete series",
+          "social": "You enjoy popular, widely-discussed books",
+          "nostalgic": "You appreciate classic literature and older works",
+          "ambitious": "You challenge yourself with volume and difficulty"
+        },
+        "tooltip": {
+          "title": "{{trait}} Personality",
+          "score": "Score: {{score}}/100",
+          "fallbackDescription": "Your reading personality trait"
+        }
+      },
+      "readingHabits": {
+        "title": "Reading Habits Analysis",
+        "subtitle": "Your behavioral reading patterns across 8 key dimensions",
+        "datasetLabel": "Reading Habits Profile",
+        "insights": {
+          "title": "Your Reading Habit Patterns"
+        },
+        "habit": {
+          "consistency": "Consistency",
+          "multitasking": "Multitasking",
+          "completionism": "Completionism",
+          "exploration": "Exploration",
+          "organization": "Organization",
+          "intensity": "Intensity",
+          "methodology": "Methodology",
+          "momentum": "Momentum"
+        },
+        "description": {
+          "consistency": "You maintain regular reading patterns and schedules",
+          "multitasking": "You juggle multiple books simultaneously",
+          "completionism": "You finish books rather than abandon them",
+          "exploration": "You actively seek out new authors and genres",
+          "organization": "You maintain systematic book tracking and metadata",
+          "intensity": "You prefer longer, immersive reading sessions",
+          "methodology": "You follow systematic approaches to book selection",
+          "momentum": "You maintain active reading streaks and continuity"
+        },
+        "tooltip": {
+          "title": "{{habit}} Habit",
+          "score": "Score: {{score}}/100",
+          "fallbackDescription": "Your reading habit pattern"
+        }
+      }
+    }
+  },
+  "settings": {
+    "taskManagement": {
+      "title": "System Task Manager",
+      "description": {
+        "line1": "Manage automated system tasks for library maintenance, metadata refreshing, and cache cleanup.",
+        "line2": "Execute tasks manually, monitor their progress in real-time, and schedule recurring operations using",
+        "line3": ".",
+        "springCronExpressionsLink": "Spring cron expressions",
+        "line4": ""
+      },
+      "loading": "Loading tasks...",
+      "empty": "No tasks available",
+      "field": {
+        "status": "Status:",
+        "progress": "Progress:",
+        "started": "Started:"
+      },
+      "badge": {
+        "inProgress": "In Progress",
+        "stale": "Stale"
+      },
+      "warning": {
+        "label": "Warning:",
+        "staleTask": "This task appears to be stuck. No updates received for over 5 minutes."
+      },
+      "action": {
+        "run": "Run",
+        "rerun": "Re-run",
+        "cancel": "Cancel"
+      },
+      "toast": {
+        "loadError": {
+          "summary": "Error",
+          "detail": "Failed to load tasks"
+        },
+        "alreadyRunning": {
+          "summary": "Task Already Running",
+          "detail": "A task is already running. Please wait for it to finish."
+        },
+        "taskQueued": {
+          "summary": "Task Queued",
+          "detail": "{{taskName}} has been queued and will run in the background."
+        },
+        "taskCompleted": {
+          "summary": "Task Completed",
+          "detail": "{{taskName}} completed successfully."
+        },
+        "taskFailed": {
+          "summary": "Task Failed",
+          "detail": "{{taskName}} failed. Please try again."
+        },
+        "taskStarted": {
+          "summary": "Task Started",
+          "detail": "{{taskName}} started successfully."
+        },
+        "startError": {
+          "summary": "Error",
+          "detail": "Failed to start {{taskName}}."
+        },
+        "cancelMissingId": {
+          "summary": "Error",
+          "detail": "Unable to cancel task: missing task id."
+        },
+        "taskCancelled": {
+          "summary": "Task Cancelled",
+          "detail": "Task cancelled successfully."
+        },
+        "cancelFailed": {
+          "summary": "Cancel Failed",
+          "detail": "Failed to cancel task."
+        },
+        "cancelError": {
+          "summary": "Error",
+          "detail": "An error occurred while cancelling the task."
+        },
+        "cronUpdated": {
+          "summary": "Schedule Updated",
+          "detail": "Cron schedule updated successfully."
+        },
+        "cronUpdateFailed": {
+          "summary": "Update Failed",
+          "detail": "Failed to update cron schedule."
+        },
+        "metadataUpdateScheduled": {
+          "summary": "Metadata Update Scheduled",
+          "detail": "The metadata update for the selected books has been successfully scheduled."
+        },
+        "metadataUpdateAlreadyRunning": {
+          "summary": "Task Already Running",
+          "detail": "A metadata refresh task is already in progress. Please wait for it to complete before starting another one."
+        },
+        "metadataUpdateFailed": {
+          "summary": "Metadata Update Failed",
+          "detail": "An unexpected error occurred while scheduling the metadata update. Please try again later or contact support if the issue persists."
+        }
+      },
+      "statusMessage": {
+        "stuck": "Task appears to be stuck (no updates received)",
+        "processing": "Processing..."
+      },
+      "lastRun": {
+        "never": "Never run",
+        "justNow": "Just now",
+        "minutesAgo": "{{minutes}}m ago",
+        "hoursAgo": "{{hours}}h ago",
+        "daysAgo": "{{days}}d ago",
+        "status": {
+          "success": "Success",
+          "error": "Error",
+          "warning": "Warning",
+          "info": "Info"
+        }
+      },
+      "metadataReplace": {
+        "label": "Metadata Replace Mode:",
+        "placeholder": "Select mode",
+        "option": {
+          "replaceMissing": "Update Missing Metadata Only (Recommended)",
+          "replaceAll": "Replace All Metadata (Overwrite Existing)"
+        },
+        "description": {
+          "replaceMissing": "Only update books that are missing metadata information. Existing metadata will be preserved.",
+          "replaceAll": "Replace all metadata for all books, even if they already have metadata. Use with caution as this will overwrite existing data."
+        }
+      },
+      "cron": {
+        "label": {
+          "scheduled": "Scheduled:"
+        },
+        "notConfigured": "Not configured",
+        "placeholder": "e.g., 0 0 2 * * ?",
+        "field": {
+          "seconds": "Seconds",
+          "minutes": "Minutes",
+          "hours": "Hours",
+          "dayOfMonth": "Day of Month",
+          "month": "Month",
+          "dayOfWeek": "Day of Week"
+        },
+        "validation": {
+          "fieldCount": "Cron expression must have exactly 6 fields (seconds, minutes, hours, day, month, weekday)",
+          "invalidField": "Invalid {{fieldName}} field: {{fieldValue}}"
+        }
+      },
+      "taskType": {
+        "refreshLibraryMetadata": {
+          "name": "Refresh Library Metadata",
+          "description": "Refresh library metadata to fill missing or outdated book information."
+        },
+        "syncLibraryFiles": {
+          "name": "Sync Library Files",
+          "description": "Scan and sync library files to match the server file system."
+        },
+        "updateBookRecommendations": {
+          "name": "Update Book Recommendations",
+          "description": "Recalculate book recommendations for users."
+        },
+        "cleanupDeletedBooks": {
+          "name": "Cleanup Deleted Books",
+          "description": "Remove data for books that were deleted from the library."
+        },
+        "cleanupTempMetadata": {
+          "name": "Cleanup Temporary Metadata",
+          "description": "Remove temporary metadata files created during processing."
+        },
+        "refreshMetadataManual": {
+          "name": "Refresh Metadata (Manual)",
+          "description": "Run a manual metadata refresh task."
+        },
+        "clearPdfCache": {
+          "name": "Clear PDF Cache",
+          "description": "Clear cached PDF data to free up storage."
+        }
+      },
+      "task": {
+        "defaultDescription": "System maintenance task."
+      },
+      "tooltip": {
+        "editSchedule": "Edit schedule"
+      }
+    },
+    "device": {
+      "clipboard": {
+        "label": {
+          "text": "Text",
+          "token": "Token",
+          "apiPath": "API Path",
+          "username": "Username",
+          "password": "Password",
+          "apiKey": "API Key"
+        },
+        "toast": {
+          "copied": {
+            "summary": "Copied",
+            "detail": "{{label}} copied to clipboard"
+          },
+          "copyFailed": {
+            "summary": "Copy Failed",
+            "detail": "Unable to copy {{label}} to clipboard"
+          }
+        }
+      },
+      "kobo": {
+        "title": "Kobo Integration Configuration",
+        "description": "Configure Kobo device integration to sync your library books and reading progress with your Kobo e-reader.",
+        "section": {
+          "sync": {
+            "title": "Sync Configuration",
+            "description": "Enable and configure synchronization between your Booklore library and Kobo device."
+          },
+          "admin": {
+            "title": "Administrator Settings",
+            "description": "Configure advanced Kobo sync settings that affect all users on this server."
+          }
+        },
+        "syncEnabled": {
+          "label": "Enable Kobo Sync",
+          "description": "Turn on synchronization to automatically sync your library books to your Kobo device."
+        },
+        "autoAddToShelf": {
+          "label": "Auto-Add New Books to Kobo Shelf",
+          "description": {
+            "line1": "When enabled, newly added books will be automatically added to your Kobo shelf for syncing.",
+            "line2": "This eliminates the need to manually add each book to the shelf."
+          }
+        },
+        "token": {
+          "label": "Kobo Sync Token",
+          "description": "Your unique sync token for authenticating with your Kobo device. Keep this secure."
+        },
+        "tokenManagement": {
+          "label": "Token Management",
+          "action": {
+            "regenerate": "Regenerate Token"
+          },
+          "description": "Regenerate your sync token if needed. This will invalidate the current token."
+        },
+        "progressReading": {
+          "label": "Mark as Reading at: {{percent}}%",
+          "description": {
+            "line1": "Books are marked as \"Reading\" when progress exceeds this percentage. This helps automatically track which books you've started."
+          },
+          "recommended": "1% (default) - marks as reading after the first page or two."
+        },
+        "progressFinished": {
+          "label": "Mark as Finished at: {{percent}}%",
+          "description": {
+            "line1": "Books are marked as \"Finished\" when progress reaches this percentage. Accounts for books where the last few pages are acknowledgments or index."
+          },
+          "recommended": "99% (default) - marks as finished when nearly complete."
+        },
+        "recommended": {
+          "label": "Recommended:"
+        },
+        "convertToKepub": {
+          "label": "Convert to KEPUB",
+          "prosLabel": "Pros:",
+          "pros": "KEPUB format enables enhanced Kobo features like better typography, reading stats, and faster page turns.",
+          "consLabel": "Cons:",
+          "cons": "Conversion takes extra processing time and may occasionally fail for complex layouts.",
+          "note": "Books over the size limit below will skip conversion automatically."
+        },
+        "conversionLimit": {
+          "label": "Conversion Size Limit: {{size}} MB",
+          "description": {
+            "line1": "Large files (100MB+) can cause conversion timeouts and server strain. Lower limits ensure faster syncing but may skip conversion of larger books."
+          },
+          "recommended": "50-100MB for most libraries. Very large books will sync as regular EPUB regardless of this setting."
+        },
+        "forceHyphenation": {
+          "label": "Force Enable Hyphenation",
+          "description": {
+            "line1": "Force enable hyphenation. Otherwise, hyphenation is only enabled when text alignment on the Kobo device is explicitly set to",
+            "line2": "",
+            "justified": "justified"
+          }
+        },
+        "convertCbx": {
+          "label": "Convert CBX to EPUB",
+          "description": "Converts CBX files to EPUB during Kobo sync, allowing CBX files to be downloaded and read on Kobo devices."
+        },
+        "imageCompression": {
+          "label": "Conversion image compression: {{percent}}%",
+          "description": "Comic book conversions can sometimes result in very large files. This setting allows you to compress the images during conversion to prevent size from shooting up."
+        },
+        "cbxConversionLimit": {
+          "label": "CBX Conversion Size Limit: {{size}} MB",
+          "description": {
+            "line1": "Comic book archives can be very large due to high-resolution images. Set a reasonable limit to prevent server overload during conversion."
+          },
+          "recommended": "100-200MB for most comic libraries. CBX files over this limit will not be converted or synced to the device."
+        },
+        "accessDenied": {
+          "title": "Access Restricted",
+          "line1": "Access to Kobo sync is restricted.",
+          "line2": "Please contact your administrator to request permission."
+        },
+        "confirm": {
+          "regenerate": {
+            "header": "Confirm Regeneration",
+            "message": "This will generate a new token and invalidate the previous one. Continue?"
+          },
+          "disable": {
+            "header": "Confirm Disable",
+            "message": "Disabling Kobo sync will delete your Kobo shelf. Are you sure you want to proceed?"
+          }
+        },
+        "toast": {
+          "loadError": {
+            "summary": "Error",
+            "detail": "Failed to load Kobo settings"
+          },
+          "tokenRegenerated": {
+            "summary": "Token regenerated",
+            "detail": "New token generated successfully"
+          },
+          "regenerateTokenFailed": {
+            "summary": "Error",
+            "detail": "Failed to regenerate token"
+          },
+          "progressThresholdsUpdated": {
+            "detail": "Progress thresholds updated successfully"
+          },
+          "settingsUpdated": {
+            "summary": "Settings Updated"
+          },
+          "syncEnabled": {
+            "detail": "Kobo sync enabled"
+          },
+          "syncDisabled": {
+            "detail": "Kobo sync disabled"
+          },
+          "autoAddEnabled": {
+            "detail": "New books will be automatically added to Kobo shelf"
+          },
+          "autoAddDisabled": {
+            "detail": "Auto-add to Kobo shelf disabled"
+          },
+          "updateFailed": {
+            "summary": "Error",
+            "detail": "Failed to update Kobo settings"
+          },
+          "saved": {
+            "summary": "Settings Saved",
+            "detail": "Kobo settings updated successfully"
+          },
+          "saveFailed": {
+            "summary": "Save Failed",
+            "detail": "Failed to save Kobo settings"
+          }
+        }
+      },
+      "koreader": {
+        "title": "KOReader Sync Configuration",
+        "description": "Configure KOReader integration to sync your reading progress between your device and Booklore library.",
+        "section": {
+          "sync": {
+            "title": "Sync Configuration",
+            "description": "Enable and configure synchronization between your Booklore library and KOReader device."
+          }
+        },
+        "syncEnabled": {
+          "label": "Enable KOReader Sync",
+          "description": "Turn on synchronization to automatically sync your reading progress."
+        },
+        "apiPath": {
+          "label": "KOReader API Path",
+          "description": "The API endpoint path for your KOReader sync service."
+        },
+        "username": {
+          "label": "KOReader Username",
+          "description": "Your username for authenticating with the KOReader sync service.",
+          "validation": {
+            "required": "Username is required."
+          }
+        },
+        "password": {
+          "label": "KOReader Password",
+          "description": "Your password for authenticating with the KOReader sync service.",
+          "validation": {
+            "minLength": "Password must be at least 6 characters."
+          }
+        },
+        "management": {
+          "label": "Settings Management",
+          "action": {
+            "save": "Save",
+            "edit": "Edit"
+          },
+          "description": "Save your credentials or edit existing settings."
+        },
+        "accessDenied": {
+          "title": "Access Restricted",
+          "line1": "Access to KOReader sync is restricted.",
+          "line2": "Please contact your administrator to request permission."
+        },
+        "toast": {
+          "loadError": {
+            "summary": "Load Error",
+            "detail": "Unable to retrieve KOReader account. Please try again."
+          },
+          "syncUpdated": {
+            "summary": "Sync Updated"
+          },
+          "syncEnabled": {
+            "detail": "KOReader sync has been enabled."
+          },
+          "syncDisabled": {
+            "detail": "KOReader sync has been disabled."
+          },
+          "updateFailed": {
+            "summary": "Update Failed",
+            "detail": "Unable to update KOReader sync setting. Please try again."
+          },
+          "saved": {
+            "summary": "Saved",
+            "detail": "KOReader account saved successfully."
+          },
+          "saveFailed": {
+            "summary": "Error",
+            "detail": "Failed to save KOReader credentials. Please try again."
+          }
+        }
+      },
+      "hardcover": {
+        "title": "Hardcover Integration",
+        "description": "Sync your reading progress from Booklore to your Hardcover account.",
+        "section": {
+          "sync": {
+            "title": "Sync Configuration",
+            "description": "Enable and configure synchronization between Booklore and Hardcover."
+          }
+        },
+        "syncEnabled": {
+          "label": "Sync KOReader Reading Progress to Hardcover",
+          "description": "When enabled, your KOReader reading progress will be automatically synced to your Hardcover account."
+        },
+        "apiKey": {
+          "label": "Hardcover API Key",
+          "placeholder": "Enter your Hardcover API key",
+          "description": {
+            "line1": "Your personal Hardcover API key. Get it from",
+            "line2": "This key is used only for syncing your reading progress and is not shared with other users."
+          }
+        },
+        "accessDenied": {
+          "title": "Access Restricted",
+          "line1": "Access to Hardcover sync is restricted.",
+          "line2": "Please contact your administrator to request permission."
+        },
+        "toast": {
+          "loadError": {
+            "summary": "Load Error",
+            "detail": "Unable to retrieve Hardcover sync settings. Please try again."
+          },
+          "settingsUpdated": {
+            "summary": "Settings Updated"
+          },
+          "syncEnabled": {
+            "detail": "Hardcover sync enabled"
+          },
+          "syncDisabled": {
+            "detail": "Hardcover sync disabled"
+          },
+          "apiKeyUpdated": {
+            "detail": "Hardcover API key updated"
+          },
+          "updateFailed": {
+            "summary": "Update Failed",
+            "detail": "Unable to update Hardcover sync settings. Please try again."
+          }
+        }
+      }
+    },
+    "storage": {
+      "title": "Storage Settings",
+      "description": "Configure AList integration and connection parameters for remote storage.",
+      "alist": {
+        "title": "AList Configuration",
+        "description": "Connect Booklore to your AList server for remote storage.",
+        "enabled": {
+          "label": "Enable AList Storage",
+          "description": "Turn on AList integration so libraries can store files remotely."
+        },
+        "baseUrl": {
+          "label": "AList Server URL",
+          "placeholder": "e.g., http://localhost:5244",
+          "description": "The base URL of your AList server."
+        },
+        "username": {
+          "label": "AList Username",
+          "placeholder": "Enter username",
+          "description": "Username for authenticating with AList."
+        },
+        "password": {
+          "label": "AList Password",
+          "placeholder": "Enter password",
+          "description": "Password for the AList account."
+        },
+        "token": {
+          "label": "AList Token",
+          "placeholder": "Enter token (optional)",
+          "description": "Use a token for authentication instead of username and password."
+        },
+        "connectTimeout": {
+          "label": "Connect Timeout",
+          "description": "Maximum time to establish a connection (milliseconds)."
+        },
+        "readTimeout": {
+          "label": "Read Timeout",
+          "description": "Maximum time to wait for a response (milliseconds)."
+        },
+        "redirectDownload": {
+          "label": "Enable Redirect Downloads",
+          "description": "Use AList direct links when downloading files."
+        },
+        "management": {
+          "label": "Settings Management",
+          "action": {
+            "edit": "Edit",
+            "test": "Test Connection"
+          },
+          "description": "Edit settings or test the connection to your AList server."
+        }
+      },
+      "clipboard": {
+        "label": {
+          "text": "Text",
+          "baseUrl": "Server URL",
+          "username": "Username",
+          "password": "Password",
+          "token": "Token"
+        }
+      },
+      "toast": {
+        "loadError": {
+          "summary": "Error",
+          "detail": "Failed to load storage settings."
+        },
+        "saved": {
+          "summary": "Settings Saved",
+          "detail": "Storage settings updated successfully."
+        },
+        "saveFailed": {
+          "summary": "Save Failed",
+          "detail": "Failed to save storage settings."
+        },
+        "testSuccess": {
+          "summary": "Connection Successful",
+          "detail": "AList connection test succeeded."
+        },
+        "testFailed": {
+          "summary": "Connection Failed",
+          "detail": "AList connection test failed."
+        }
+      }
+    },
+    "opds": {
+      "title": "OPDS Configuration",
+      "description": {
+        "line1": "Manage your OPDS credentials and control how your book collection is shared with reading apps.",
+        "line2": "By default, all libraries you have access to will be included in the OPDS feed."
+      },
+      "serverControl": {
+        "title": "Server Control"
+      },
+      "serverEnabled": {
+        "label": "OPDS Server Enabled",
+        "description": "Enable or disable the OPDS server to control access to your book collection through reading apps."
+      },
+      "endpoint": {
+        "title": "OPDS Endpoint",
+        "label": "OPDS Catalog URL",
+        "description": "Use this URL to access your book collection through OPDS-compatible reading apps."
+      },
+      "users": {
+        "title": "OPDS Users",
+        "addUser": "Add User"
+      },
+      "table": {
+        "paginatorReport": "Showing {first} to {last} of {totalRecords} users",
+        "header": {
+          "username": "Username",
+          "sortOrder": "Sort Order",
+          "password": "Password",
+          "actions": "Actions"
+        },
+        "empty": {
+          "title": "No users found",
+          "subtitle": "Create your first OPDS user to get started"
+        }
+      },
+      "dialog": {
+        "createUser": {
+          "header": "Create OPDS User"
+        },
+        "field": {
+          "username": {
+            "label": "Username",
+            "placeholder": "Enter username"
+          },
+          "password": {
+            "label": "Password",
+            "placeholder": "Enter password"
+          },
+          "sortOrder": {
+            "label": "Default Sort Order",
+            "placeholder": "Select sort order",
+            "hint": "This will determine how books appear in the OPDS feed for this user"
+          }
+        },
+        "action": {
+          "create": "Create"
+        }
+      },
+      "accessDenied": {
+        "title": "Access Restricted",
+        "line1": "Access to OPDS is restricted.",
+        "line2": "Please contact your administrator to request permission."
+      },
+      "sortOrder": {
+        "recent": "Recently Added",
+        "titleAsc": "Title (A-Z)",
+        "titleDesc": "Title (Z-A)",
+        "authorAsc": "Author (A-Z)",
+        "authorDesc": "Author (Z-A)",
+        "seriesAsc": "Series (A-Z)",
+        "seriesDesc": "Series (Z-A)",
+        "ratingAsc": "Rating (Low to High)",
+        "ratingDesc": "Rating (High to Low)"
+      },
+      "confirm": {
+        "deleteUser": {
+          "header": "Delete Confirmation",
+          "message": "Are you sure you want to delete user \"{{username}}\"?"
+        }
+      },
+      "toast": {
+        "serverEnabled": {
+          "detail": "OPDS Server Enabled."
+        },
+        "serverDisabled": {
+          "detail": "OPDS Server Disabled."
+        },
+        "endpointCopied": {
+          "summary": "Copied",
+          "detail": "OPDS endpoint copied to clipboard"
+        },
+        "loadUsersError": {
+          "summary": "Error",
+          "detail": "Failed to load users"
+        },
+        "userCreated": {
+          "summary": "Success",
+          "detail": "User created successfully"
+        },
+        "createUserError": {
+          "summary": "Error",
+          "detail": "Failed to create user"
+        },
+        "userDeleted": {
+          "summary": "Success",
+          "detail": "User deleted successfully"
+        },
+        "deleteUserError": {
+          "summary": "Error",
+          "detail": "Failed to delete user"
+        },
+        "sortOrderUpdated": {
+          "summary": "Success",
+          "detail": "Sort order updated successfully"
+        },
+        "updateSortOrderError": {
+          "summary": "Error",
+          "detail": "Failed to update sort order"
+        }
+      },
+      "tooltip": {
+        "editSortOrder": "Edit sort order",
+        "passwordHiddenInfo": "Passwords are hidden for security reasons. To change, delete the user and create a new one with a new password.",
+        "deleteUser": "Delete user",
+        "copyEndpoint": "Copy endpoint"
+      }
+    },
+    "pageTitle": "Settings",
+    "fileNamingPattern": {
+      "title": "File Naming Patterns",
+      "description": "Configure automatic file organization using metadata placeholders. Patterns are applied when uploading files, moving files within your library, and after metadata updates.",
+      "preview": {
+        "label": "Preview:"
+      },
+      "validation": {
+        "invalidCharacters": "Pattern contains invalid characters."
+      },
+      "toast": {
+        "invalidPattern": {
+          "summary": "Invalid Pattern",
+          "detail": "Please fix errors before saving."
+        },
+        "librarySaved": {
+          "summary": "Library Patterns Saved",
+          "detail": "Library-specific patterns were successfully saved!"
+        },
+        "librarySaveError": {
+          "summary": "Error",
+          "detail": "Failed to save {{count}} library pattern(s)."
+        }
+      },
+      "default": {
+        "title": "Default File Naming Pattern",
+        "description": "This pattern serves as the fallback when no library-specific override is configured.",
+        "patternLabel": "Default Pattern",
+        "placeholder": "e.g., {title} - {authors}"
+      },
+      "libraryOverrides": {
+        "title": "Library-Specific Overrides",
+        "description": "Define custom naming patterns for specific libraries. Leave empty to use the default pattern.",
+        "placeholder": "Leave empty to use default pattern"
+      },
+      "action": {
+        "clear": "Clear",
+        "saveAllLibraryPatterns": "Save All Library Patterns"
+      },
+      "placeholders": {
+        "title": "Available Placeholders",
+        "description": "Use placeholders to dynamically insert book metadata into file names and folder paths. These will be replaced with actual values when uploading or moving files.",
+        "listTitle": "Available Placeholders",
+        "items": {
+          "title": "Book title",
+          "subtitle": "Book subtitle",
+          "authors": "Author(s)",
+          "year": "Full year (e.g. 2025)",
+          "series": "Series name",
+          "seriesIndex": "Series index (e.g. 01)",
+          "language": "Language code (e.g. en)",
+          "publisher": "Publisher name",
+          "isbn": "ISBN number",
+          "currentFilename": "Original file name (with extension)"
+        }
+      },
+      "optionalBlocks": {
+        "title": "Optional blocks",
+        "line1": "Surround parts of your pattern with angle brackets",
+        "line2": "to make them optional. If any placeholder inside the block has no value, the whole block is excluded.",
+        "exampleLabel": "Example:",
+        "exampleHasValue": "if it exists:",
+        "exampleMissingValue": "if it's missing:"
+      },
+      "examples": {
+        "title": "Example Patterns & Output",
+        "description": "See how different patterns work with sample book metadata and learn best practices for organizing your library.",
+        "notProvided": "not provided",
+        "sampleFields": {
+          "title": "title",
+          "subtitle": "subtitle",
+          "authors": "authors",
+          "series": "series",
+          "seriesIndex": "seriesIndex",
+          "year": "year",
+          "currentFilename": "currentFilename"
+        },
+        "fullMetadata": {
+          "title": "Examples with Full Metadata"
+        },
+        "missingFields": {
+          "title": "Examples with Missing Optional Fields"
+        },
+        "labels": {
+          "basicPattern": "Basic pattern:",
+          "patternWithPunctuation": "Pattern with punctuation:",
+          "seriesInFolder": "Series in folder path:",
+          "folderOnly": "Folder only:",
+          "absolutePath": "Absolute path:",
+          "reuseOriginalFilename": "Reuse original filename in path:",
+          "titlePlusSubtitle": "Title + Subtitle:",
+          "patternWithOptionalBlocks": "Pattern with optional blocks:",
+          "fallbackWithSeriesIndex": "Fallback with seriesIndex and dash:",
+          "bracketsFallback": "Brackets & punctuation fallback:",
+          "seriesPunctuationFallback": "Series + punctuation fallback:",
+          "originalFilenameWithYear": "Use original filename with year suffix:",
+          "titlePlusSubtitleFallback": "Title + Subtitle fallback:",
+          "output": "Output:"
+        }
+      }
+    },
+    "application": {
+      "title": "Global Preferences",
+      "description": "Configure global settings for your Booklore instance, including cover image handling, search preferences, and file upload limits.",
+      "section": {
+        "cover": {
+          "title": "Book Cover Image",
+          "regenerate": {
+            "label": "Regenerate Covers",
+            "button": "Regenerate",
+            "description": "Regenerates cover images for all books from the embedded covers in the file."
+          },
+          "verticalCropping": {
+            "label": "Vertical Cover Cropping",
+            "description": "Automatically crop extremely tall images (like web comics) from the top to create usable cover thumbnails."
+          },
+          "horizontalCropping": {
+            "label": "Horizontal Cover Cropping",
+            "description": "Automatically crop extremely wide images from the left to create usable cover thumbnails."
+          },
+          "aspectRatioThreshold": {
+            "label": "Aspect Ratio Threshold: {{value}}",
+            "description": "Images with aspect ratios exceeding this threshold will be cropped. A value of 2.5 means images more than 2.5x taller (or wider) than normal will be cropped."
+          },
+          "smartCropping": {
+            "label": "Smart Cropping",
+            "description": "Skip uniform colour regions when determining where to crop. Focuses the cover image on the most relevant content."
+          }
+        },
+        "search": {
+          "title": "Search & Recommendations",
+          "autoBookSearch": {
+            "label": "Auto Book Search",
+            "description": "Automatically attempts metadata matching when the book information panel is opened."
+          },
+          "similarBookRecommendation": {
+            "label": "Similar Book Recommendation",
+            "description": "Enables or disables similar book recommendations based on your library."
+          }
+        },
+        "file": {
+          "title": "File Management",
+          "maxFileUploadSize": {
+            "label": "Max File Upload Size",
+            "placeholder": "Max size",
+            "save": "Save",
+            "description": "Defines the maximum allowed size (in MB) for each uploaded file. Applies to EPUB, PDF, CBZ, CBR, and CB7 formats.",
+            "restartWarning": "Changes will take effect after restarting the server"
+          }
+        },
+        "telemetry": {
+          "title": "Telemetry",
+          "enableTelemetry": {
+            "label": "Enable Telemetry",
+            "description": "Help improve Booklore by sharing anonymous usage statistics. This data lets the developers see which features are most used, identify bugs, and spot performance issues so they know what to work on next. No personal information, book content, or any identifiable data is ever sent. Data is sent to the Booklore server automatically once every 24 hours. It’s completely safe and very helpful to the developers."
+          }
+        }
+      },
+      "toast": {
+        "invalidInput": {
+          "summary": "Invalid Input",
+          "detail": "Please enter a valid max file upload size in MB."
+        },
+        "coverRegenerationStarted": {
+          "summary": "Cover Regeneration Started",
+          "detail": "Book covers are being regenerated."
+        },
+        "coverRegenerationError": {
+          "summary": "Error",
+          "detail": "Failed to start cover regeneration."
+        }
+      }
+    },
+    "toast": {
+      "saved": {
+        "summary": "Settings Saved",
+        "detail": "The settings were successfully saved!"
+      },
+      "saveError": {
+        "summary": "Error",
+        "detail": "There was an error saving the settings."
+      },
+      "loadError": {
+        "summary": "Error",
+        "detail": "Failed to load settings."
+      },
+      "preferencesUpdated": {
+        "summary": "Preferences Updated",
+        "detail": "Your preferences have been saved successfully."
+      }
+    },
+    "metadata": {
+      "title": "Metadata Settings",
+      "description": "Configure how metadata is retrieved, stored, and managed for your books. Set up automatic downloads, persistence options, and provider preferences.",
+      "section": {
+        "autoDownload": {
+          "title": "Auto-Download Metadata",
+          "bookdrop": {
+            "label": "Auto-Download for BookDrop Files",
+            "description": "Automatically downloads metadata from your configured sources (Amazon, Goodreads, etc.) when files are added to the Bookdrop folder. Use with caution if adding many files at once as metadata fetching can take time."
+          }
+        },
+        "providers": {
+          "title": "Metadata Providers"
+        },
+        "publicReviews": {
+          "title": "Public Reviews"
+        },
+        "matchWeights": {
+          "title": "Metadata Match Weights"
+        }
+      }
+    },
+    "libraryMetadata": {
+      "title": "Library Metadata Configuration",
+      "description": "Configure metadata fetch behavior for your libraries. Set global defaults and create library-specific overrides to control how book metadata is retrieved from different providers.",
+      "section": {
+        "default": {
+          "title": "Default Metadata Settings",
+          "description": {
+            "line1": "Set global default provider priorities for book metadata fields. These settings apply to all libraries unless overridden below.",
+            "line2": "BookLore tries providers from left to right (1st → 2nd → 3rd → 4th priority) for each book field until it finds data.",
+            "line3": "The system checks your 1st priority provider first. If that provider doesn't have the specific field (like description or author), it automatically moves to your 2nd priority, then 3rd, and finally 4th.",
+            "line4": "Leave a priority empty to skip it entirely. For example, if Amazon (1st) has no description but Google Books (2nd) does, Google's description will be used.",
+            "line5": "Use the Enable checkboxes to completely disable fetching for specific fields.",
+            "line6": "Disabled fields will be skipped entirely regardless of provider settings."
+          }
+        },
+        "libraryOverrides": {
+          "title": "Library-Specific Overrides",
+          "description": {
+            "line1": "Override the default priority settings for specific libraries. Each library can have its own provider priority order while falling back to defaults for unspecified fields.",
+            "line2": "You can also enable or disable specific metadata fields per library."
+          }
+        }
+      },
+      "libraryIndicator": {
+        "custom": "Custom Settings",
+        "default": "Default Settings"
+      },
+      "action": {
+        "saveDefault": "Save Default Settings",
+        "saveLibrary": "Save {{libraryName}} Settings"
+      },
+      "toast": {
+        "saveDefaultSuccess": {
+          "summary": "Settings Saved",
+          "detail": "Default metadata settings have been saved successfully."
+        },
+        "saveDefaultError": {
+          "summary": "Save Failed",
+          "detail": "Failed to save default metadata settings. Please try again."
+        },
+        "saveLibrarySuccess": {
+          "summary": "Settings Saved",
+          "detail": "Library metadata settings have been saved successfully."
+        },
+        "saveLibraryError": {
+          "summary": "Save Failed",
+          "detail": "Failed to save library metadata settings. Please try again."
+        }
+      }
+    },
+    "metadataProviders": {
+      "enabledProviders": {
+        "label": "Enabled Metadata Providers",
+        "description": "Enable or configure third-party metadata sources for enhanced book information. Each provider offers different types of data and coverage."
+      },
+      "provider": {
+        "amazon": "Amazon",
+        "goodreads": "Goodreads",
+        "google": "Google",
+        "hardcover": "Hardcover",
+        "comicVine": "Comic Vine",
+        "douban": "Douban",
+        "lubimyczytac": "Lubimyczytac",
+        "ranobedb": "Ranobedb"
+      },
+      "amazon": {
+        "region": {
+          "label": "Region",
+          "placeholder": "Select Domain"
+        },
+        "cookie": {
+          "label": "Cookie (Optional, but highly recommended)",
+          "description": "Providing your Amazon session cookie allows the app to access richer book metadata and bypass rate limits. Optional but recommended for best results.",
+          "placeholder": "Paste your Amazon cookie"
+        }
+      },
+      "google": {
+        "languageRestriction": {
+          "label": "Language restriction",
+          "placeholder": "Select Language"
+        }
+      },
+      "hardcover": {
+        "apiToken": {
+          "label": "API Token",
+          "placeholder": "Enter Hardcover API token"
+        }
+      },
+      "comicvine": {
+        "apiToken": {
+          "label": "API Token",
+          "placeholder": "Enter Comic Vine API token"
+        }
+      },
+      "action": {
+        "save": "Save"
+      },
+      "toast": {
+        "saved": {
+          "summary": "Saved",
+          "detail": "Metadata provider settings saved."
+        },
+        "error": {
+          "summary": "Error",
+          "detail": "Failed to save metadata provider settings."
+        }
+      }
+    },
+    "publicReviews": {
+      "download": {
+        "label": "Download Public Reviews",
+        "description": "Enable downloading user reviews from configured platforms (Amazon, Goodreads, Hardcover). Reviews will be stored with your books for offline access."
+      },
+      "autoDownload": {
+        "label": "Auto Download on Book Open",
+        "description": "Automatically fetch reviews when you open a book's details page. When disabled, reviews will only be downloaded manually or during metadata refresh, reducing background network activity and improving performance."
+      },
+      "sources": {
+        "title": "Review Sources",
+        "description": "Configure which platforms to download reviews from and set limits for each source.",
+        "maxReviews": {
+          "label": "Max Reviews:"
+        },
+        "empty": "No review sources available. Please ensure metadata providers are configured in the Provider Settings section above."
+      },
+      "title": {
+        "maxReviewsHint": "Number of reviews to download (1-10)"
+      }
+    },
+    "metadataPersistence": {
+      "title": "Metadata Persistence",
+      "warning": {
+        "title": "Network Storage Warning:",
+        "body": "These features directly modify and move book files on disk (including rewriting metadata and renaming files). They are designed for local file systems only. Using them on NAS or cloud-backed storage is untested and may lead to file corruption, incomplete writes, or permanent data loss. GitHub issues related to network storage will not be supported."
+      },
+      "enabled": {
+        "label": "Enabled:"
+      },
+      "maxFileSize": {
+        "label": "Max File Size (MB):"
+      },
+      "writeToFile": {
+        "epub": {
+          "label": "Write Metadata to EPUB",
+          "description": "Write metadata directly into EPUB files when editing book information."
+        },
+        "cbx": {
+          "label": "Write Metadata to CBX",
+          "description": "Write metadata directly into CBX files when editing book information."
+        },
+        "pdf": {
+          "label": "Write Metadata to PDF",
+          "description": {
+            "line1": "Write metadata directly into PDF files when editing book information.",
+            "line2": "Note: PDFs do not support embedded covers, and only a limited set of metadata can be updated (Title, Authors, Publisher, Categories, Description, Language, Published Date). This is a limitation of the PDF format."
+          }
+        }
+      },
+      "autoMoveOnUpdate": {
+        "label": "Auto-Move Files on Metadata Update",
+        "description": "Automatically move and rename files according to their library's naming pattern when metadata is updated, either through manual editing or auto-fetch operations."
+      },
+      "tooltip": {
+        "maxFileSizeHint": "Only files up to this size (MB) will be updated. Larger files are ignored."
+      }
+    },
+    "metadataMatchWeights": {
+      "recalculate": {
+        "title": "Recalculate Metadata Scores:",
+        "action": "Recalculate"
+      },
+      "weights": {
+        "title": "Metadata Field Weights",
+        "action": {
+          "save": "Save"
+        }
+      },
+      "field": {
+        "title": "Title",
+        "subtitle": "Subtitle",
+        "authors": "Authors",
+        "description": "Description",
+        "publisher": "Publisher",
+        "publishedDate": "Published Date",
+        "categories": "Categories",
+        "coverImage": "Cover Image",
+        "seriesName": "Series Name",
+        "seriesNumber": "Series Number",
+        "language": "Language",
+        "isbn13": "ISBN-13",
+        "isbn10": "ISBN-10",
+        "pageCount": "Page Count",
+        "amazonRating": "Amazon Rating",
+        "amazonReviewCount": "Amazon Rating #",
+        "goodreadsRating": "Goodreads Rating",
+        "goodreadsReviewCount": "Goodreads Rating #",
+        "hardcoverRating": "Hardcover Rating",
+        "hardcoverReviewCount": "Hardcover Rating #",
+        "ranobedbRating": "Ranobedb Rating"
+      },
+      "toast": {
+        "saveSuccess": {
+          "summary": "Saved",
+          "detail": "Weights saved successfully"
+        },
+        "saveError": {
+          "summary": "Error",
+          "detail": "Failed to save weights"
+        },
+        "recalculateSuccess": {
+          "summary": "Recalculated",
+          "detail": "All book match scores were recalculated successfully."
+        },
+        "recalculateError": {
+          "summary": "Error",
+          "detail": "Failed to recalculate match scores."
+        }
+      },
+      "tooltip": {
+        "recalculateInfo": "Recomputes match scores for all books based on the latest weights.",
+        "adjustWeightsInfo": "Adjust how important each metadata field is when computing match scores. Higher weights make fields more influential."
+      }
+    },
+    "emailV2": {
+      "title": "Email Configuration",
+      "description": "Configure email settings to send books directly to your devices or recipients. Set up email providers (like Gmail, Outlook, or custom SMTP servers) and manage recipient email addresses.",
+      "accessDenied": {
+        "title": "Access Restricted",
+        "line1": "Access to Email Configuration is restricted.",
+        "line2": "Please contact your administrator to request permission."
+      },
+      "createProviderDialog": {
+        "title": "Create Email Provider",
+        "description": "Configure a new email provider for sending notifications",
+        "field": {
+          "name": {
+            "label": "Provider Name",
+            "placeholder": "e.g., Gmail SMTP, SendGrid",
+            "errorRequired": "Provider name is required."
+          },
+          "host": {
+            "label": "Host",
+            "placeholder": "e.g., smtp.gmail.com",
+            "errorRequired": "Host is required."
+          },
+          "port": {
+            "label": "Port",
+            "placeholder": "e.g., 587, 465",
+            "errorInvalid": "Port is required and must be a number."
+          },
+          "username": {
+            "label": "Username",
+            "placeholder": "Enter username"
+          },
+          "password": {
+            "label": "Password",
+            "placeholder": "Enter password"
+          },
+          "fromAddress": {
+            "label": "From Address",
+            "placeholder": "e.g., noreply@example.com"
+          },
+          "auth": {
+            "title": "Enable Authentication",
+            "description": "Require username and password for SMTP"
+          },
+          "startTls": {
+            "title": "Enable StartTLS",
+            "description": "Use TLS encryption for secure connection"
+          }
+        },
+        "validation": {
+          "invalid": "Please fill in all required fields",
+          "valid": "Ready to create provider"
+        },
+        "action": {
+          "createProvider": "Create Provider"
+        },
+        "toast": {
+          "validationError": {
+            "summary": "Validation Error",
+            "detail": "Please correct errors before submitting."
+          },
+          "createSuccess": {
+            "summary": "Email Provider Created",
+            "detail": "The email provider has been successfully created."
+          },
+          "createError": {
+            "summary": "Email Provider Creation Failed",
+            "detail": "An unexpected error occurred while creating the email provider. Please try again later."
+          },
+          "createErrorWithMessage": {
+            "detail": "Unable to create email provider: {{message}}"
+          }
+        }
+      },
+      "createRecipientDialog": {
+        "title": "Create Email Recipient",
+        "description": "Add a new recipient for email notifications",
+        "field": {
+          "name": {
+            "label": "Recipient Name",
+            "placeholder": "Enter recipient name...",
+            "errorRequired": "Recipient name is required."
+          },
+          "email": {
+            "label": "Email Address",
+            "placeholder": "Enter email address...",
+            "errorInvalid": "Valid email is required."
+          },
+          "defaultRecipient": {
+            "title": "Default Recipient",
+            "description": "Set as default recipient for all notifications"
+          }
+        },
+        "validation": {
+          "invalid": "Please fill in all required fields",
+          "valid": "Ready to add recipient"
+        },
+        "action": {
+          "addRecipient": "Add Recipient"
+        },
+        "toast": {
+          "validationError": {
+            "summary": "Validation Error",
+            "detail": "Please correct errors before submitting."
+          },
+          "createSuccess": {
+            "summary": "Recipient Added",
+            "detail": "{{name}} has been successfully added."
+          },
+          "createError": {
+            "summary": "Recipient Creation Failed",
+            "detail": "An unexpected error occurred while adding the recipient. Please try again later."
+          },
+          "createErrorWithMessage": {
+            "detail": "Unable to create recipient: {{message}}"
+          }
+        }
+      },
+      "recipient": {
+        "title": "Recipient Emails",
+        "description": "Manage the list of recipients who will receive books via email. The 'Default' recipient will be used for 'Quick Book Send,' located in the Book Card menu.",
+        "action": {
+          "createRecipient": "Create Recipient"
+        },
+        "table": {
+          "default": "Default",
+          "emailAddress": "Email Address",
+          "name": "Name",
+          "edit": "Edit",
+          "delete": "Delete"
+        },
+        "empty": {
+          "title": "No recipients found",
+          "subtitle": "Add your first email recipient to start sending books"
+        },
+        "confirmDelete": "Are you sure you want to delete recipient \"{{email}}\"?",
+        "toast": {
+          "loadError": {
+            "summary": "Error",
+            "detail": "Failed to load recipient emails"
+          },
+          "updateSuccess": {
+            "summary": "Success",
+            "detail": "Recipient updated successfully"
+          },
+          "updateError": {
+            "summary": "Error",
+            "detail": "Failed to update recipient"
+          },
+          "deleteSuccess": {
+            "summary": "Success",
+            "detail": "Recipient \"{{email}}\" deleted successfully"
+          },
+          "deleteError": {
+            "summary": "Error",
+            "detail": "Failed to delete recipient"
+          },
+          "defaultSetSuccess": {
+            "summary": "Default Recipient Set",
+            "detail": "{{email}} is now the default recipient."
+          }
+        },
+        "tooltip": {
+          "editRecipient": "Edit recipient",
+          "saveChanges": "Save changes",
+          "cancel": "Cancel",
+          "deleteRecipient": "Delete recipient"
+        }
+      },
+      "provider": {
+        "title": "Email Providers",
+        "description": "Configure email-sending services like Gmail, Outlook, or custom SMTP servers for sending books via email. The default email provider will be used for 'Quick Book Send' located in the Book Card menu.",
+        "action": {
+          "createProvider": "Create Provider"
+        },
+        "table": {
+          "default": "Default",
+          "name": "Name",
+          "host": "Host",
+          "port": "Port",
+          "username": "Username",
+          "password": "Password",
+          "fromAddress": "From Address",
+          "auth": "Auth",
+          "startTls": "StartTLS",
+          "shared": "Shared",
+          "edit": "Edit",
+          "delete": "Delete",
+          "passwordHidden": "Hidden"
+        },
+        "empty": {
+          "title": "No email providers found",
+          "subtitle": "Create your first email provider to start sending books"
+        },
+        "confirmDelete": "Are you sure you want to delete provider \"{{name}}\"?",
+        "sharedState": {
+          "shared": "shared",
+          "notShared": "not shared"
+        },
+        "toast": {
+          "loadError": {
+            "summary": "Error",
+            "detail": "Failed to load Email Providers"
+          },
+          "updateSuccess": {
+            "summary": "Success",
+            "detail": "Provider updated successfully"
+          },
+          "updateError": {
+            "summary": "Error",
+            "detail": "Failed to update provider"
+          },
+          "deleteSuccess": {
+            "summary": "Success",
+            "detail": "Provider \"{{name}}\" deleted successfully"
+          },
+          "deleteError": {
+            "summary": "Error",
+            "detail": "Failed to delete provider"
+          },
+          "defaultSetSuccess": {
+            "summary": "Default Provider Set",
+            "detail": "{{name}} is now the default email provider."
+          },
+          "defaultSetError": {
+            "summary": "Error",
+            "detail": "Failed to set {{name}} as the default provider. Please try again."
+          },
+          "sharedUpdateSuccess": {
+            "summary": "Success",
+            "detail": "Provider \"{{name}}\" is now {{state}}"
+          },
+          "sharedUpdateError": {
+            "summary": "Error",
+            "detail": "Failed to update shared status"
+          }
+        },
+        "tooltip": {
+          "sharedProvider": "Shared provider",
+          "shareWithAllUsers": "Share this provider with all users",
+          "editProvider": "Edit provider",
+          "cannotEditSharedProvider": "Cannot edit shared provider from another user",
+          "saveChanges": "Save changes",
+          "cancel": "Cancel",
+          "deleteProvider": "Delete provider",
+          "cannotDeleteSharedProvider": "Cannot delete shared provider from another user"
+        }
+      }
+    },
+    "authentication": {
+      "title": "Authentication Settings",
+      "description": "Configure authentication methods for your Booklore instance. Internal authentication is always enabled, and you can optionally enable OIDC for external authentication providers.",
+      "internal": {
+        "title": "Internal Authentication",
+        "description": "Internal authentication is always enabled and cannot be disabled. However, OIDC can be used alongside internal authentication if OIDC is enabled.",
+        "enabledLabel": "Internal Authentication Enabled"
+      },
+      "oidc": {
+        "title": "OIDC Authentication (Experimental)",
+        "description": "Configure external authentication providers using OpenID Connect (OIDC) protocol for seamless single sign-on integration.",
+        "enabledLabel": "OIDC Enabled",
+        "formIncompleteHint": "Fill all required fields to enable"
+      },
+      "provider": {
+        "title": "OIDC Provider Settings",
+        "field": {
+          "providerName": {
+            "label": "Provider Name",
+            "placeholder": "e.g. Authentik"
+          },
+          "clientId": {
+            "label": "Client ID",
+            "placeholder": "e.g. my-client-id"
+          },
+          "scope": {
+            "label": "Scope",
+            "requiredInfo": "Required scopes for OIDC login and token exchange. Must be supported and advertised in the provider's discovery metadata."
+          },
+          "issuerUri": {
+            "label": "Issuer URI",
+            "placeholder": "e.g. https://authentik.domain.com/application/o/booklore/  or  https://pocket-id.domain.com"
+          }
+        },
+        "claims": {
+          "username": {
+            "label": "Username Claim",
+            "placeholder": "e.g. preferred_username"
+          },
+          "email": {
+            "label": "Email Claim",
+            "placeholder": "e.g. email"
+          },
+          "name": {
+            "label": "Display Name Claim",
+            "placeholder": "e.g. name or given_name"
+          },
+          "info": "These claims are used by Booklore to provision new OIDC users with their name, username, and email. Ensure they match the claims provided by your OIDC provider."
+        }
+      },
+      "provisioning": {
+        "title": "OIDC User Provisioning",
+        "autoProvision": {
+          "label": "Automatic user provisioning",
+          "info": "Enabling auto-provisioning ensures that new users are automatically created with the selected default permissions. If turned off, users must be manually created in Booklore before they can log in."
+        },
+        "permissions": {
+          "title": "Default permissions for auto-provisioned users",
+          "readBooks": "Read Books"
+        },
+        "libraries": {
+          "title": "Default libraries for auto-provisioned users",
+          "placeholder": "Select Libraries"
+        }
+      },
+      "permissions": {
+        "uploadBooks": "Upload Books",
+        "downloadBooks": "Download Books",
+        "editBookMetadata": "Edit Book Metadata",
+        "manageLibrary": "Manage Library",
+        "emailBook": "Email Book",
+        "deleteBook": "Delete Book",
+        "koreaderSync": "KOReader Sync",
+        "koboSync": "Kobo Sync",
+        "accessOpds": "Access OPDS"
+      },
+      "action": {
+        "saveSettings": "Save Settings"
+      },
+      "toast": {
+        "oidcUpdated": {
+          "summary": "Saved",
+          "detail": "OIDC setting updated."
+        },
+        "oidcUpdateFailed": {
+          "summary": "Error",
+          "detail": "Failed to update OIDC setting."
+        },
+        "oidcProviderSaved": {
+          "summary": "Saved",
+          "detail": "OIDC provider settings saved."
+        },
+        "oidcProviderSaveFailed": {
+          "summary": "Error",
+          "detail": "Failed to save OIDC provider settings."
+        },
+        "oidcAutoProvisionSaved": {
+          "summary": "Saved",
+          "detail": "OIDC auto-provisioning settings saved."
+        },
+        "oidcAutoProvisionSaveFailed": {
+          "summary": "Error",
+          "detail": "Failed to save OIDC auto-provisioning settings."
+        }
+      }
+    },
+    "tabs": {
+      "reader": "Reader",
+      "view": "View",
+      "metadata1": "Metadata 1",
+      "metadata2": "Metadata 2",
+      "application": "Application",
+      "users": "Users",
+      "email": "Email",
+      "patterns": "Patterns",
+      "authentication": "Authentication",
+      "tasks": "Tasks",
+      "opds": "OPDS",
+      "devices": "Devices",
+      "storage": "Storage"
+    },
+    "userProfileDialog": {
+      "title": "User Profile",
+      "description": "Manage your account information and security settings",
+      "section": {
+        "basic": {
+          "title": "Basic Information"
+        },
+        "security": {
+          "title": "Security Settings"
+        }
+      },
+      "field": {
+        "username": {
+          "label": "Username",
+          "placeholder": "Username..."
+        },
+        "fullName": {
+          "label": "Full Name",
+          "placeholder": "Enter full name..."
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "Enter email..."
+        }
+      },
+      "action": {
+        "editProfile": "Edit Profile",
+        "saveChanges": "Save Changes",
+        "changePassword": "Change Password"
+      },
+      "validation": {
+        "currentPasswordRequired": "Current password is required.",
+        "newPasswordRequired": "New password is required.",
+        "newPasswordMinLength": "Password must be at least 6 characters long.",
+        "confirmNewPasswordRequired": "Please confirm your new password.",
+        "passwordMismatch": "Passwords do not match."
+      },
+      "toast": {
+        "errorSummary": "Error",
+        "infoSummary": "Info",
+        "successSummary": "Success",
+        "userNotAvailable": "User data not available.",
+        "noChanges": "No changes detected.",
+        "profileUpdated": "Profile updated successfully",
+        "profileUpdateFailed": "Failed to update profile",
+        "passwordChanged": "Password changed successfully",
+        "passwordChangeFailed": "Failed to change password"
+      },
+      "loading": {
+        "userData": "Loading user data..."
+      }
+    },
+    "readerPreferences": {
+      "title": "Reader Preferences",
+      "description": "Configure reader settings scope and customize reading experience for different book formats including PDF, EPUB, and CBX files.",
+      "scope": {
+        "title": "Reader Settings Scope",
+        "description": "Select whether to apply the same reader settings (font, theme, spread, zoom, etc.) globally for all books or individually per book.",
+        "option": {
+          "global": "Global",
+          "individual": "Individual"
+        },
+        "pdf": {
+          "label": "PDF Reader Settings",
+          "description": "Choose how PDF reader settings are applied across your library."
+        },
+        "epub": {
+          "label": "EPUB Reader Settings",
+          "description": "Choose how EPUB reader settings are applied across your library."
+        },
+        "cbx": {
+          "label": "CBX Reader Settings",
+          "description": "Choose how CBX (comic book) reader settings are applied across your library."
+        }
+      },
+      "section": {
+        "epubGlobal": {
+          "title": "EPUB Preferences: Global",
+          "description": "Set default reading options that will apply to all EPUB books in your library, including font, theme, text flow, and layout preferences."
+        },
+        "pdfGlobal": {
+          "title": "PDF Preferences: Global",
+          "description": "Set default reading options that apply to all PDF books in your library, including zoom level, page layout, and navigation behavior."
+        },
+        "cbxGlobal": {
+          "title": "CBX Preferences: Global",
+          "description": "Configure default reading settings for all comic books in your library, including page layout, reading direction, and image scaling."
+        },
+        "customFonts": {
+          "title": "Custom Fonts Management",
+          "description": "Upload and manage up to 10 custom fonts for a personalized reading experience in the EPUB reader. Each font can then be selected in the EPUB reader settings."
+        }
+      },
+      "options": {
+        "flow": {
+          "paginated": "Paginated",
+          "scrolled": "Scrolled"
+        },
+        "pageSpread": {
+          "single": "Single",
+          "double": "Double",
+          "even": "Even",
+          "odd": "Odd",
+          "none": "None"
+        },
+        "zoom": {
+          "auto": "Auto Zoom",
+          "pageFit": "Page Fit",
+          "pageWidth": "Page Width",
+          "actualSize": "Actual Size"
+        },
+        "cbxViewMode": {
+          "singlePage": "Single Page",
+          "twoPage": "Two Page"
+        },
+        "fitMode": {
+          "fitPage": "Fit Page",
+          "fitWidth": "Fit Width",
+          "fitHeight": "Fit Height",
+          "actualSize": "Actual Size",
+          "automatic": "Automatic"
+        },
+        "scrollMode": {
+          "infinite": "Infinite"
+        },
+        "backgroundColor": {
+          "gray": "Gray",
+          "black": "Black",
+          "white": "White"
+        }
+      },
+      "epub": {
+        "field": {
+          "theme": {
+            "label": "Theme",
+            "description": "Choose the visual theme for EPUB reading experience."
+          },
+          "font": {
+            "label": "Font",
+            "description": "Select the font family for text display."
+          },
+          "flow": {
+            "label": "Flow",
+            "description": "Configure text flow and reading direction."
+          },
+          "pageSpread": {
+            "label": "Page Spread",
+            "description": "Choose between single page or double page spread view."
+          },
+          "fontSize": {
+            "label": "Font Size",
+            "description": "Adjust the text size for comfortable reading."
+          }
+        },
+        "font": {
+          "bookDefault": {
+            "tooltip": "Book Default",
+            "label": "Default"
+          },
+          "serif": "Serif",
+          "sansSerif": "Sans Serif",
+          "roboto": "Roboto",
+          "cursive": "Cursive",
+          "monospace": "Monospace"
+        },
+        "theme": {
+          "white": "White",
+          "black": "Black",
+          "grey": "Grey",
+          "sepia": "Sepia",
+          "green": "Green",
+          "lavender": "Lavender",
+          "cream": "Cream",
+          "lightBlue": "Light Blue",
+          "peach": "Peach",
+          "mint": "Mint",
+          "darkSlate": "Dark Slate",
+          "darkOlive": "Dark Olive",
+          "darkPurple": "Dark Purple",
+          "darkTeal": "Dark Teal",
+          "darkBrown": "Dark Brown"
+        }
+      },
+      "pdf": {
+        "field": {
+          "pageSpread": {
+            "label": "Page Spread",
+            "description": "Choose how PDF pages are displayed - single page or double page spread view."
+          },
+          "pageZoom": {
+            "label": "Page Zoom",
+            "description": "Set the default zoom level for PDF documents to enhance readability."
+          }
+        }
+      },
+      "cbx": {
+        "field": {
+          "pageSpread": {
+            "label": "Page Spread",
+            "description": "Configure how comic book pages are displayed - single page or double page spread."
+          },
+          "pageLayout": {
+            "label": "Page Layout",
+            "description": "Choose how comic pages are displayed while reading."
+          },
+          "fitMode": {
+            "label": "Fit Mode",
+            "description": "Select how images should be scaled to fit the reader window."
+          },
+          "scrollMode": {
+            "label": "Scroll Mode",
+            "description": "Choose between paginated or infinite scroll reading experience."
+          },
+          "backgroundColor": {
+            "label": "Background Color",
+            "description": "Set the background color for the comic reader."
+          }
+        }
+      }
+    },
+    "customFonts": {
+      "tooltip": {
+        "deleteFont": "Delete font"
+      },
+      "empty": {
+        "title": "No Custom Fonts Yet",
+        "description": {
+          "line1": "Upload your favorite fonts to personalize your reading experience.",
+          "line2": "Click the upload button above to get started."
+        }
+      },
+      "supportedFormats": {
+        "label": "Supported formats:"
+      },
+      "library": {
+        "title": "Your Font Library"
+      },
+      "preview": {
+        "label": "Preview"
+      },
+      "metadata": {
+        "file": "File",
+        "size": "Size",
+        "uploaded": "Uploaded"
+      },
+      "confirm": {
+        "delete": {
+          "header": "Delete Font",
+          "message": "Are you sure you want to delete the font \"{{fontName}}\"?"
+        }
+      },
+      "toast": {
+        "loadFailed": {
+          "summary": "Error",
+          "detail": "Failed to load custom fonts"
+        },
+        "quotaExceeded": {
+          "summary": "Quota Exceeded",
+          "detail": "Maximum {{max}} fonts allowed per user"
+        },
+        "deleteSuccess": {
+          "summary": "Success",
+          "detail": "Font \"{{fontName}}\" deleted successfully"
+        },
+        "deleteFailed": {
+          "summary": "Delete Failed",
+          "detail": "Failed to delete font"
+        }
+      },
+      "uploadDialog": {
+        "title": "Add New Font",
+        "description": "Upload a custom font for your EPUB reader",
+        "section": {
+          "selectFile": "Select Font File"
+        },
+        "empty": {
+          "title": "Drag and Drop Font File",
+          "supportedFormats": "Supported formats:",
+          "maxFileSize": "Maximum file size: {{size}}"
+        },
+        "preview": {
+          "label": "Font Preview"
+        },
+        "field": {
+          "displayName": {
+            "label": "Font Display Name",
+            "description": "This name will appear in the font selector when reading EPUB books.",
+            "placeholder": "e.g., Bookerly, Open Sans, Merriweather"
+          }
+        },
+        "button": {
+          "upload": "Upload Font"
+        },
+        "toast": {
+          "previewFailed": {
+            "summary": "Preview Failed",
+            "detail": "Unable to preview font, but you can still upload it"
+          },
+          "noFileSelected": {
+            "summary": "No File Selected",
+            "detail": "Please select a font file to upload"
+          },
+          "uploadSuccess": {
+            "summary": "Success",
+            "detail": "Font \"{{fontName}}\" uploaded successfully"
+          },
+          "uploadFailed": {
+            "summary": "Upload Failed",
+            "detail": {
+              "generic": "Failed to upload font",
+              "badRequest": "Invalid file format or quota exceeded"
+            }
+          }
+        },
+        "error": {
+          "invalidType": {
+            "summary": "Invalid File Type",
+            "detail": "Please upload a TTF, OTF, WOFF, or WOFF2 font file"
+          },
+          "fileTooLarge": {
+            "summary": "File Too Large",
+            "detail": "File size must not exceed {{size}}"
+          }
+        }
+      }
+    },
+    "viewPreferences": {
+      "title": "Library and Shelf View & Sort Preferences",
+      "description": "Configure default and per-library/shelf preferences for sorting and view mode (grid or table) in the browser.",
+      "section": {
+        "default": {
+          "title": "Default Settings",
+          "description": "Set the default sorting and view preferences that will apply to all libraries and shelves unless overridden."
+        },
+        "overrides": {
+          "title": "Specific Overrides",
+          "description": "Create specific sorting and view preferences for individual libraries or shelves that override the default settings."
+        }
+      },
+      "label": {
+        "defaultPreferences": "Default Preferences",
+        "overrideManagement": "Override Management"
+      },
+      "placeholder": {
+        "sortBy": "Sort By",
+        "direction": "Direction",
+        "viewMode": "View Mode"
+      },
+      "description": {
+        "defaultPreferences": "Configure the default sorting field, direction, and view mode for all libraries and shelves.",
+        "overrideManagement": "Add custom preferences for specific libraries or shelves. These will override your default settings."
+      },
+      "button": {
+        "addOverride": "Add Override",
+        "saveSettings": "Save Settings"
+      },
+      "table": {
+        "header": {
+          "type": "Type",
+          "name": "Name",
+          "sortBy": "Sort By",
+          "direction": "Direction",
+          "viewMode": "View Mode",
+          "actions": "Actions"
+        }
+      },
+      "tooltip": {
+        "removeOverride": "Remove override"
+      },
+      "toast": {
+        "saved": {
+          "summary": "Preferences Saved",
+          "detail": "Your sorting and view preferences were saved successfully."
+        }
+      },
+      "sortOption": {
+        "title": "Title",
+        "titleSeries": "Title + Series",
+        "fileName": "File Name",
+        "author": "Author",
+        "authorSeries": "Author + Series",
+        "lastReadTime": "Last Read",
+        "addedOn": "Added On",
+        "fileSizeKb": "File Size",
+        "locked": "Locked",
+        "publisher": "Publisher",
+        "publishedDate": "Published Date",
+        "amazonRating": "Amazon Rating",
+        "amazonReviewCount": "Amazon #",
+        "goodreadsRating": "Goodreads Rating",
+        "goodreadsReviewCount": "Goodreads #",
+        "hardcoverRating": "Hardcover Rating",
+        "hardcoverReviewCount": "Hardcover #",
+        "ranobedbRating": "Ranobedb Rating",
+        "pageCount": "Pages",
+        "random": "Random"
+      },
+      "entityType": {
+        "library": "Library",
+        "shelf": "Shelf",
+        "magicShelf": "Magic Shelf"
+      },
+      "sortDirection": {
+        "ascending": "Ascending",
+        "descending": "Descending"
+      },
+      "viewMode": {
+        "grid": "Grid",
+        "table": "Table"
+      }
+    },
+    "filterPreferences": {
+      "title": "Filter Preferences",
+      "description": "Configure default options for filter controls shown in the sidebar.",
+      "label": {
+        "filterMode": "Filter Mode",
+        "sortingMode": "Sorting Mode"
+      },
+      "tooltip": {
+        "filterMode": "Choose the default mode for combining filters selected from the filter sidebar.",
+        "sortingMode": "Choose how filter options are sorted in the sidebar."
+      },
+      "description": {
+        "filterMode": "Choose the default mode for combining filters selected from the right filter sidebar.",
+        "sortingMode": "Choose how filter options are sorted in the sidebar."
+      },
+      "option": {
+        "filterMode": {
+          "and": "And",
+          "or": "Or",
+          "single": "Single"
+        },
+        "sortingMode": {
+          "alphabetical": "Alphabetical",
+          "count": "By Count"
+        }
+      }
+    },
+    "sidebarSortingPreferences": {
+      "title": "Sidebar Library and Shelf Sorting Preference",
+      "description": "Configure sorting options for your library and shelves names shown in the left menu sidebar.",
+      "label": {
+        "library": "Library",
+        "shelf": "Shelf",
+        "magicShelf": "Magic Shelf"
+      },
+      "placeholder": {
+        "selectSorting": "Select Sorting"
+      },
+      "description": {
+        "library": "Choose how library names are sorted and displayed in the sidebar.",
+        "shelf": "Choose how shelf names are sorted and displayed in the sidebar.",
+        "magicShelf": "Choose how magic shelf names are sorted and displayed in the sidebar."
+      },
+      "option": {
+        "nameAsc": "Name | Ascending",
+        "nameDesc": "Name | Descending",
+        "creationDateAsc": "Creation Date | Ascending",
+        "creationDateDesc": "Creation Date | Descending"
+      }
+    },
+    "metaCenterViewMode": {
+      "title": "View Preferences",
+      "description": "Customize how you view metadata and series information.",
+      "label": {
+        "metadataCenterDisplayMode": "Metadata Center Display Mode",
+        "seriesViewMode": "Series View Mode"
+      },
+      "tooltip": {
+        "metadataCenterDisplayMode": "Choose whether to open the Metadata Center in the current page or as a popup dialog window.",
+        "seriesViewMode": "Enable or disable the series view mode for displaying series information."
+      },
+      "description": {
+        "metadataCenterDisplayMode": "Choose whether to open the Metadata Center in the current page or as a popup dialog window.",
+        "seriesViewMode": "Enable or disable the series view mode for displaying series information."
+      },
+      "button": {
+        "openInPage": "Open in Page",
+        "openInDialog": "Open in Dialog",
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+      },
+      "toast": {
+        "viewModeSaved": {
+          "detail": "Your metadata center view preference has been saved."
+        },
+        "seriesViewModeSaved": {
+          "detail": "Your series view mode preference has been saved."
+        }
+      }
+    },
+    "userManagement": {
+      "title": "User Management",
+      "description": "Manage Booklore users, their permissions, and library access. Configure user roles and capabilities for your book collection.",
+      "section": {
+        "currentUsers": {
+          "title": "Current Users"
+        }
+      },
+      "table": {
+        "header": {
+          "type": "Type",
+          "user": "User",
+          "libraries": "Libraries",
+          "actions": "Actions"
+        }
+      },
+      "label": {
+        "fullName": "Full Name",
+        "email": "Email"
+      },
+      "placeholder": {
+        "selectLibraries": "Select Libraries"
+      },
+      "button": {
+        "createUser": "Create User"
+      },
+      "expanded": {
+        "userInformation": {
+          "title": "User Information"
+        },
+        "permissions": {
+          "title": "Permissions"
+        }
+      },
+      "permissionGroup": {
+        "bookManagement": "Book Management",
+        "systemAccess": "System Access",
+        "systemConfiguration": "System Configuration",
+        "metadataEditing": "Metadata Editing",
+        "deviceSync": "Device Sync",
+        "bulkReset": "Bulk Reset",
+        "administration": "Administration"
+      },
+      "permission": {
+        "uploadBooks": "Upload Books",
+        "downloadBooks": "Download Books",
+        "deleteBooks": "Delete Books",
+        "manageLibrary": "Manage Library",
+        "emailBooks": "Email Books",
+        "accessBookdrop": "Access Bookdrop",
+        "viewLibraryStatistics": "View Library Statistics",
+        "viewUserReadingStatistics": "View User Reading Statistics",
+        "manageMetadataConfiguration": "Manage Metadata Configuration",
+        "manageApplicationPreferences": "Manage Application Preferences",
+        "accessTaskManager": "Access Task Manager",
+        "manageIcons": "Manage Icons",
+        "manageFonts": "Manage Fonts",
+        "editSingleMetadata": "Edit Single Metadata",
+        "bulkAutoFetchMetadata": "Bulk Auto Fetch Metadata",
+        "bulkCustomFetchMetadata": "Bulk Custom Fetch Metadata",
+        "accessBulkMetadataEditor": "Access Bulk Metadata Editor",
+        "bulkRegenerateCover": "Bulk Regenerate Cover",
+        "moveOrganizeFiles": "Move/Organize Files",
+        "bulkLockUnlockMetadata": "Bulk Lock/Unlock Metadata",
+        "koreaderSync": "KOReader Sync",
+        "koboSync": "Kobo Sync",
+        "opdsFeedAccess": "OPDS Feed Access",
+        "bulkResetBookloreReadProgress": "Bulk Reset Booklore Read Progress",
+        "bulkResetKoreaderReadProgress": "Bulk Reset KoReader Read Progress",
+        "bulkResetBookReadStatus": "Bulk Reset Book Read Status",
+        "fullAdministratorAccess": "Full Administrator Access"
+      },
+      "tooltip": {
+        "adminPermissions": "Admin permissions",
+        "bookManagementPermissions": "Book Management permissions",
+        "systemAccessPermissions": "System Access permissions",
+        "systemConfigurationPermissions": "System Configuration permissions",
+        "metadataEditingPermissions": "Metadata Editing permissions",
+        "deviceSyncPermissions": "Device Sync permissions",
+        "bulkResetPermissions": "Bulk Reset permissions",
+        "administrator": "Administrator",
+        "notAdministrator": "Not Administrator",
+        "editUser": "Edit user",
+        "saveChanges": "Save changes",
+        "changePassword": "Change password",
+        "deleteUser": "Delete user"
+      },
+      "confirm": {
+        "deleteUser": {
+          "message": "Are you sure you want to delete {{username}}?"
+        }
+      },
+      "toast": {
+        "fetchUsersFailed": {
+          "summary": "Error",
+          "detail": "Failed to fetch users."
+        },
+        "userUpdated": {
+          "summary": "Success",
+          "detail": "User updated successfully."
+        },
+        "updateUserFailed": {
+          "summary": "Error",
+          "detail": "Failed to update user."
+        },
+        "userDeleted": {
+          "summary": "Success",
+          "detail": "User {{username}} deleted successfully."
+        },
+        "deleteUserFailed": {
+          "summary": "Error",
+          "detail": "Failed to delete user {{username}}.",
+          "detailWithMessage": "Unable to delete user {{username}}: {{message}}"
+        },
+        "passwordChanged": {
+          "summary": "Success",
+          "detail": "Password changed successfully."
+        }
+      },
+      "passwordDialog": {
+        "header": "Change Password",
+        "label": {
+          "newPassword": "New Password",
+          "confirmPassword": "Confirm Password"
+        },
+        "placeholder": {
+          "newPassword": "Enter new password",
+          "confirmPassword": "Confirm new password"
+        },
+        "button": {
+          "changePassword": "Change Password"
+        },
+        "error": {
+          "bothFieldsRequired": "Both fields are required.",
+          "passwordsDoNotMatch": "Passwords do not match.",
+          "changeFailed": "Failed to change password.",
+          "changeFailedWithMessage": "Unable to change password: {{message}}"
+        }
+      },
+      "createUserDialog": {
+        "title": "Create New User",
+        "description": "Set up a new user account with permissions and library access",
+        "section": {
+          "basicInformation": "Basic Information",
+          "libraryAccess": "Library Access"
+        },
+        "label": {
+          "username": "Username",
+          "password": "Password",
+          "accessibleLibraries": "Accessible Libraries"
+        },
+        "placeholder": {
+          "fullName": "Enter full name...",
+          "email": "Enter email...",
+          "username": "Enter username...",
+          "password": "Enter password..."
+        },
+        "validation": {
+          "name": "Name is required and must be at least 3 characters.",
+          "email": "Enter a valid email address.",
+          "username": "Username is required.",
+          "password": "Password must be at least 6 characters long.",
+          "selectedLibraries": "At least one library must be selected."
+        },
+        "footer": {
+          "allFieldsRequired": "All fields are required to create a user"
+        },
+        "toast": {
+          "validationError": {
+            "summary": "Validation Error",
+            "detail": "Please correct errors before submitting."
+          },
+          "userCreated": {
+            "summary": "User Created",
+            "detail": "The user has been successfully created."
+          },
+          "userCreateFailed": {
+            "summary": "User Creation Failed",
+            "detail": "An unexpected error occurred while creating the user. Please try again later.",
+            "detailWithMessage": "Unable to create user: {{message}}"
+          }
+        }
+      }
+    }
+  },
+  "metadata": {
+    "searcher": {
+      "label": {
+        "providers": "Providers",
+        "isbn": "ISBN",
+        "title": "Title",
+        "author": "Author"
+      },
+      "placeholder": {
+        "providers": "Select provider(s)",
+        "isbn": "ISBN 10/13",
+        "title": "Enter title",
+        "author": "Enter author"
+      },
+      "tooltip": {
+        "isbnPriority": "When ISBN is provided, it will be prioritized over other fields."
+      },
+      "section": {
+        "searchResults": "Search Results"
+      },
+      "resultsCount": "{{count}} results",
+      "badge": {
+        "fetching": "Fetching..."
+      },
+      "empty": {
+        "readyTitle": "Ready to Search",
+        "readyDescription": "Fill in any fields above and click Search to start.",
+        "noResultsTitle": "No Results",
+        "noResultsDescription": "Try adjusting your search criteria or providers."
+      },
+      "card": {
+        "select": "Select"
+      }
+    },
+    "coverSearch": {
+      "title": {
+        "selectAndSave": "Select & Save"
+      },
+      "label": {
+        "titleRequired": "Title *",
+        "author": "Author"
+      },
+      "placeholder": {
+        "title": "Enter title",
+        "author": "Enter author"
+      },
+      "button": {
+        "searchCovers": "Search Covers",
+        "pickAndSave": "Pick & Save",
+        "clear": "Clear"
+      },
+      "status": {
+        "searching": "Searching for book covers..."
+      },
+      "empty": {
+        "noResults": "No covers found."
+      },
+      "alt": {
+        "bookCover": "Book cover"
+      },
+      "validation": {
+        "titleRequired": "Title is required."
+      }
+    },
+    "advancedFetch": {
+      "table": {
+        "enabled": "Enabled",
+        "field": "Field",
+        "priority1": "Priority 1",
+        "priority2": "Priority 2",
+        "priority3": "Priority 3",
+        "priority4": "Priority 4",
+        "setAll": "Set all"
+      },
+      "tooltip": {
+        "priority1": "First choice provider for this field.",
+        "priority2": "Second choice provider for this field.",
+        "priority3": "Third choice provider for this field.",
+        "priority4": "Fourth choice provider for this field.",
+        "enableField": "Enable/disable this field",
+        "updateCovers": "Fetch and update book covers",
+        "mergeGenres": "Keep existing genres and add new ones",
+        "manualReview": "Review fetched metadata before applying"
+      },
+      "placeholder": {
+        "unset": "Unset",
+        "setAllP1": "Set all (P1)",
+        "setAllP2": "Set all (P2)",
+        "setAllP3": "Set all (P3)",
+        "setAllP4": "Set all (P4)"
+      },
+      "option": {
+        "clearAll": "Clear all"
+      },
+      "section": {
+        "providerSpecificFieldsTitle": "Provider-Specific Fields",
+        "providerSpecificFieldsDescription": "Enable provider-specific fields to fetch additional metadata when available."
+      },
+      "label": {
+        "updateCovers": "Update covers",
+        "mergeGenres": "Merge genres",
+        "manualReview": "Manual review"
+      },
+      "button": {
+        "resetForm": "Reset"
+      },
+      "error": {
+        "validationSummary": "Invalid options",
+        "validationDetail": "Please select providers for enabled fields."
+      },
+      "field": {
+        "title": "Title",
+        "subtitle": "Subtitle",
+        "description": "Description",
+        "authors": "Authors",
+        "publisher": "Publisher",
+        "publishedDate": "Published Date",
+        "seriesName": "Series Name",
+        "seriesNumber": "Series #",
+        "seriesTotal": "Series Total",
+        "isbn13": "ISBN 13",
+        "isbn10": "ISBN 10",
+        "language": "Language",
+        "categories": "Genres",
+        "moods": "Moods",
+        "tags": "Tags",
+        "cover": "Cover",
+        "pageCount": "Page Count",
+        "asin": "Amazon ASIN",
+        "goodreadsId": "Goodreads ID",
+        "comicvineId": "ComicVine ID",
+        "hardcoverId": "Hardcover ID",
+        "googleId": "Google Books ID",
+        "amazonRating": "Amazon Rating",
+        "amazonReviewCount": "Amazon Review Count",
+        "goodreadsRating": "Goodreads Rating",
+        "goodreadsReviewCount": "Goodreads Review Count",
+        "hardcoverRating": "Hardcover Rating",
+        "hardcoverReviewCount": "Hardcover Review Count",
+        "lubimyczytacId": "Lubimyczytac ID",
+        "lubimyczytacRating": "Lubimyczytac Rating",
+        "ranobedbId": "RanobeDB ID",
+        "ranobedbRating": "RanobeDB Rating"
+      }
+    },
+    "fetchOptions": {
+      "button": {
+        "startRefresh": "Start Refresh"
+      }
+    },
+    "manager": {
+      "title": "Metadata Manager",
+      "description": "Consolidate, rename, split, and delete metadata values across your library.",
+      "tooltip": {
+        "writeToFileWarning": "Some operations may write metadata back into your book files. Make sure you have backups."
+      },
+      "tab": {
+        "author": "Author",
+        "authors": "Authors",
+        "genre": "Genre",
+        "genres": "Genres",
+        "mood": "Mood",
+        "moods": "Moods",
+        "tag": "Tag",
+        "tags": "Tags",
+        "series": "Series",
+        "seriesPlural": "Series",
+        "publisher": "Publisher",
+        "publishers": "Publishers",
+        "language": "Language",
+        "languages": "Languages"
+      },
+      "placeholder": {
+        "authors": "Search authors...",
+        "categories": "Search genres...",
+        "moods": "Search moods...",
+        "tags": "Search tags...",
+        "series": "Search series...",
+        "publishers": "Search publishers...",
+        "languages": "Search languages..."
+      },
+      "button": {
+        "clearSelection": "Clear selection",
+        "deleteSelected": "Delete selected",
+        "mergeSplitSelected": "Merge/Split selected"
+      },
+      "common": {
+        "booksCount": "{{count}} books"
+      },
+      "table": {
+        "books": "Books",
+        "actions": "Actions"
+      },
+      "status": {
+        "processing": "Processing...",
+        "deleting": "Deleting...",
+        "processingWriteToFileNote": "This may write metadata into your files."
+      },
+      "dialog": {
+        "mergeSplitHeader": "Merge/Split {{type}}",
+        "mergeSplitIntro": "Merging {{count}} selected {{type}} values.",
+        "renameSplitHeader": "Rename/Split {{type}}",
+        "renameSplitIntro": "Rename or split a {{type}} value.",
+        "targetValueLabel": "Target value",
+        "targetValuePluralSuffix": "s",
+        "newNamesLabel": "New name(s)",
+        "targetPlaceholderSingle": "Enter a single value",
+        "targetPlaceholderMultiple": "Enter one or more values, separated by commas",
+        "renamePlaceholderSingle": "Enter a new value",
+        "renamePlaceholderMultiple": "Enter one or more values, separated by commas",
+        "deleteHeader": "Delete {{type}}",
+        "deleteIntro": "Delete selected {{type}} values from all books.",
+        "deleteWhatWillHappenTitle": "What will happen",
+        "deleteWhatWillHappenItem1": "Values will be removed from all affected books",
+        "deleteWhatWillHappenItem2": "This cannot be undone",
+        "deleteWhatWillHappenItem3": "File metadata may be updated"
+      },
+      "help": {
+        "howItWorks": "How it works",
+        "note": "Note:",
+        "example": "Example",
+        "single": {
+          "mergeIntoOne": "Merge selected {{type}} values into one",
+          "updateBooks": "Update all affected books",
+          "note": "Single-value fields accept only one value",
+          "exampleIntro": "Selected values:",
+          "exampleLine": "Rename \"Sci-Fi\" and \"Science Fiction\" to \"Science Fiction\""
+        },
+        "multi": {
+          "mergeIntoOne": "Merge selected {{type}} values into one",
+          "splitIntoMany": "Split one value into many",
+          "exampleIntro": "Example:",
+          "exampleMergeLine": "Merge \"A, B\" and \"B\" into \"B\"",
+          "exampleSplitLine": "Split \"A, B\" into \"A\" and \"B\""
+        },
+        "renameSingle": {
+          "renameToNewValue": "Rename {{type}} to a new value",
+          "note": "Enter a single value to rename"
+        },
+        "renameMulti": {
+          "renameToOne": "Rename {{type}} to one value",
+          "splitIntoMany": "Split into many {{type}} values",
+          "exampleIntro": "Example:",
+          "exampleRenameLine": "Rename \"A\" to \"B\"",
+          "exampleSplitLine": "Split \"A, B\" into \"A\" and \"B\""
+        }
+      },
+      "toast": {
+        "invalidSelection": {
+          "summary": "Invalid selection",
+          "mergeMin2": "Select at least two items to merge/split.",
+          "deleteMin1": "Select at least one item to delete."
+        },
+        "invalidTarget": {
+          "summary": "Invalid input",
+          "enterValidName": "Enter a valid name.",
+          "enterAtLeastOneValue": "Enter at least one value.",
+          "enterMergeTarget": "Enter a merge target.",
+          "singleValueOnly": "{{type}} only allows a single value.",
+          "singleValueOnlyMerge": "{{type}} only allows a single merge target."
+        },
+        "renameSuccess": {
+          "summary": "Rename complete",
+          "detail": "Renamed \"{{oldValue}}\" to \"{{newValue}}\" ({{booksUpdated}} books)."
+        },
+        "renameFailed": {
+          "summary": "Rename failed",
+          "detail": "Could not rename the selected values."
+        },
+        "splitSuccess": {
+          "summary": "Split complete",
+          "detail": "Split \"{{oldValue}}\" into {{count}} values ({{booksUpdated}} books)."
+        },
+        "splitFailed": {
+          "summary": "Split failed",
+          "detail": "Could not split the selected value."
+        },
+        "mergeSuccess": {
+          "summary": "Merge complete",
+          "detail": "Merged into \"{{newValue}}\" ({{booksUpdated}} books)."
+        },
+        "mergeFailed": {
+          "summary": "Merge failed",
+          "detail": "Could not merge the selected values."
+        },
+        "deleteSuccess": {
+          "summary": "Delete complete",
+          "detail": "Deleted {{count}} value(s) from {{booksUpdated}} books."
+        },
+        "deleteFailed": {
+          "summary": "Delete failed",
+          "detail": "Could not delete the selected values."
+        }
+      }
+    },
+    "picker": {
+      "section": {
+        "currentMetadata": "Current Metadata",
+        "fetchedMetadata": "Fetched Metadata"
+      },
+      "tooltip": {
+        "moveMissingFields": "Move all missing fields",
+        "moveAllFields": "Move all fields"
+      },
+      "placeholder": {
+        "dateFormat": "YYYY-MM-DD"
+      },
+      "alt": {
+        "coverImage": "Cover"
+      },
+      "button": {
+        "toMetadataList": "To Metadata List",
+        "unlockAll": "Unlock All",
+        "lockAll": "Lock All"
+      },
+      "field": {
+        "cover": "Cover",
+        "title": "Title",
+        "subtitle": "Subtitle",
+        "publisher": "Publisher",
+        "publishedDate": "Published Date",
+        "authors": "Authors",
+        "genres": "Genres",
+        "moods": "Moods",
+        "tags": "Tags",
+        "description": "Description",
+        "seriesName": "Series Name",
+        "seriesNumber": "Series #",
+        "seriesTotal": "Series Total",
+        "language": "Language",
+        "isbn10": "ISBN 10",
+        "isbn13": "ISBN 13",
+        "asin": "Amazon ASIN",
+        "amazonReviewCount": "Amazon Review Count",
+        "amazonRating": "Amazon Rating",
+        "comicvineId": "ComicVine ID",
+        "goodreadsId": "Goodreads ID",
+        "goodreadsReviewCount": "Goodreads Review Count",
+        "goodreadsRating": "Goodreads Rating",
+        "hardcoverId": "Hardcover ID",
+        "hardcoverBookId": "Hardcover Book ID",
+        "hardcoverReviewCount": "Hardcover Review Count",
+        "hardcoverRating": "Hardcover Rating",
+        "lubimyczytacId": "Lubimyczytac ID",
+        "lubimyczytacRating": "Lubimyczytac Rating",
+        "ranobedbId": "RanobeDB ID",
+        "ranobedbRating": "RanobeDB Rating",
+        "googleId": "Google Books ID",
+        "pageCount": "Page Count"
+      },
+      "toast": {
+        "saveSuccess": {
+          "summary": "Saved",
+          "detail": "Book metadata updated."
+        },
+        "saveFailed": {
+          "summary": "Save failed",
+          "detail": "Failed to update book metadata."
+        },
+        "lockAllSuccess": {
+          "summary": "Locked",
+          "detail": "All fields have been locked."
+        },
+        "unlockAllSuccess": {
+          "summary": "Unlocked",
+          "detail": "All fields have been unlocked."
+        },
+        "lockUpdateFailed": {
+          "summary": "Update failed",
+          "detail": "Failed to update lock state."
+        },
+        "actionBlocked": {
+          "summary": "Action blocked",
+          "detail": "\"{{field}}\" is locked and cannot be updated."
+        }
+      }
+    },
+    "editor": {
+      "alt": {
+        "coverImage": "Cover"
+      },
+      "label": {
+        "title": "Title",
+        "subtitle": "Subtitle",
+        "language": "Language",
+        "authors": "Authors",
+        "publisher": "Publisher",
+        "publishedDate": "Published Date",
+        "genres": "Genres",
+        "moods": "Moods",
+        "tags": "Tags",
+        "seriesName": "Series Name",
+        "seriesNumber": "Series #",
+        "seriesTotal": "Series Total",
+        "pageCount": "Pages",
+        "publicReviews": "Public Reviews",
+        "isbn10": "ISBN 10",
+        "isbn13": "ISBN 13",
+        "asin": "Amazon ASIN",
+        "amazonRating": "Amazon ★",
+        "amazonReviewCount": "Amazon #",
+        "googleId": "Google Books ID",
+        "goodreadsId": "Goodreads ID",
+        "goodreadsRating": "Goodreads ★",
+        "goodreadsReviewCount": "Goodreads #",
+        "hardcoverId": "Hardcover ID",
+        "hardcoverBookId": "Hardcover Book ID",
+        "hardcoverRating": "Hardcover ★",
+        "hardcoverReviewCount": "Hardcover #",
+        "lubimyczytacId": "LC ID",
+        "lubimyczytacRating": "LC ★",
+        "comicvineId": "ComicVine ID",
+        "ranobedbId": "RanobeDB ID",
+        "ranobedbRating": "RanobeDB ★",
+        "description": "Description"
+      },
+      "button": {
+        "previousBook": "Previous Book",
+        "nextBook": "Next Book",
+        "autoFetch": "Auto Fetch",
+        "unlockAll": "Unlock All",
+        "lockAll": "Lock All"
+      },
+      "status": {
+        "fetching": "Fetching..."
+      },
+      "value": {
+        "noValue": "No Value"
+      },
+      "tooltip": {
+        "regenerateCoverFromFile": "Regenerate cover from file",
+        "generateCustomCover": "Generate custom cover",
+        "searchCover": "Search cover",
+        "uploadCover": "Upload cover",
+        "lockCover": "Lock cover",
+        "unlockCover": "Unlock cover",
+        "unlockAllFields": "Unlock all fields",
+        "lockAllFields": "Lock all fields",
+        "goToPreviousBook": "Go to previous book",
+        "goToNextBook": "Go to next book",
+        "autoFetchDefault": "Auto fetch using default options",
+        "autoFetch": "Auto fetch",
+        "close": "Close",
+        "previousBook": "Previous book",
+        "nextBook": "Next book",
+        "unlockAll": "Unlock all",
+        "lockAll": "Lock all"
+      },
+      "toast": {
+        "saveSuccess": {
+          "summary": "Saved",
+          "detail": "Book metadata updated."
+        },
+        "saveFailed": {
+          "summary": "Save failed",
+          "detail": "Failed to update book metadata."
+        },
+        "lockAllSuccess": {
+          "summary": "Locked",
+          "detail": "All fields have been locked."
+        },
+        "unlockAllSuccess": {
+          "summary": "Unlocked",
+          "detail": "All fields have been unlocked."
+        },
+        "lockUpdateFailed": {
+          "summary": "Update failed",
+          "detail": "Failed to update lock state."
+        },
+        "uploadFailed": {
+          "summary": "Upload failed",
+          "detail": "An error occurred while uploading the cover."
+        },
+        "coverRegenerated": {
+          "summary": "Success",
+          "detail": "Book cover regenerated successfully."
+        },
+        "coverRegeneratedPartial": {
+          "summary": "Partial success",
+          "detail": "Cover regenerated but failed to refresh display. Please refresh the page."
+        },
+        "customCoverGenerated": {
+          "summary": "Success",
+          "detail": "Custom cover generated successfully."
+        },
+        "customCoverGeneratedPartial": {
+          "summary": "Partial success",
+          "detail": "Cover generated but failed to refresh display. Please refresh the page."
+        },
+        "customCoverGenerateFailed": {
+          "summary": "Error",
+          "detail": "Failed to generate custom cover."
+        }
+      }
+    },
+    "viewer": {
+      "label": {
+        "genres": "Genres",
+        "moods": "Moods",
+        "tags": "Tags",
+        "library": "Library",
+        "publisher": "Publisher",
+        "published": "Published",
+        "language": "Language",
+        "fileType": "File Type",
+        "bookloreProgress": "BookLore Progress",
+        "metadataMatch": "Metadata Match",
+        "isbn": "ISBN",
+        "readStatus": "Read Status",
+        "koreaderProgress": "KOReader Progress",
+        "koboProgress": "Kobo Progress",
+        "finishedOn": "Finished On",
+        "pageCount": "Page Count",
+        "fileSize": "File Size",
+        "filePath": "File Path"
+      },
+      "button": {
+        "read": "Read",
+        "shelf": "Shelf",
+        "download": "Download",
+        "autoFetch": "Auto Fetch",
+        "showMore": "Show more",
+        "showLess": "Show less"
+      },
+      "status": {
+        "fetching": "Fetching..."
+      },
+      "tab": {
+        "moreInSeries": "More in Series",
+        "similarBooks": "Similar Books",
+        "notes": "Notes",
+        "readingSessions": "Reading Sessions",
+        "reviews": "Reviews"
+      },
+      "loading": {
+        "bookDetails": "Loading book details..."
+      },
+      "value": {
+        "na": "N/A",
+        "file": "file",
+        "unknownError": "Unknown error"
+      },
+      "unit": {
+        "mb": "MB"
+      },
+      "navigation": {
+        "position": "{{current}} of {{total}}"
+      },
+      "menu": {
+        "customFetch": "Custom Fetch",
+        "streamingReader": "Streaming Reader",
+        "uploadFile": "Upload File",
+        "organizeFiles": "Organize Files",
+        "sendBook": "Send Book",
+        "quickSend": "Quick Send",
+        "customSend": "Custom Send",
+        "deleteBook": "Delete Book",
+        "deleteAdditionalFiles": "Delete Additional Files"
+      },
+      "confirm": {
+        "deleteBook": {
+          "header": "Confirm Deletion",
+          "message": "Are you sure you want to delete \"{{title}}\"?"
+        },
+        "deleteAdditionalFile": {
+          "header": "Confirm File Deletion",
+          "message": "Are you sure you want to delete the additional file \"{{fileName}}\"?"
+        },
+        "resetProgress": {
+          "header": "Confirm Reset",
+          "message": "Reset reading progress for \"{{title}}\"?"
+        }
+      },
+      "toast": {
+        "deleteAdditionalFileSuccess": {
+          "summary": "Success",
+          "detail": "Additional file \"{{fileName}}\" deleted successfully."
+        },
+        "deleteAdditionalFileFailed": {
+          "summary": "Error",
+          "detail": "Failed to delete additional file: {{error}}"
+        },
+        "sendScheduled": {
+          "summary": "Success",
+          "detail": "The book sending has been scheduled."
+        },
+        "sendFailed": {
+          "summary": "Error",
+          "detail": "An error occurred while sending the book."
+        },
+        "readStatusUpdated": {
+          "summary": "Read status updated",
+          "detail": "Marked as \"{{status}}\""
+        },
+        "readStatusUpdateFailed": {
+          "summary": "Update failed",
+          "detail": "Could not update read status."
+        },
+        "progressReset": {
+          "summary": "Progress reset",
+          "detail": "Reading progress has been reset."
+        },
+        "progressResetFailed": {
+          "summary": "Failed",
+          "detail": "Could not reset progress."
+        },
+        "ratingSaved": {
+          "summary": "Rating saved",
+          "detail": "Personal rating updated successfully."
+        },
+        "ratingSaveFailed": {
+          "summary": "Update failed",
+          "detail": "Could not update personal rating."
+        },
+        "ratingReset": {
+          "summary": "Rating reset",
+          "detail": "Personal rating has been cleared."
+        },
+        "ratingResetFailed": {
+          "summary": "Reset failed",
+          "detail": "Could not reset personal rating."
+        },
+        "dateUpdated": {
+          "summary": "Date updated",
+          "detail": "Book finish date has been updated."
+        },
+        "dateUpdateFailed": {
+          "summary": "Update failed",
+          "detail": "Could not update book finish date."
+        }
+      },
+      "rating": {
+        "reviews": "{{count}} reviews"
+      },
+      "readStatus": {
+        "unread": "Unread",
+        "paused": "Paused",
+        "reading": "Reading",
+        "reReading": "Re-reading",
+        "read": "Read",
+        "partiallyRead": "Partially Read",
+        "abandoned": "Abandoned",
+        "wontRead": "Won't Read",
+        "unset": "Unset"
+      },
+      "alt": {
+        "coverImage": "Cover",
+        "amazon": "Amazon",
+        "goodreads": "Goodreads",
+        "hardcover": "Hardcover",
+        "lubimyczytac": "Lubimyczytac",
+        "ranobedb": "RanobeDB",
+        "googleBooks": "Google Books",
+        "comicVine": "ComicVine"
+      },
+      "tooltip": {
+        "goToPreviousBook": "Go to previous book",
+        "goToNextBook": "Go to next book",
+        "metadataLocked": "Metadata locked",
+        "metadataUnlocked": "Metadata unlocked",
+        "personalRating": "Your rating",
+        "resetRating": "Reset rating",
+        "resetProgress": "Reset progress",
+        "saveDate": "Save date",
+        "autoFetchDefault": "Auto fetch using default options"
+      }
+    },
+    "bulkUpdate": {
+      "header": {
+        "editingSingle": "Editing {{count}} Book",
+        "editingMultiple": "Editing {{count}} Books"
+      },
+      "button": {
+        "hideTitles": "Hide Titles",
+        "showTitles": "Show Titles",
+        "selectImage": "Select Image",
+        "applyToSelected": "Apply to Selected"
+      },
+      "fallback": {
+        "untitledBook": "Untitled Book"
+      },
+      "notice": {
+        "checking": "Checking",
+        "clear": "Clear",
+        "willRemove": "will remove that field’s metadata from",
+        "allSelectedBooks": "all selected books"
+      },
+      "label": {
+        "authors": "Author(s)",
+        "language": "Language",
+        "publisher": "Publisher",
+        "publishedDate": "Published Date",
+        "seriesName": "Series Name",
+        "seriesTotal": "Total Books",
+        "genres": "Genre(s)",
+        "moods": "Mood(s)",
+        "tags": "Tag(s)",
+        "clear": "Clear",
+        "mergeGenres": "Keep existing genres and add new ones (uncheck to remove all existing genres)",
+        "mergeMoods": "Keep existing moods and add new ones (uncheck to remove all existing moods)",
+        "mergeTags": "Keep existing tags and add new ones (uncheck to remove all existing tags)"
+      },
+      "tooltip": {
+        "authors": "Enter multiple authors. Press Enter after typing each name.",
+        "genres": "Enter multiple genres. Press Enter after typing each genre.",
+        "moods": "Enter multiple moods. Press Enter after typing each mood.",
+        "tags": "Enter multiple tags. Press Enter after typing each tag.",
+        "seriesTotal": "Total number of books in the series.",
+        "removeFile": "Remove file"
+      },
+      "section": {
+        "coverImage": {
+          "title": "Cover Image",
+          "description": "Upload an image to set as the cover for all selected books."
+        }
+      },
+      "toast": {
+        "metadataAndCoverUpdated": {
+          "summary": "Metadata & Cover Updated",
+          "detail": "Books updated and cover upload started. Refresh the page when complete."
+        },
+        "partialSuccess": {
+          "summary": "Partial Success",
+          "coverUploadFailed": "Metadata updated but cover upload failed."
+        },
+        "metadataUpdated": {
+          "summary": "Metadata Updated",
+          "detail": "Books updated successfully."
+        },
+        "updateFailed": {
+          "summary": "Update Failed",
+          "detail": "An error occurred while updating book metadata."
+        }
+      }
+    },
+    "reviewDialog": {
+      "tooltip": {
+        "progress": "{{current}} of {{total}} processed ({{percent}}%)"
+      },
+      "progress": {
+        "book": "Book {{current}} / {{total}}"
+      },
+      "button": {
+        "lockAll": "Lock All",
+        "unlockAll": "Unlock All",
+        "acceptAndSave": "Accept & Save",
+        "finishAndClose": "Finish & Close",
+        "next": "Next"
+      }
+    },
+    "center": {
+      "tab": {
+        "bookDetails": "Book Details",
+        "editMetadata": "Edit Metadata",
+        "searchMetadata": "Search Metadata"
+      }
+    },
+    "multiEditor": {
+      "tab": {
+        "editMetadata": "Edit Metadata",
+        "searchMetadata": "Search Metadata"
+      }
+    },
+    "readingSessions": {
+      "loading": "Loading reading sessions...",
+      "empty": "No reading sessions recorded yet",
+      "pageReport": "Showing {first} to {last} of {totalRecords} sessions",
+      "table": {
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "duration": "Duration",
+        "progress": "Progress",
+        "progressDelta": "Progress Delta",
+        "location": "Location"
+      },
+      "location": {
+        "pageRange": "Page {{start}} → Page {{end}}"
+      },
+      "value": {
+        "na": "N/A"
+      },
+      "unit": {
+        "hour": "h",
+        "minute": "m",
+        "second": "s"
+      }
+    }
+  }
+}

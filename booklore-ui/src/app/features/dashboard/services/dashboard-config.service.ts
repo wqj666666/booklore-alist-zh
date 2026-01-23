@@ -22,7 +22,7 @@ export class DashboardConfigService {
       .subscribe(userState => {
         const dashboardConfig = userState.user?.userSettings?.dashboardConfig as DashboardConfig;
         if (dashboardConfig) {
-          this.configSubject.next(dashboardConfig);
+          this.configSubject.next(this.normalizeConfig(dashboardConfig));
         }
       });
 
@@ -41,7 +41,7 @@ export class DashboardConfigService {
       });
 
       if (updated) {
-        this.configSubject.next({...currentConfig});
+        this.configSubject.next(this.normalizeConfig({...currentConfig}));
         const user = this.userService.getCurrentUser();
         if (user) {
           this.userService.updateUserSetting(user.id, 'dashboardConfig', currentConfig);
@@ -51,7 +51,7 @@ export class DashboardConfigService {
   }
 
   saveConfig(config: DashboardConfig): void {
-    this.configSubject.next(config);
+    this.configSubject.next(this.normalizeConfig(config));
 
     const user = this.userService.getCurrentUser();
     if (user) {
@@ -61,5 +61,41 @@ export class DashboardConfigService {
 
   resetToDefault(): void {
     this.saveConfig(DEFAULT_DASHBOARD_CONFIG);
+  }
+
+  private normalizeConfig(config: DashboardConfig): DashboardConfig {
+    const normalized: DashboardConfig = {
+      scrollers: (config.scrollers || []).map(scroller => {
+        if (scroller.type === ScrollerType.MAGIC_SHELF) {
+          return {
+            ...scroller,
+            titleKey: undefined,
+          };
+        }
+
+        const titleKey = this.getDefaultScrollerTitleKey(scroller.type);
+        return {
+          ...scroller,
+          titleKey: scroller.titleKey || titleKey,
+        };
+      })
+    };
+
+    return normalized;
+  }
+
+  private getDefaultScrollerTitleKey(type: ScrollerType): string {
+    switch (type) {
+      case ScrollerType.LAST_READ:
+        return 'dashboard.scrollerTypes.continueReading';
+      case ScrollerType.LATEST_ADDED:
+        return 'dashboard.scrollerTypes.recentlyAdded';
+      case ScrollerType.RANDOM:
+        return 'dashboard.scrollerTypes.discoverSomethingNew';
+      case ScrollerType.MAGIC_SHELF:
+        return 'dashboard.scrollerTypes.magicShelf';
+      default:
+        return 'dashboard.scrollerTypes.scroller';
+    }
   }
 }

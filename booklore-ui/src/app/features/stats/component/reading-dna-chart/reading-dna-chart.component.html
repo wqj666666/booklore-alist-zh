@@ -3,9 +3,9 @@
     <div class="chart-title">
       <h3>
         <i class="pi pi-chart-line reading-dna-icon"></i>
-        Reading DNA Profile
+        {{ 'stats.user.readingDna.title' | translate }}
       </h3>
-      <p class="chart-description">Your unique reading personality across 8 key dimensions</p>
+      <p class="chart-description">{{ 'stats.user.readingDna.subtitle' | translate }}</p>
     </div>
   </div>
   <div class="chart-wrapper">
@@ -17,18 +17,18 @@
   </div>
   @if (personalityInsights.length > 0) {
     <div class="personality-insights">
-      <h4>Your Reading Personality Traits</h4>
+      <h4>{{ 'stats.user.readingDna.insights.title' | translate }}</h4>
       <div class="insights-grid">
         @for (insight of personalityInsights; track insight.trait) {
           <div class="insight-card">
             <div class="insight-header">
-              <span class="insight-trait">{{ insight.trait }}</span>
+              <span class="insight-trait">{{ insight.trait | translate }}</span>
               <span class="insight-score" [style.color]="insight.color">{{ insight.score.toFixed(0) }}%</span>
             </div>
             <div class="insight-progress">
               <div class="progress-bar" [style.width.%]="insight.score" [style.background-color]="insight.color"></div>
             </div>
-            <p class="insight-description">{{ insight.description }}</p>
+            <p class="insight-description">{{ insight.description | translate }}</p>
           </div>
         }
       </div>

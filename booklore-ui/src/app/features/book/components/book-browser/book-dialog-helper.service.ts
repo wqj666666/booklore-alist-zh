@@ -15,11 +15,13 @@ import {BookMetadataCenterComponent} from '../../../metadata/component/book-meta
 import {CoverSearchComponent} from '../../../metadata/component/cover-search/cover-search.component';
 import {Book} from '../../model/book.model';
 import {AdditionalFileUploaderComponent} from '../additional-file-uploader/additional-file-uploader.component';
+import {TranslateService} from '@ngx-translate/core';
 
 @Injectable({providedIn: 'root'})
 export class BookDialogHelperService {
 
   private dialogLauncherService = inject(DialogLauncherService);
+  private translateService = inject(TranslateService);
 
   private openDialog(component: unknown, options: {}): DynamicDialogRef | null {
     return this.dialogLauncherService.openDialog(component, options);
@@ -27,7 +29,7 @@ export class BookDialogHelperService {
 
   openBookDetailsDialog(bookId: number): DynamicDialogRef | null {
     return this.openDialog(BookMetadataCenterComponent, {
-      header: 'Book Details',
+      header: this.translateService.instant('metadata.center.tab.bookDetails'),
       styleClass: 'book-details-dialog dialog-maximal',
       data: {
         bookId: bookId,

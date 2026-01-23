@@ -5,11 +5,12 @@ import {BookService} from '../../../service/book.service';
 import {Book, BookMetadata} from '../../../model/book.model';
 import {MessageService} from 'primeng/api';
 import {UrlHelperService} from '../../../../../shared/service/url-helper.service';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-metadata-restore-dialog-component',
   standalone: true,
-  imports: [Button],
+  imports: [Button, TranslateModule],
   templateUrl: './metadata-restore-dialog-component.html',
   styleUrl: './metadata-restore-dialog-component.scss'
 })
@@ -24,6 +25,7 @@ export class MetadataRestoreDialogComponent implements OnInit {
   protected bookService = inject(BookService);
   private messageService = inject(MessageService);
   protected urlHelperService = inject(UrlHelperService);
+  private translate = inject(TranslateService);
 
   ngOnInit(): void {
     this.bookId = this.dynamicDialogConfig.data.bookId;
@@ -34,10 +36,12 @@ export class MetadataRestoreDialogComponent implements OnInit {
         this.backupMetadata = data;
       },
       error: err => {
+        const fallbackDetail = this.translate.instant('book.metadataRestoreDialog.toast.noBackupFound.detail');
+        const detail = err?.error?.message || fallbackDetail;
         this.messageService.add({
           severity: 'warn',
-          summary: 'No Backup Found',
-          detail: err?.error?.message || 'Backup metadata could not be retrieved.'
+          summary: this.translate.instant('book.metadataRestoreDialog.toast.noBackupFound.summary'),
+          detail,
         });
         this.backupMetadata = null;
       }
@@ -49,17 +53,17 @@ export class MetadataRestoreDialogComponent implements OnInit {
       next: () => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Restore Successful',
-          detail: `Metadata restored for book ID ${this.bookId}`
+          summary: this.translate.instant('book.metadataRestoreDialog.toast.restoreSuccessful.summary'),
+          detail: this.translate.instant('book.metadataRestoreDialog.toast.restoreSuccessful.detail', {bookId: this.bookId}),
         });
         this.dynamicDialogRef.close({ action: 'restore', bookId: this.bookId });
       },
       error: err => {
-        const errorMessage = err?.error?.message || err?.message || 'Unknown error';
+        const errorMessage = err?.error?.message || err?.message || this.translate.instant('book.metadataRestoreDialog.toast.unknownError');
         this.messageService.add({
           severity: 'error',
-          summary: 'Restore Failed',
-          detail: `Failed to restore metadata: ${errorMessage}`
+          summary: this.translate.instant('book.metadataRestoreDialog.toast.restoreFailed.summary'),
+          detail: this.translate.instant('book.metadataRestoreDialog.toast.restoreFailed.detail', {message: errorMessage}),
         });
       }
     });

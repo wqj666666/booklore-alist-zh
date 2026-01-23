@@ -7,11 +7,13 @@ import {TaskCreateRequest, TaskService, TaskType} from './task.service';
 import {MessageService} from 'primeng/api';
 import {MetadataRefreshRequest} from '../../metadata/model/request/metadata-refresh-request.model';
 import {MetadataRefreshType} from '../../metadata/model/request/metadata-refresh-type.enum';
+import {TranslateService} from '@ngx-translate/core';
 
 describe('TaskHelperService', () => {
   let service: TaskHelperService;
   let taskServiceMock: any;
   let messageServiceMock: any;
+  let translateServiceMock: any;
 
   beforeEach(() => {
     taskServiceMock = {
@@ -20,12 +22,16 @@ describe('TaskHelperService', () => {
     messageServiceMock = {
       add: vi.fn()
     };
+    translateServiceMock = {
+      instant: vi.fn((key: string) => key)
+    };
 
     TestBed.configureTestingModule({
       providers: [
         TaskHelperService,
         {provide: TaskService, useValue: taskServiceMock},
-        {provide: MessageService, useValue: messageServiceMock}
+        {provide: MessageService, useValue: messageServiceMock},
+        {provide: TranslateService, useValue: translateServiceMock}
       ]
     });
 
@@ -44,7 +50,7 @@ describe('TaskHelperService', () => {
       });
       expect(messageServiceMock.add).toHaveBeenCalledWith(expect.objectContaining({
         severity: 'success',
-        summary: 'Metadata Update Scheduled'
+        summary: 'settings.taskManagement.toast.metadataUpdateScheduled.summary'
       }));
     });
   });
@@ -56,7 +62,7 @@ describe('TaskHelperService', () => {
       expect(result).toEqual({success: false});
       expect(messageServiceMock.add).toHaveBeenCalledWith(expect.objectContaining({
         severity: 'error',
-        summary: 'Task Already Running'
+        summary: 'settings.taskManagement.toast.metadataUpdateAlreadyRunning.summary'
       }));
     });
   });
@@ -68,7 +74,7 @@ describe('TaskHelperService', () => {
       expect(result).toEqual({success: false});
       expect(messageServiceMock.add).toHaveBeenCalledWith(expect.objectContaining({
         severity: 'error',
-        summary: 'Metadata Update Failed'
+        summary: 'settings.taskManagement.toast.metadataUpdateFailed.summary'
       }));
     });
   });
@@ -78,6 +84,7 @@ describe('TaskHelperService - API Contract Tests', () => {
   let service: TaskHelperService;
   let taskServiceMock: any;
   let messageServiceMock: any;
+  let translateServiceMock: any;
 
   beforeEach(() => {
     taskServiceMock = {
@@ -86,12 +93,16 @@ describe('TaskHelperService - API Contract Tests', () => {
     messageServiceMock = {
       add: vi.fn()
     };
+    translateServiceMock = {
+      instant: vi.fn((key: string) => key)
+    };
 
     TestBed.configureTestingModule({
       providers: [
         TaskHelperService,
         {provide: TaskService, useValue: taskServiceMock},
-        {provide: MessageService, useValue: messageServiceMock}
+        {provide: MessageService, useValue: messageServiceMock},
+        {provide: TranslateService, useValue: translateServiceMock}
       ]
     });
 

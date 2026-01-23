@@ -1,5 +1,5 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {FileSelectEvent, FileUpload, FileUploadHandlerEvent} from 'primeng/fileupload';
+import {Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {FileSelectEvent, FileUpload} from 'primeng/fileupload';
 import {Button} from 'primeng/button';
 import {AsyncPipe} from '@angular/common';
 import {FormsModule} from '@angular/forms';
@@ -19,11 +19,14 @@ import {filter, take} from 'rxjs/operators';
 import {AppSettings} from '../../model/app-settings.model';
 import {SelectButton} from 'primeng/selectbutton';
 import {DynamicDialogRef} from 'primeng/dynamicdialog';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 interface UploadingFile {
   file: File;
   status: 'Pending' | 'Uploading' | 'Uploaded' | 'Failed';
   errorMessage?: string;
+  errorCode?: 'MAX_FILE_SIZE' | 'UPLOAD_FAILED';
 }
 
 @Component({
@@ -37,7 +40,8 @@ interface UploadingFile {
     Select,
     Badge,
     Tooltip,
-    SelectButton
+    SelectButton,
+    TranslateModule
   ],
   templateUrl: './book-uploader.component.html',
   styleUrl: './book-uploader.component.scss'
@@ -54,22 +58,25 @@ export class BookUploaderComponent implements OnInit {
   private readonly appSettingsService = inject(AppSettingsService);
   private readonly http = inject(HttpClient);
   private readonly ref = inject(DynamicDialogRef);
+  private readonly translateService = inject(TranslateService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly libraryState$: Observable<LibraryState> = this.libraryService.libraryState$;
   appSettings$: Observable<AppSettings | null> = this.appSettingsService.appSettings$;
   maxFileSizeBytes?: number;
   maxFileSizeDisplay: string = '100 MB';
-  stateOptions = [
-    {label: 'Library', value: 'library'},
-    {label: 'Bookdrop', value: 'bookdrop'}
-  ];
+  stateOptions: {label: string; value: 'library' | 'bookdrop'}[] = [];
   value = 'library';
 
   ngOnInit(): void {
+    this.rebuildStateOptions();
+    this.translateService.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.rebuildStateOptions());
+
     this.appSettings$
       .pipe(
         filter(settings => settings != null),
-        take(1)
+        take(1),
+        takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(settings => {
         const maxSizeMb = settings?.maxFileUploadSizeInMb ?? 100;
@@ -77,13 +84,20 @@ export class BookUploaderComponent implements OnInit {
         this.maxFileSizeDisplay = `${maxSizeMb} MB`;
       });
 
-    this.libraryState$.subscribe(state => {
+    this.libraryState$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(state => {
       if (state?.libraries?.length !== 1 || this.selectedLibrary) {
         return;
       }
 
       this.selectedLibrary = state.libraries[0];
     });
+  }
+
+  private rebuildStateOptions(): void {
+    this.stateOptions = [
+      {label: this.translateService.instant('shared.bookUploader.destinationOption.library'), value: 'library'},
+      {label: this.translateService.instant('shared.bookUploader.destinationOption.bookdrop'), value: 'bookdrop'}
+    ];
   }
 
   get selectedLibrary(): Library | null {
@@ -106,7 +120,7 @@ export class BookUploaderComponent implements OnInit {
     return this.files.length > 0;
   }
 
-  choose(_event: any, chooseCallback: () => void): void {
+  choose(_event: Event, chooseCallback: () => void): void {
     chooseCallback();
   }
 
@@ -124,16 +138,18 @@ export class BookUploaderComponent implements OnInit {
       }
 
       if (this.maxFileSizeBytes && file.size > this.maxFileSizeBytes) {
-        const errorMsg = `File exceeds maximum size of ${this.formatSize(this.maxFileSizeBytes)}`;
+        const maxSize = this.formatSize(this.maxFileSizeBytes);
+        const errorMsg = this.translateService.instant('shared.bookUploader.error.fileExceedsMaxSize', {size: maxSize});
         this.files.unshift({
           file,
           status: 'Failed',
-          errorMessage: errorMsg
+          errorMessage: errorMsg,
+          errorCode: 'MAX_FILE_SIZE'
         });
         this.messageService.add({
           severity: 'error',
-          summary: 'File Too Large',
-          detail: `${file.name} exceeds the maximum file size of ${this.formatSize(this.maxFileSizeBytes)}`,
+          summary: this.translateService.instant('shared.bookUploader.toast.fileTooLarge.summary'),
+          detail: this.translateService.instant('shared.bookUploader.toast.fileTooLarge.detail', {fileName: file.name, size: maxSize}),
           life: 5000
         });
       } else {
@@ -142,7 +158,7 @@ export class BookUploaderComponent implements OnInit {
     }
   }
 
-  onRemoveTemplatingFile(_event: any, _file: File, removeFileCallback: (event: any, index: number) => void, index: number): void {
+  onRemoveTemplatingFile(_event: Event, _file: File, removeFileCallback: (event: Event, index: number) => void, index: number): void {
     removeFileCallback(_event, index);
   }
 
@@ -150,12 +166,12 @@ export class BookUploaderComponent implements OnInit {
     uploadCallback();
   }
 
-  uploadFiles(event: FileUploadHandlerEvent): void {
+  uploadFiles(): void {
     if (this.value === 'library' && (!this.selectedLibrary || !this.selectedPath)) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Missing Data',
-        detail: 'Please select a library and path before uploading.',
+        summary: this.translateService.instant('shared.bookUploader.toast.missingData.summary'),
+        detail: this.translateService.instant('shared.bookUploader.toast.missingData.detail'),
         life: 4000
       });
       return;
@@ -215,7 +231,8 @@ export class BookUploaderComponent implements OnInit {
         },
         error: (err) => {
           uploadFile.status = 'Failed';
-          uploadFile.errorMessage = err?.error?.message || 'Upload failed due to unknown error.';
+          uploadFile.errorCode = 'UPLOAD_FAILED';
+          uploadFile.errorMessage = err?.error?.message || this.translateService.instant('shared.bookUploader.error.uploadFailedUnknown');
           console.error('Upload failed for', uploadFile.file.name, err);
           if (--pending === 0) {
             setTimeout(() => {
@@ -269,18 +286,18 @@ export class BookUploaderComponent implements OnInit {
   }
 
   getFileStatusLabel(uploadFile: UploadingFile): string {
-    if (uploadFile.status === 'Failed' && uploadFile.errorMessage?.includes('exceeds maximum size')) {
-      return 'Too Large';
+    if (uploadFile.status === 'Failed' && uploadFile.errorCode === 'MAX_FILE_SIZE') {
+      return this.translateService.instant('shared.bookUploader.status.tooLarge');
     }
     switch (uploadFile.status) {
       case 'Pending':
-        return 'Ready';
+        return this.translateService.instant('shared.bookUploader.status.ready');
       case 'Uploading':
-        return 'Uploading';
+        return this.translateService.instant('shared.bookUploader.status.uploading');
       case 'Uploaded':
-        return 'Uploaded';
+        return this.translateService.instant('shared.bookUploader.status.uploaded');
       case 'Failed':
-        return 'Failed';
+        return this.translateService.instant('shared.bookUploader.status.failed');
       default:
         return uploadFile.status;
     }

@@ -2,6 +2,7 @@ import {Injectable, inject} from '@angular/core';
 import {AppSettingsService} from './app-settings.service';
 import {MessageService} from 'primeng/api';
 import {Observable} from 'rxjs';
+import {TranslateService} from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ export class SettingsHelperService {
 
   private readonly appSettingsService = inject(AppSettingsService);
   private readonly messageService = inject(MessageService);
+  private readonly translateService = inject(TranslateService);
 
   saveSetting(key: string, value: unknown): Observable<void> {
     const observable = this.appSettingsService.saveSettings([{key, newValue: value}]);
@@ -28,16 +30,16 @@ export class SettingsHelperService {
   private showSuccessMessage(): void {
     this.messageService.add({
       severity: 'success',
-      summary: 'Settings Saved',
-      detail: 'The settings were successfully saved!'
+      summary: this.translateService.instant('settings.toast.saved.summary'),
+      detail: this.translateService.instant('settings.toast.saved.detail')
     });
   }
 
   private showErrorMessage(): void {
     this.messageService.add({
       severity: 'error',
-      summary: 'Error',
-      detail: 'There was an error saving the settings.'
+      summary: this.translateService.instant('settings.toast.saveError.summary'),
+      detail: this.translateService.instant('settings.toast.saveError.detail')
     });
   }
 

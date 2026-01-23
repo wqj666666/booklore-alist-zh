@@ -2,13 +2,15 @@
   <div class="settings-header">
     <h2 class="settings-title">
       <i class="pi pi-list-check"></i>
-      System Task Manager
+      {{ 'settings.taskManagement.title' | translate }}
       <app-external-doc-link docType="taskManagement"></app-external-doc-link>
     </h2>
     <p class="settings-description">
-      Manage automated system tasks for library maintenance, metadata refreshing, and cache cleanup.
-      Execute tasks manually, monitor their progress in real-time, and schedule recurring operations using
-      <a href="https://spring.io/blog/2020/11/10/new-in-spring-5-3-improved-cron-expressions" target="_blank" rel="noopener noreferrer" style="color: #3b82f6;">Spring cron expressions</a>.
+      {{ 'settings.taskManagement.description.line1' | translate }}
+      {{ 'settings.taskManagement.description.line2' | translate }}
+      <a href="https://spring.io/blog/2020/11/10/new-in-spring-5-3-improved-cron-expressions" target="_blank" rel="noopener noreferrer" style="color: #3b82f6;">
+        {{ 'settings.taskManagement.description.springCronExpressionsLink' | translate }}
+      </a>{{ 'settings.taskManagement.description.line3' | translate }}
     </p>
   </div>
 
@@ -18,7 +20,7 @@
       @if (loading && taskInfos.length === 0) {
         <div class="loading-container">
           <i class="pi pi-spin pi-spinner"></i>
-          <span>Loading tasks...</span>
+          <span>{{ 'settings.taskManagement.loading' | translate }}</span>
         </div>
       }
 
@@ -35,7 +37,7 @@
                     </label>
                     @if (!isTaskRunning(taskInfo.taskType) && getTaskHistory(taskInfo.taskType)?.id) {
                       <span class="last-run-badge">[{{ getLastRunMessage(taskInfo.taskType) }}<span class="sep">|</span><span class="status-dot" [ngClass]="getLastRunInfoClass(taskInfo.taskType)"></span><span
-                        class="status-text">{{ getLastRunInfoClass(taskInfo.taskType) === 'success' ? 'Success' : getLastRunInfoClass(taskInfo.taskType) === 'error' ? 'Error' : getLastRunInfoClass(taskInfo.taskType) === 'warning' ? 'Warning' : 'Info' }}]</span></span>
+                        class="status-text">{{ ('settings.taskManagement.lastRun.status.' + getLastRunInfoClass(taskInfo.taskType)) | translate }}]</span></span>
                     }
                   </div>
                   <p class="setting-description" [class.compact]="!isTaskRunning(taskInfo.taskType)" [class.expanded]="isTaskRunning(taskInfo.taskType)">
@@ -53,14 +55,14 @@
                     <div class="task-options">
                       <div class="option-group">
                         <div class="option-row">
-                          <label class="option-label">Metadata Replace Mode:</label>
+                          <label class="option-label">{{ 'settings.taskManagement.metadataReplace.label' | translate }}</label>
                           <p-select
                             [options]="metadataReplaceOptions"
                             [(ngModel)]="selectedMetadataReplaceMode"
                             size="small"
                             optionLabel="label"
                             optionValue="value"
-                            placeholder="Select mode"
+                            [placeholder]="'settings.taskManagement.metadataReplace.placeholder' | translate"
                             class="metadata-select">
                           </p-select>
                         </div>
@@ -74,12 +76,12 @@
                 @if (!isTaskRunning(taskInfo.taskType) && isCronSupported(taskInfo.taskType) && getCronConfig(taskInfo.taskType)) {
                   <div class="cron-config-section compact">
                     <i class="pi pi-clock"></i>
-                    <span class="cron-label">Scheduled:</span>
+                    <span class="cron-label">{{ 'settings.taskManagement.cron.label.scheduled' | translate }}</span>
                     @if (!isEditingCron(taskInfo.taskType)) {
                       @if (getCronConfig(taskInfo.taskType)?.cronExpression) {
                         <span class="cron-expression">{{ getCronConfig(taskInfo.taskType)!.cronExpression }}</span>
                       } @else {
-                        <span class="cron-expression empty">Not configured</span>
+                        <span class="cron-expression empty">{{ 'settings.taskManagement.cron.notConfigured' | translate }}</span>
                       }
                       <p-button
                         icon="pi pi-pencil"
@@ -88,7 +90,7 @@
                         [rounded]="true"
                         severity="info"
                         [disabled]="cronUpdating"
-                        pTooltip="Edit Schedule"
+                        [pTooltip]="'settings.taskManagement.tooltip.editSchedule' | translate"
                         tooltipPosition="top"
                         (onClick)="startEditingCron(taskInfo.taskType)">
                       </p-button>
@@ -101,7 +103,7 @@
                             [class.error]="!!cronValidationError"
                             [(ngModel)]="editingCronExpression"
                             (ngModelChange)="onCronExpressionChange()"
-                            placeholder="e.g., 0 2 * * *"
+                            [placeholder]="'settings.taskManagement.cron.placeholder' | translate"
                             (keyup.enter)="saveCronExpression(taskInfo.taskType)"
                             (keyup.escape)="cancelEditingCron()">
                           @if (cronValidationError) {
@@ -140,13 +142,13 @@
                 <div class="task-actions">
                   @if (isTaskRunning(taskInfo.taskType) && !isTaskStale(getTaskHistory(taskInfo.taskType))) {
                     <p-badge
-                      value="In Progress"
+                      [value]="'settings.taskManagement.badge.inProgress' | translate"
                       severity="info">
                     </p-badge>
                   }
                   @if (isTaskStale(getTaskHistory(taskInfo.taskType))) {
                     <p-badge
-                      value="Stale"
+                      [value]="'settings.taskManagement.badge.stale' | translate"
                       severity="warn">
                     </p-badge>
                   }
@@ -162,7 +164,7 @@
                   }
                   @if (canCancelTask(getTaskHistory(taskInfo.taskType)) && !isTaskStale(getTaskHistory(taskInfo.taskType))) {
                     <p-button
-                      label="Cancel"
+                      [label]="'settings.taskManagement.action.cancel' | translate"
                       [icon]="getCancelButtonIcon(taskInfo.taskType)"
                       size="small"
                       severity="danger"
@@ -179,22 +181,22 @@
                     <div class="task-info-row stale-warning">
                       <span class="task-info-label">
                         <i class="pi pi-exclamation-triangle"></i>
-                        Warning:
+                        {{ 'settings.taskManagement.warning.label' | translate }}
                       </span>
                       <span class="task-info-value warning-text">
-                        This task appears to be stuck. No updates received for over 5 minutes.
+                        {{ 'settings.taskManagement.warning.staleTask' | translate }}
                       </span>
                     </div>
                   }
                   @if (getTaskHistory(taskInfo.taskType)?.message || isTaskStale(getTaskHistory(taskInfo.taskType))) {
                     <div class="task-info-row">
-                      <span class="task-info-label">Status:</span>
+                      <span class="task-info-label">{{ 'settings.taskManagement.field.status' | translate }}</span>
                       <span class="task-info-value">{{ getTaskStatusMessage(taskInfo.taskType) }}</span>
                     </div>
                   }
                   @if (getTaskProgressPercentage(taskInfo.taskType) !== null) {
                     <div class="task-info-row">
-                      <span class="task-info-label">Progress:</span>
+                      <span class="task-info-label">{{ 'settings.taskManagement.field.progress' | translate }}</span>
                       <div class="progress-container">
                         <p-progressbar [value]="getTaskProgressPercentage(taskInfo.taskType)!"></p-progressbar>
                         <span class="progress-text">{{ getTaskProgressPercentage(taskInfo.taskType) }}%</span>
@@ -203,7 +205,7 @@
                   }
                   @if (getTaskUpdatedAt(taskInfo.taskType)) {
                     <div class="task-info-row">
-                      <span class="task-info-label">Started:</span>
+                      <span class="task-info-label">{{ 'settings.taskManagement.field.started' | translate }}</span>
                       <span class="task-info-value">{{ formatDate(getTaskUpdatedAt(taskInfo.taskType)!) }}</span>
                     </div>
                   }
@@ -220,7 +222,7 @@
             <div class="setting-info">
               <div class="no-tasks-message">
                 <i class="pi pi-check-circle"></i>
-                <span>No tasks available</span>
+                <span>{{ 'settings.taskManagement.empty' | translate }}</span>
               </div>
             </div>
           </div>

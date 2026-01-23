@@ -9,6 +9,7 @@ import {DynamicDialogRef} from 'primeng/dynamicdialog';
 import {EmailV2RecipientService} from './email-v2-recipient.service';
 import {EmailRecipient} from '../email-recipient.model';
 import {DialogLauncherService} from '../../../../shared/services/dialog-launcher.service';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-email-v2-recipient',
@@ -19,7 +20,8 @@ import {DialogLauncherService} from '../../../../shared/services/dialog-launcher
     ReactiveFormsModule,
     TableModule,
     Tooltip,
-    FormsModule
+    FormsModule,
+    TranslateModule
   ],
   templateUrl: './email-v2-recipient.component.html',
   styleUrl: './email-v2-recipient.component.scss'
@@ -31,6 +33,7 @@ export class EmailV2RecipientComponent implements OnInit {
   private dialogLauncherService = inject(DialogLauncherService);
   private emailRecipientService = inject(EmailV2RecipientService);
   private messageService = inject(MessageService);
+  private translateService = inject(TranslateService);
   defaultRecipientId: unknown;
 
   ngOnInit(): void {
@@ -50,8 +53,8 @@ export class EmailV2RecipientComponent implements OnInit {
       error: () => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to load recipient emails',
+          summary: this.translateService.instant('settings.emailV2.recipient.toast.loadError.summary'),
+          detail: this.translateService.instant('settings.emailV2.recipient.toast.loadError.detail'),
         });
       },
     });
@@ -72,37 +75,37 @@ export class EmailV2RecipientComponent implements OnInit {
         recipient.isEditing = false;
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: 'Recipient updated successfully',
+          summary: this.translateService.instant('settings.emailV2.recipient.toast.updateSuccess.summary'),
+          detail: this.translateService.instant('settings.emailV2.recipient.toast.updateSuccess.detail'),
         });
         this.loadRecipientEmails();
       },
       error: () => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to update recipient',
+          summary: this.translateService.instant('settings.emailV2.recipient.toast.updateError.summary'),
+          detail: this.translateService.instant('settings.emailV2.recipient.toast.updateError.detail'),
         });
       },
     });
   }
 
   deleteRecipient(recipient: EmailRecipient): void {
-    if (confirm(`Are you sure you want to delete recipient "${recipient.email}"?`)) {
+    if (confirm(this.translateService.instant('settings.emailV2.recipient.confirmDelete', {email: recipient.email}))) {
       this.emailRecipientService.deleteRecipient(recipient.id).subscribe({
         next: () => {
           this.messageService.add({
             severity: 'success',
-            summary: 'Success',
-            detail: `Recipient "${recipient.email}" deleted successfully`,
+            summary: this.translateService.instant('settings.emailV2.recipient.toast.deleteSuccess.summary'),
+            detail: this.translateService.instant('settings.emailV2.recipient.toast.deleteSuccess.detail', {email: recipient.email}),
           });
           this.loadRecipientEmails();
         },
         error: () => {
           this.messageService.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to delete recipient',
+            summary: this.translateService.instant('settings.emailV2.recipient.toast.deleteError.summary'),
+            detail: this.translateService.instant('settings.emailV2.recipient.toast.deleteError.detail'),
           });
         },
       });
@@ -123,8 +126,8 @@ export class EmailV2RecipientComponent implements OnInit {
       this.defaultRecipientId = recipient.id;
       this.messageService.add({
         severity: 'success',
-        summary: 'Default Recipient Set',
-        detail: `${recipient.email} is now the default recipient.`
+        summary: this.translateService.instant('settings.emailV2.recipient.toast.defaultSetSuccess.summary'),
+        detail: this.translateService.instant('settings.emailV2.recipient.toast.defaultSetSuccess.detail', {email: recipient.email})
       });
     });
   }

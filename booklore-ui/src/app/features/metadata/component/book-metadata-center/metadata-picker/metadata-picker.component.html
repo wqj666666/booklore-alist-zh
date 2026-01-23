@@ -2,22 +2,22 @@
   <form [formGroup]="metadataForm" (ngSubmit)="onSave()" class="flex flex-col h-full w-full">
     <div class="flex-grow overflow-auto p-0 md:p-4">
       <div class="flex justify-center items-center" [ngStyle]="{'padding-bottom': '0.75rem', 'padding-left': '7.6rem'}">
-        <p class="ml-3 text-lg">Current Metadata</p>
+        <p class="ml-3 text-lg">{{ 'metadata.picker.section.currentMetadata' | translate }}</p>
         <p-button
           severity="success"
           icon='pi pi-angle-left'
           [ngStyle]="{'padding-left': '3rem', 'padding-right': '0.5rem'}"
           [outlined]="true"
-          pTooltip="Move all missing fields" tooltipPosition="bottom"
+          [pTooltip]="'metadata.picker.tooltip.moveMissingFields' | translate" tooltipPosition="bottom"
           (onClick)="copyMissing()"></p-button>
         <p-button
           severity="success"
           icon='pi pi-angle-double-left'
           [ngStyle]="{'padding-left': '0.5rem', 'padding-right': '2rem'}"
           [outlined]="true"
-          pTooltip="Move all fields" tooltipPosition="bottom"
+          [pTooltip]="'metadata.picker.tooltip.moveAllFields' | translate" tooltipPosition="bottom"
           (onClick)="copyAll()"></p-button>
-        <p class="text-lg">Fetched Metadata</p>
+        <p class="text-lg">{{ 'metadata.picker.section.fetchedMetadata' | translate }}</p>
       </div>
       <div class="form-row">
         <label class="label"></label>
@@ -31,7 +31,7 @@
           <p-image
             class="thumbnail"
             [src]="metadataForm.get('thumbnailUrl')?.value"
-            alt="Image"
+            [alt]="'metadata.picker.alt.coverImage' | translate"
             appendTo="body"
             lazyLoad
             [preview]="true">
@@ -54,7 +54,7 @@
           <p-image
             class="thumbnail"
             [src]="fetchedMetadata.thumbnailUrl!"
-            alt="Image"
+            [alt]="'metadata.picker.alt.coverImage' | translate"
             appendTo="body"
             lazyLoad
             [preview]="true">
@@ -63,7 +63,7 @@
       </div>
       @for (field of metadataFieldsTop; track field) {
         <div class="form-row">
-          <label for="{{field.controlName}}" class="label">{{ field.label }}</label>
+          <label for="{{field.controlName}}" class="label">{{ field.labelKey | translate }}</label>
           <div class="input-container">
             @if (!metadataForm.get(field.lockedKey)?.value) {
               <p-button icon="pi pi-lock-open" [outlined]="true" (onClick)="toggleLock(field.controlName)" severity="success"></p-button>
@@ -72,7 +72,7 @@
               <p-button icon="pi pi-lock" [outlined]="true" (onClick)="toggleLock(field.controlName)" severity="warn"></p-button>
             }
             @if (field.controlName === 'publishedDate') {
-              <input pSize="small" fluid pInputText id="{{field.controlName}}" formControlName="{{field.controlName}}" class="input" placeholder="YYYY-MM-DD"/>
+              <input pSize="small" fluid pInputText id="{{field.controlName}}" formControlName="{{field.controlName}}" class="input" [placeholder]="'metadata.picker.placeholder.dateFormat' | translate"/>
             } @else {
               <input pSize="small" fluid pInputText id="{{field.controlName}}" formControlName="{{field.controlName}}" class="input"/>
             }
@@ -95,7 +95,7 @@
       }
       @for (field of metadataChips; track field) {
         <div class="form-row">
-          <label for="{{field.controlName}}" class="label">{{ field.label }}</label>
+          <label for="{{field.controlName}}" class="label">{{ field.labelKey | translate }}</label>
           <div class="input-container">
             @if (!metadataForm.get(field.lockedKey)?.value) {
               <p-button icon="pi pi-lock-open" [outlined]="true" (onClick)="toggleLock(field.controlName)" severity="success"></p-button>
@@ -144,7 +144,7 @@
       }
       @for (field of metadataDescription; track field) {
         <div class="form-row">
-          <label for="{{field.controlName}}" class="label">{{ field.label }}</label>
+          <label for="{{field.controlName}}" class="label">{{ field.labelKey | translate }}</label>
           <div class="input-container">
             @if (!metadataForm.get(field.lockedKey)?.value) {
               <p-button icon="pi pi-lock-open" [outlined]="true" (onClick)="toggleLock(field.controlName)" severity="success"></p-button>
@@ -172,7 +172,7 @@
       }
       @for (field of metadataFieldsBottom; track field) {
         <div class="form-row">
-          <label for="{{field.controlName}}" class="label">{{ field.label }}</label>
+          <label for="{{field.controlName}}" class="label">{{ field.labelKey | translate }}</label>
           <div class="input-container">
             @if (!metadataForm.get(field.lockedKey)?.value) {
               <p-button icon="pi pi-lock-open" [outlined]="true" (onClick)="toggleLock(field.controlName)" severity="success"></p-button>
@@ -199,22 +199,22 @@
         </div>
       }
       <div class="flex justify-center items-center" [ngStyle]="{'padding-bottom': '0.75rem', 'padding-left': '7.6rem'}">
-        <p class="ml-3 text-lg">Current Metadata</p>
+        <p class="ml-3 text-lg">{{ 'metadata.picker.section.currentMetadata' | translate }}</p>
         <p-button
           severity="success"
           icon='pi pi-angle-left'
           [ngStyle]="{'padding-left': '3rem', 'padding-right': '0.5rem'}"
           [outlined]="true"
-          pTooltip="Move all missing fields" tooltipPosition="bottom"
+          [pTooltip]="'metadata.picker.tooltip.moveMissingFields' | translate" tooltipPosition="bottom"
           (onClick)="copyMissing()"></p-button>
         <p-button
           severity="success"
           icon='pi pi-angle-double-left'
           [ngStyle]="{'padding-left': '0.5rem', 'padding-right': '2rem'}"
           [outlined]="true"
-          pTooltip="Move all fields" tooltipPosition="bottom"
+          [pTooltip]="'metadata.picker.tooltip.moveAllFields' | translate" tooltipPosition="bottom"
           (onClick)="copyAll()"></p-button>
-        <p class="text-lg">Fetched Metadata</p>
+        <p class="text-lg">{{ 'metadata.picker.section.fetchedMetadata' | translate }}</p>
       </div>
     </div>
 
@@ -223,13 +223,13 @@
       <div class="mt-auto">
         <p-divider></p-divider>
         <div class="flex justify-between px-2 pt-4">
-          <p-button label="To Metadata List" icon="pi pi-arrow-left" severity="info" (onClick)="goBackClick()"></p-button>
+          <p-button [label]="'metadata.picker.button.toMetadataList' | translate" icon="pi pi-arrow-left" severity="info" (onClick)="goBackClick()"></p-button>
           <div class="flex gap-x-4 justify-end">
-            <p-button label="Unlock All" icon="pi pi-lock-open" [outlined]="true" severity="success" (onClick)="unlockAll()"></p-button>
-            <p-button label="Lock All" icon="pi pi-lock" [outlined]="true" severity="warn" (onClick)="lockAll()"></p-button>
+            <p-button [label]="'metadata.picker.button.unlockAll' | translate" icon="pi pi-lock-open" [outlined]="true" severity="success" (onClick)="unlockAll()"></p-button>
+            <p-button [label]="'metadata.picker.button.lockAll' | translate" icon="pi pi-lock" [outlined]="true" severity="warn" (onClick)="lockAll()"></p-button>
             <p-divider layout="vertical"/>
             <p-button
-              label="Save"
+              [label]="'common.save' | translate"
               [icon]="isSaving ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
               [loading]="isSaving"
               [disabled]="isSaving"

@@ -1,13 +1,13 @@
 <div class="bulk-edit-container">
   <div class="info-banner">
     <i class="pi pi-info-circle"></i>
-    <span>Select which fields to apply to <strong>{{ fileCount }}</strong> selected file(s). Only checked fields will be updated.</span>
+    <span [innerHTML]="'bookdrop.bulkEdit.info.banner' | translate:{ count: fileCount }"></span>
   </div>
 
   <p-divider></p-divider>
 
   <div class="fields-section">
-    <h4>Text Fields</h4>
+    <h4>{{ 'bookdrop.bulkEdit.section.textFields' | translate }}</h4>
     <div class="field-grid">
       @for (field of textFields; track field.name) {
         <div class="field-row">
@@ -15,14 +15,14 @@
             [binary]="true"
             [ngModel]="isFieldEnabled(field.name)"
             (ngModelChange)="toggleField(field.name)"
-            [ariaLabel]="'Enable ' + field.label">
+            [ariaLabel]="'bookdrop.bulkEdit.a11y.enableField' | translate:{ field: (field.labelKey | translate) }">
           </p-checkbox>
-          <label class="field-label" [attr.for]="field.controlName">{{ field.label }}</label>
+          <label class="field-label" [attr.for]="field.controlName">{{ field.labelKey | translate }}</label>
           <input
             pInputText
             [formControl]="getControl(field.controlName)"
             [attr.id]="field.controlName"
-            [attr.aria-label]="field.label"
+            [attr.aria-label]="field.labelKey | translate"
             class="field-input"/>
         </div>
       }
@@ -32,7 +32,7 @@
   <p-divider></p-divider>
 
   <div class="fields-section">
-    <h4>Number Fields</h4>
+    <h4>{{ 'bookdrop.bulkEdit.section.numberFields' | translate }}</h4>
     <div class="field-grid">
       @for (field of numberFields; track field.name) {
         <div class="field-row">
@@ -40,15 +40,15 @@
             [binary]="true"
             [ngModel]="isFieldEnabled(field.name)"
             (ngModelChange)="toggleField(field.name)"
-            [ariaLabel]="'Enable ' + field.label">
+            [ariaLabel]="'bookdrop.bulkEdit.a11y.enableField' | translate:{ field: (field.labelKey | translate) }">
           </p-checkbox>
-          <label class="field-label" [attr.for]="field.controlName">{{ field.label }}</label>
+          <label class="field-label" [attr.for]="field.controlName">{{ field.labelKey | translate }}</label>
           <input
             pInputText
             type="number"
             [formControl]="getControl(field.controlName)"
             [attr.id]="field.controlName"
-            [attr.aria-label]="field.label"
+            [attr.aria-label]="field.labelKey | translate"
             class="field-input field-input-small"/>
         </div>
       }
@@ -59,9 +59,9 @@
 
   <div class="fields-section">
     <div class="section-header">
-      <h4>Array Fields</h4>
+      <h4>{{ 'bookdrop.bulkEdit.section.arrayFields' | translate }}</h4>
       <div class="merge-toggle">
-        <span class="merge-label" id="merge-mode-label">Mode:</span>
+        <span class="merge-label" id="merge-mode-label">{{ 'bookdrop.bulkEdit.merge.modeLabel' | translate }}</span>
         <p-selectButton
           [options]="mergeOptions"
           [(ngModel)]="mergeArrays"
@@ -71,7 +71,7 @@
         </p-selectButton>
       </div>
     </div>
-    <p class="helper-text"><i class="pi pi-info-circle"></i> Type and press Enter to add each item.</p>
+    <p class="helper-text"><i class="pi pi-info-circle"></i> {{ 'bookdrop.bulkEdit.helper.addItem' | translate }}</p>
     <div class="field-grid">
       @for (field of chipFields; track field.name) {
         <div class="field-row">
@@ -79,9 +79,9 @@
             [binary]="true"
             [ngModel]="isFieldEnabled(field.name)"
             (ngModelChange)="toggleField(field.name)"
-            [ariaLabel]="'Enable ' + field.label">
+            [ariaLabel]="'bookdrop.bulkEdit.a11y.enableField' | translate:{ field: (field.labelKey | translate) }">
           </p-checkbox>
-          <label class="field-label" [attr.for]="field.controlName">{{ field.label }}</label>
+          <label class="field-label" [attr.for]="field.controlName">{{ field.labelKey | translate }}</label>
           <p-autoComplete
             [formControl]="getControl(field.controlName)"
             [multiple]="true"
@@ -89,7 +89,7 @@
             [forceSelection]="false"
             [typeahead]="false"
             [dropdown]="false"
-            [ariaLabel]="field.label"
+            [ariaLabel]="field.labelKey | translate"
             (onBlur)="onAutoCompleteBlur(field.name, $event)"
             class="field-input">
           </p-autoComplete>
@@ -102,13 +102,13 @@
 
   <div class="dialog-footer">
     <p-button
-      label="Cancel"
+      [label]="'common.cancel' | translate"
       icon="pi pi-times"
       severity="secondary"
       (click)="cancel()">
     </p-button>
     <p-button
-      label="Apply to Selected"
+      [label]="'bookdrop.bulkEdit.button.applySelected' | translate"
       icon="pi pi-check"
       severity="success"
       [disabled]="!hasEnabledFields"

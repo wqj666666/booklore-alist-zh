@@ -2,10 +2,10 @@
   <div class="settings-header">
     <h2 class="settings-title">
       <i class="pi pi-cog"></i>
-      Global Preferences
+      {{ 'settings.application.title' | translate }}
     </h2>
     <p class="settings-description">
-      Configure global settings for your Booklore instance, including cover image handling, search preferences, and file upload limits.
+      {{ 'settings.application.description' | translate }}
     </p>
   </div>
 
@@ -14,7 +14,7 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-image"></i>
-          Book Cover Image
+          {{ 'settings.application.section.cover.title' | translate }}
         </h3>
       </div>
 
@@ -22,9 +22,9 @@
         <div class="setting-item">
           <div class="setting-info">
             <div class="setting-label-row">
-              <label class="setting-label">Regenerate Covers</label>
+              <label class="setting-label">{{ 'settings.application.section.cover.regenerate.label' | translate }}</label>
               <p-button
-                label="Regenerate"
+                [label]="'settings.application.section.cover.regenerate.button' | translate"
                 icon="pi pi-refresh"
                 outlined="true"
                 size="small"
@@ -34,7 +34,7 @@
             </div>
             <p class="setting-description">
               <i class="pi pi-info-circle"></i>
-              Regenerates cover images for all books from the embedded covers in the file.
+              {{ 'settings.application.section.cover.regenerate.description' | translate }}
             </p>
           </div>
         </div>
@@ -42,7 +42,7 @@
         <div class="setting-item">
           <div class="setting-info">
             <div class="setting-label-row">
-              <label class="setting-label">Vertical Cover Cropping</label>
+              <label class="setting-label">{{ 'settings.application.section.cover.verticalCropping.label' | translate }}</label>
               <p-toggleswitch
                 [(ngModel)]="coverCroppingSettings.verticalCroppingEnabled"
                 (onChange)="onCoverCroppingChange()">
@@ -50,7 +50,7 @@
             </div>
             <p class="setting-description">
               <i class="pi pi-info-circle"></i>
-              Automatically crop extremely tall images (like web comics) from the top to create usable cover thumbnails.
+              {{ 'settings.application.section.cover.verticalCropping.description' | translate }}
             </p>
           </div>
         </div>
@@ -58,7 +58,7 @@
         <div class="setting-item">
           <div class="setting-info">
             <div class="setting-label-row">
-              <label class="setting-label">Horizontal Cover Cropping</label>
+              <label class="setting-label">{{ 'settings.application.section.cover.horizontalCropping.label' | translate }}</label>
               <p-toggleswitch
                 [(ngModel)]="coverCroppingSettings.horizontalCroppingEnabled"
                 (onChange)="onCoverCroppingChange()">
@@ -66,7 +66,7 @@
             </div>
             <p class="setting-description">
               <i class="pi pi-info-circle"></i>
-              Automatically crop extremely wide images from the left to create usable cover thumbnails.
+              {{ 'settings.application.section.cover.horizontalCropping.description' | translate }}
             </p>
           </div>
         </div>
@@ -74,7 +74,10 @@
         <div class="setting-item">
           <div class="setting-info">
             <div class="setting-label-row">
-              <label class="setting-label">Aspect Ratio Threshold: {{ coverCroppingSettings.aspectRatioThreshold }}</label>
+              <label class="setting-label">{{
+                'settings.application.section.cover.aspectRatioThreshold.label'
+                  | translate: {value: coverCroppingSettings.aspectRatioThreshold}
+              }}</label>
               <div class="slider-container">
                 <p-slider
                   [(ngModel)]="coverCroppingSettings.aspectRatioThreshold"
@@ -87,7 +90,7 @@
             </div>
             <p class="setting-description">
               <i class="pi pi-info-circle"></i>
-              Images with aspect ratios exceeding this threshold will be cropped. A value of 2.5 means images more than 2.5x taller (or wider) than normal will be cropped.
+              {{ 'settings.application.section.cover.aspectRatioThreshold.description' | translate }}
             </p>
           </div>
         </div>
@@ -95,7 +98,7 @@
         <div class="setting-item">
           <div class="setting-info">
             <div class="setting-label-row">
-              <label class="setting-label">Smart Cropping</label>
+              <label class="setting-label">{{ 'settings.application.section.cover.smartCropping.label' | translate }}</label>
               <p-toggleswitch
                 [(ngModel)]="coverCroppingSettings.smartCroppingEnabled"
                 (onChange)="onCoverCroppingChange()">
@@ -103,7 +106,7 @@
             </div>
             <p class="setting-description">
               <i class="pi pi-info-circle"></i>
-              Skip uniform colour regions when determining where to crop. Focuses the cover image on the most relevant content.
+              {{ 'settings.application.section.cover.smartCropping.description' | translate }}
             </p>
           </div>
         </div>
@@ -114,7 +117,7 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-search"></i>
-          Search & Recommendations
+          {{ 'settings.application.section.search.title' | translate }}
         </h3>
       </div>
 
@@ -122,7 +125,7 @@
         <div class="setting-item">
           <div class="setting-info">
             <div class="setting-label-row">
-              <label class="setting-label">Auto Book Search</label>
+              <label class="setting-label">{{ 'settings.application.section.search.autoBookSearch.label' | translate }}</label>
               <p-toggleswitch
                 [(ngModel)]="toggles.autoBookSearch"
                 (onChange)="onToggleChange('autoBookSearch', $event.checked)">
@@ -130,7 +133,7 @@
             </div>
             <p class="setting-description">
               <i class="pi pi-info-circle"></i>
-              Automatically attempts metadata matching when the book information panel is opened.
+              {{ 'settings.application.section.search.autoBookSearch.description' | translate }}
             </p>
           </div>
         </div>
@@ -138,7 +141,7 @@
         <div class="setting-item">
           <div class="setting-info">
             <div class="setting-label-row">
-              <label class="setting-label">Similar Book Recommendation</label>
+              <label class="setting-label">{{ 'settings.application.section.search.similarBookRecommendation.label' | translate }}</label>
               <p-toggleswitch
                 [(ngModel)]="toggles.similarBookRecommendation"
                 (onChange)="onToggleChange('similarBookRecommendation', $event.checked)">
@@ -146,7 +149,7 @@
             </div>
             <p class="setting-description">
               <i class="pi pi-info-circle"></i>
-              Enables or disables similar book recommendations based on your library.
+              {{ 'settings.application.section.search.similarBookRecommendation.description' | translate }}
             </p>
           </div>
         </div>
@@ -157,7 +160,7 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-upload"></i>
-          File Management
+          {{ 'settings.application.section.file.title' | translate }}
         </h3>
       </div>
 
@@ -165,26 +168,30 @@
         <div class="setting-item">
           <div class="setting-info">
             <div class="setting-label-row">
-              <label class="setting-label">Max File Upload Size</label>
+              <label class="setting-label">{{ 'settings.application.section.file.maxFileUploadSize.label' | translate }}</label>
               <div class="input-group">
                 <div class="input-with-unit">
                   <input
                     type="text"
                     pInputText
                     [(ngModel)]="maxFileUploadSizeInMb"
-                    placeholder="Max size"/>
+                    [placeholder]="'settings.application.section.file.maxFileUploadSize.placeholder' | translate"/>
                   <span class="unit">MB</span>
                 </div>
-                <p-button label="Save" outlined severity="success" (onClick)="saveFileSize()"></p-button>
+                <p-button
+                  [label]="'settings.application.section.file.maxFileUploadSize.save' | translate"
+                  outlined
+                  severity="success"
+                  (onClick)="saveFileSize()"></p-button>
               </div>
             </div>
             <p class="setting-description">
               <i class="pi pi-info-circle"></i>
-              Defines the maximum allowed size (in MB) for each uploaded file. Applies to EPUB, PDF, CBZ, CBR, and CB7 formats.
+              {{ 'settings.application.section.file.maxFileUploadSize.description' | translate }}
             </p>
             <div class="warning-message">
               <i class="pi pi-exclamation-triangle"></i>
-              <span>Changes will take effect after restarting the server</span>
+              <span>{{ 'settings.application.section.file.maxFileUploadSize.restartWarning' | translate }}</span>
             </div>
           </div>
         </div>
@@ -196,7 +203,7 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-chart-bar"></i>
-          Telemetry
+          {{ 'settings.application.section.telemetry.title' | translate }}
           <app-external-doc-link docType="telemetry"></app-external-doc-link>
         </h3>
       </div>
@@ -204,7 +211,7 @@
         <div class="setting-item">
           <div class="setting-info">
             <div class="setting-label-row">
-              <label class="setting-label">Enable Telemetry</label>
+              <label class="setting-label">{{ 'settings.application.section.telemetry.enableTelemetry.label' | translate }}</label>
               <p-toggleswitch
                 [(ngModel)]="toggles.enableTelemetry"
                 (onChange)="onToggleChange('enableTelemetry', $event.checked)">
@@ -212,8 +219,8 @@
             </div>
             <p class="setting-description">
               <i class="pi pi-info-circle"></i>
-              Help improve Booklore by sharing anonymous usage statistics. This data lets the developers see which features are most used, identify bugs, and spot performance issues so they know what to work on next. No personal information, book content, or any identifiable data is ever sent. Data
-              is sent to the Booklore server automatically once every 24 hours. It’s completely safe and very helpful to the developers. </p>
+              {{ 'settings.application.section.telemetry.enableTelemetry.description' | translate }}
+            </p>
           </div>
         </div>
       </div>

@@ -11,11 +11,12 @@ import {ProgressSpinner} from 'primeng/progressspinner';
 import {MessageService} from 'primeng/api';
 import {ReadingSessionService} from '../../../shared/service/reading-session.service';
 import {Location} from '@angular/common';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-pdf-reader',
   standalone: true,
-  imports: [NgxExtendedPdfViewerModule, ProgressSpinner],
+  imports: [NgxExtendedPdfViewerModule, ProgressSpinner, TranslateModule],
   templateUrl: './pdf-reader.component.html',
 })
 export class PdfReaderComponent implements OnInit, OnDestroy {
@@ -39,6 +40,7 @@ export class PdfReaderComponent implements OnInit, OnDestroy {
   private pageTitle = inject(PageTitleService);
   private readingSessionService = inject(ReadingSessionService);
   private location = inject(Location);
+  private translate = inject(TranslateService);
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
@@ -72,7 +74,11 @@ export class PdfReaderComponent implements OnInit, OnDestroy {
           this.isLoading = false;
         },
         error: () => {
-          this.messageService.add({severity: 'error', summary: 'Error', detail: 'Failed to load the book'});
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant('readers.toast.errorSummary'),
+            detail: this.translate.instant('readers.pdf.toast.loadBookFailedFallback')
+          });
           this.isLoading = false;
         }
       });

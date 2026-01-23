@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {MessageService} from 'primeng/api';
 import {Router} from '@angular/router';
@@ -7,7 +7,7 @@ import {TableModule} from 'primeng/table';
 import {Step, StepList, StepPanel, StepPanels, Stepper} from 'primeng/stepper';
 import {FormsModule} from '@angular/forms';
 import {InputText} from 'primeng/inputtext';
-import {BookFileType, Library, LibraryScanMode} from '../book/model/library.model';
+import {BookFileType, Library, LibraryPath, LibraryScanMode} from '../book/model/library.model';
 import {ToggleSwitch} from 'primeng/toggleswitch';
 import {Tooltip} from 'primeng/tooltip';
 import {IconPickerService, IconSelection} from '../../shared/service/icon-picker.service';
@@ -15,19 +15,21 @@ import {Select} from 'primeng/select';
 import {Button} from 'primeng/button';
 import {IconDisplayComponent} from '../../shared/components/icon-display/icon-display.component';
 import {DialogLauncherService} from '../../shared/services/dialog-launcher.service';
-import {switchMap} from 'rxjs/operators';
-import {map, of} from 'rxjs';
+import {switchMap, takeUntil} from 'rxjs/operators';
+import {map, Subject} from 'rxjs';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {DirectoryPickerResult} from '../../shared/components/directory-picker/directory-picker.component';
 
 @Component({
   selector: 'app-library-creator',
   standalone: true,
   templateUrl: './library-creator.component.html',
-  imports: [TableModule, StepPanel, FormsModule, InputText, Stepper, StepList, Step, StepPanels, ToggleSwitch, Tooltip, Select, Button, IconDisplayComponent],
+  imports: [TableModule, StepPanel, FormsModule, InputText, Stepper, StepList, Step, StepPanels, ToggleSwitch, Tooltip, Select, Button, IconDisplayComponent, TranslateModule],
   styleUrl: './library-creator.component.scss'
 })
-export class LibraryCreatorComponent implements OnInit {
+export class LibraryCreatorComponent implements OnInit, OnDestroy {
   chosenLibraryName: string = '';
-  folders: string[] = [];
+  folders: LibraryPath[] = [];
   selectedIcon: IconSelection | null = null;
 
   mode!: string;
@@ -37,17 +39,8 @@ export class LibraryCreatorComponent implements OnInit {
   scanMode: LibraryScanMode = 'FILE_AS_BOOK';
   defaultBookFormat: BookFileType | undefined = undefined;
 
-  readonly scanModeOptions = [
-    {label: 'Each file is a book (Recommended)', value: 'FILE_AS_BOOK'},
-    {label: 'Each folder is a book with extras (Deprecated)', value: 'FOLDER_AS_BOOK'}
-  ];
-
-  readonly bookFormatOptions = [
-    {label: 'None', value: undefined},
-    {label: 'EPUB', value: 'EPUB'},
-    {label: 'PDF', value: 'PDF'},
-    {label: 'CBX/CBZ/CBR', value: 'CBX'}
-  ];
+  scanModeOptions: {label: string; value: LibraryScanMode}[] = [];
+  bookFormatOptions: {label: string; value: BookFileType | undefined}[] = [];
 
   private dialogLauncherService = inject(DialogLauncherService);
   private dynamicDialogRef = inject(DynamicDialogRef);
@@ -56,8 +49,13 @@ export class LibraryCreatorComponent implements OnInit {
   private messageService = inject(MessageService);
   private router = inject(Router);
   private iconPicker = inject(IconPickerService);
+  private translateService = inject(TranslateService);
+  private readonly destroy$ = new Subject<void>();
 
   ngOnInit(): void {
+    this.rebuildOptions();
+    this.translateService.onLangChange.pipe(takeUntil(this.destroy$)).subscribe(() => this.rebuildOptions());
+
     const data = this.dynamicDialogConfig?.data;
     if (data?.mode === 'edit') {
       this.mode = data.mode;
@@ -77,9 +75,19 @@ export class LibraryCreatorComponent implements OnInit {
         this.watch = watch;
         this.scanMode = scanMode || 'FILE_AS_BOOK';
         this.defaultBookFormat = defaultBookFormat || undefined;
-        this.folders = paths.map(path => path.path);
+        this.folders = paths.map(path => ({
+          id: path.id,
+          path: path.path,
+          alistEnabled: path.alistEnabled ?? false,
+          alistPath: path.alistPath ?? ''
+        }));
       }
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   closeDialog(): void {
@@ -88,11 +96,27 @@ export class LibraryCreatorComponent implements OnInit {
 
   openDirectoryPicker(): void {
     const ref = this.dialogLauncherService.openDirectoryPickerDialog();
-    ref?.onClose.subscribe((selectedFolders: string[] | null) => {
-      if (selectedFolders && selectedFolders.length > 0) {
-        selectedFolders.forEach(folder => {
-          if (!this.folders.includes(folder)) {
-            this.addFolder(folder);
+    ref?.onClose.subscribe((result: DirectoryPickerResult | string[] | null) => {
+      if (!result) return;
+
+      // Handle both old format (string[]) and new format (DirectoryPickerResult)
+      let folders: string[];
+      let isAlist = false;
+
+      if (Array.isArray(result)) {
+        // Legacy format - just an array of folder paths
+        folders = result;
+      } else {
+        // New format with storage type info
+        folders = result.folders;
+        isAlist = result.storageType === 'alist';
+      }
+
+      if (folders && folders.length > 0) {
+        folders.forEach(folder => {
+          const exists = this.folders.some(f => f.path === folder);
+          if (!exists) {
+            this.addFolderWithStorageType(folder, isAlist);
           }
         });
       }
@@ -108,7 +132,15 @@ export class LibraryCreatorComponent implements OnInit {
   }
 
   addFolder(folder: string): void {
-    this.folders.push(folder);
+    this.addFolderWithStorageType(folder, false);
+  }
+
+  addFolderWithStorageType(folder: string, isAlist: boolean): void {
+    this.folders.push({
+      path: folder,
+      alistEnabled: isAlist,
+      alistPath: isAlist ? folder : ''
+    });
   }
 
   removeFolder(index: number): void {
@@ -134,8 +166,8 @@ export class LibraryCreatorComponent implements OnInit {
       if (exists) {
         this.messageService.add({
           severity: 'error',
-          summary: 'Library Name Exists',
-          detail: 'This library name is already taken.',
+          summary: this.translateService.instant('libraryCreator.toast.nameExists.summary'),
+          detail: this.translateService.instant('libraryCreator.toast.nameExists.detail'),
         });
       } else {
         activateCallback(2);
@@ -153,7 +185,12 @@ export class LibraryCreatorComponent implements OnInit {
       name: this.chosenLibraryName,
       icon: iconValue,
       iconType: iconType,
-      paths: this.folders.map(folder => ({path: folder})),
+      paths: this.folders.map(folder => ({
+        id: folder.id,
+        path: folder.path,
+        alistEnabled: folder.alistEnabled,
+        alistPath: folder.alistPath
+      })),
       watch: this.watch,
       scanMode: this.scanMode,
       defaultBookFormat: this.defaultBookFormat
@@ -162,11 +199,19 @@ export class LibraryCreatorComponent implements OnInit {
     if (this.mode === 'edit') {
       this.libraryService.updateLibrary(library, this.library?.id).subscribe({
         next: () => {
-          this.messageService.add({severity: 'success', summary: 'Library Updated', detail: 'The library was updated successfully.'});
+          this.messageService.add({
+            severity: 'success',
+            summary: this.translateService.instant('libraryCreator.toast.updated.summary'),
+            detail: this.translateService.instant('libraryCreator.toast.updated.detail')
+          });
           this.dynamicDialogRef.close();
         },
         error: (e) => {
-          this.messageService.add({severity: 'error', summary: 'Update Failed', detail: 'An error occurred while updating the library. Please try again.'});
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translateService.instant('libraryCreator.toast.updateFailed.summary'),
+            detail: this.translateService.instant('libraryCreator.toast.updateFailed.detail')
+          });
           console.error(e);
         }
       });
@@ -191,28 +236,53 @@ export class LibraryCreatorComponent implements OnInit {
             this.router.navigate(['/library', createdLibrary.id, 'books']);
             this.messageService.add({
               severity: 'success',
-              summary: 'Library Created',
+              summary: this.translateService.instant('libraryCreator.toast.created.summary'),
               detail: count >= 500
-                ? `Library created with ${count} files. Loading in progress...`
-                : 'The library was created successfully.'
+                ? this.translateService.instant('libraryCreator.toast.created.detailLarge', {count})
+                : this.translateService.instant('libraryCreator.toast.created.detail')
             });
             this.dynamicDialogRef.close();
           }
         },
         error: (e) => {
           this.libraryService.setLargeLibraryLoading(false, 0);
-          this.messageService.add({severity: 'error', summary: 'Creation Failed', detail: 'An error occurred while creating the library. Please try again.'});
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translateService.instant('libraryCreator.toast.creationFailed.summary'),
+            detail: this.translateService.instant('libraryCreator.toast.creationFailed.detail')
+          });
           console.error(e);
         }
       });
     }
   }
 
-  getFolderName(path: string): string {
-    if (!path || typeof path !== 'string') {
+  getFolderName(folderPath: string): string {
+    if (!folderPath || typeof folderPath !== 'string') {
       return '';
     }
-    const parts = path.split('/').filter(p => p);
-    return parts[parts.length - 1] || path;
+    const parts = folderPath.split('/').filter(p => p);
+    return parts[parts.length - 1] || folderPath;
+  }
+
+  toggleAlistEnabled(folder: LibraryPath): void {
+    folder.alistEnabled = !folder.alistEnabled;
+    if (!folder.alistEnabled) {
+      folder.alistPath = '';
+    }
+  }
+
+  private rebuildOptions(): void {
+    this.scanModeOptions = [
+      {label: this.translateService.instant('libraryCreator.option.scanMode.fileAsBook'), value: 'FILE_AS_BOOK'},
+      {label: this.translateService.instant('libraryCreator.option.scanMode.folderAsBook'), value: 'FOLDER_AS_BOOK'}
+    ];
+
+    this.bookFormatOptions = [
+      {label: this.translateService.instant('libraryCreator.option.bookFormat.none'), value: undefined},
+      {label: this.translateService.instant('libraryCreator.option.bookFormat.epub'), value: 'EPUB'},
+      {label: this.translateService.instant('libraryCreator.option.bookFormat.pdf'), value: 'PDF'},
+      {label: this.translateService.instant('libraryCreator.option.bookFormat.cbx'), value: 'CBX'}
+    ];
   }
 }

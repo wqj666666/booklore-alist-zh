@@ -1,9 +1,9 @@
 <div class="flex pb-8">
   <p class="text-lg flex items-center gap-2">
-    Recalculate Metadata Scores:
+    {{ 'settings.metadataMatchWeights.recalculate.title' | translate }}
     <i
       class="pi pi-info-circle text-blue-500"
-      pTooltip="Recomputes match scores for all books based on the latest weights."
+      [pTooltip]="'settings.metadataMatchWeights.tooltip.recalculateInfo' | translate"
       tooltipPosition="right"
       style="cursor: help;"
     ></i>
@@ -13,7 +13,7 @@
     class="pl-4"
     type="button"
     icon="pi pi-refresh"
-    label="Recalculate"
+    [label]="'settings.metadataMatchWeights.recalculate.action' | translate"
     [disabled]="isRecalculating"
     (click)="recalculate()"
     outlined
@@ -22,10 +22,10 @@
 
 
 <p class="text-lg flex items-center gap-2">
-  Metadata Field Weights
+  {{ 'settings.metadataMatchWeights.weights.title' | translate }}
   <i
     class="pi pi-info-circle text-blue-500"
-    pTooltip="Adjust how important each metadata field is when computing match scores. Higher weights make fields more influential."
+    [pTooltip]="'settings.metadataMatchWeights.tooltip.adjustWeightsInfo' | translate"
     tooltipPosition="right"
     style="cursor: help;"
   ></i>
@@ -38,7 +38,7 @@
         @for (key of orderedKeys; track key) {
           <div class="flex text-sm items-center gap-2">
             <label class="capitalize w-full max-w-[150px]">
-              {{ labelMap[key] }}
+              {{ labelMap[key] | translate }}
             </label>
             <p-inputNumber
               [formControlName]="key"
@@ -54,7 +54,7 @@
         <p-button
           type="button"
           severity="success"
-          label="Save"
+          [label]="'settings.metadataMatchWeights.weights.action.save' | translate"
           icon="pi pi-save"
           outlined
           [disabled]="isSaving"

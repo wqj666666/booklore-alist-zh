@@ -3,25 +3,25 @@
     <div class="header-title">
       <h3>
         <i class="pi pi-clock timeline-title-icon"></i>
-        Reading Session Timeline
+        {{ 'stats.user.timeline.title' | translate }}
       </h3>
-      <p class="timeline-subtitle">Weekly overview of your reading sessions and patterns</p>
+      <p class="timeline-subtitle">{{ 'stats.user.timeline.subtitle' | translate }}</p>
     </div>
     <div class="week-info">
       <button type="button"
               class="week-nav-btn"
               (click)="changeWeek(-1)"
-              title="Previous week">
+              [title]="'stats.user.timeline.actions.previousWeek' | translate">
         <i class="pi pi-chevron-left"></i>
       </button>
       <div class="week-display">
-        <span class="week-label">Week {{ currentWeek }}</span>
+        <span class="week-label">{{ 'stats.user.timeline.weekLabel' | translate:{week: currentWeek} }}</span>
         <span class="week-dates">{{ getWeekDateRange() }}</span>
       </div>
       <button type="button"
               class="week-nav-btn"
               (click)="changeWeek(1)"
-              title="Next week">
+              [title]="'stats.user.timeline.actions.nextWeek' | translate">
         <i class="pi pi-chevron-right"></i>
       </button>
     </div>
@@ -32,7 +32,7 @@
         (onChange)="onYearChange()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Select Year"
+        [placeholder]="'stats.user.timeline.select.year' | translate"
         [style]="{'min-width': '120px'}">
       </p-select>
       <p-select
@@ -41,7 +41,7 @@
         (onChange)="onWeekChange()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Select Week"
+        [placeholder]="'stats.user.timeline.select.week' | translate"
         [style]="{'min-width': '120px'}">
       </p-select>
     </div>
@@ -62,7 +62,7 @@
     <div class="timeline-rows">
       @for (dayData of timelineData; track dayData.dayOfWeek) {
         <div class="timeline-row">
-          <div class="day-label">{{ dayData.day }}</div>
+          <div class="day-label">{{ dayData.day | translate }}</div>
           <div class="timeline-track">
             <div class="grid-lines">
               @for (hour of hourLabels; track $index) {
@@ -92,18 +92,18 @@
                   <div class="session-tooltip">
                     <div class="tooltip-content">
                       <div class="tooltip-cover">
-                        <img [src]="getCoverUrl(session.bookId)" alt="Book Cover">
+                        <img [src]="getCoverUrl(session.bookId)" [alt]="'stats.user.timeline.a11y.bookCover' | translate">
                       </div>
                       <div class="tooltip-details">
                         <div class="tooltip-header">
                           <i class="pi pi-book"></i>
-                          <span class="tooltip-title">{{ session.bookTitle || 'Reading Session' }}</span>
+                          <span class="tooltip-title">{{ session.bookTitle || ('stats.user.timeline.sessionTitleFallback' | translate) }}</span>
                         </div>
                         <div class="tooltip-divider"></div>
                         <div class="tooltip-body">
                           <div class="tooltip-row">
                             <i class="pi pi-clock"></i>
-                            <span class="tooltip-label">Time:</span>
+                            <span class="tooltip-label">{{ 'stats.user.timeline.tooltip.time' | translate }}</span>
                             <span class="tooltip-value">
                               {{ formatTime(session.startHour, session.startMinute) }} -
                               {{ formatTime(session.endHour, session.endMinute) }}
@@ -111,7 +111,7 @@
                           </div>
                           <div class="tooltip-row">
                             <i class="pi pi-hourglass"></i>
-                            <span class="tooltip-label">Duration:</span>
+                            <span class="tooltip-label">{{ 'stats.user.timeline.tooltip.duration' | translate }}</span>
                             <span class="tooltip-value">{{ formatDuration(session.duration) }}</span>
                           </div>
                         </div>

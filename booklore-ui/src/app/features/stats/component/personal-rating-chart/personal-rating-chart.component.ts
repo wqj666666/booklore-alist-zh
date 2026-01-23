@@ -1,4 +1,4 @@
-import {Component, inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {BaseChartDirective} from 'ng2-charts';
 import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
@@ -7,6 +7,7 @@ import {ChartConfiguration, ChartData} from 'chart.js';
 import {BookService} from '../../../book/service/book.service';
 import {Book} from '../../../book/model/book.model';
 import {BookState} from '../../../book/model/state/book-state.model';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 interface RatingStats {
   ratingRange: string;
@@ -52,13 +53,15 @@ type RatingChartData = ChartData<'bar', number[], string>;
 @Component({
   selector: 'app-personal-rating-chart',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective],
+  imports: [CommonModule, TranslateModule, BaseChartDirective],
   templateUrl: './personal-rating-chart.component.html',
   styleUrls: ['./personal-rating-chart.component.scss']
 })
 export class PersonalRatingChartComponent implements OnInit, OnDestroy {
   private readonly bookService = inject(BookService);
+  private readonly translate = inject(TranslateService);
   private readonly destroy$ = new Subject<void>();
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
   public readonly chartType = 'bar' as const;
 
@@ -83,10 +86,12 @@ export class PersonalRatingChartComponent implements OnInit, OnDestroy {
         titleFont: {size: 14, weight: 'bold'},
         bodyFont: {size: 13},
         callbacks: {
-          title: (context) => `Personal Rating: ${context[0].label}`,
+          title: (context) => this.translate.instant('stats.user.personalRating.tooltip.title', {rating: context[0].label}),
           label: (context) => {
             const value = context.parsed.y;
-            return `${value} book${value === 1 ? '' : 's'}`;
+            return value === 1
+              ? this.translate.instant('stats.user.units.bookCountOne', {count: value})
+              : this.translate.instant('stats.user.units.bookCountMany', {count: value});
           }
         }
       },
@@ -96,7 +101,7 @@ export class PersonalRatingChartComponent implements OnInit, OnDestroy {
       x: {
         title: {
           display: true,
-          text: 'Personal Rating',
+          text: this.translate.instant('stats.user.personalRating.axis.rating'),
           color: '#ffffff',
           font: {
             family: "'Inter', sans-serif",
@@ -116,7 +121,7 @@ export class PersonalRatingChartComponent implements OnInit, OnDestroy {
       y: {
         title: {
           display: true,
-          text: 'Number of Books',
+          text: this.translate.instant('stats.user.personalRating.axis.books'),
           color: '#ffffff',
           font: {
             family: "'Inter', sans-serif",
@@ -144,7 +149,7 @@ export class PersonalRatingChartComponent implements OnInit, OnDestroy {
   private readonly chartDataSubject = new BehaviorSubject<RatingChartData>({
     labels: [],
     datasets: [{
-      label: 'Books by Personal Rating',
+      label: this.translate.instant('stats.user.personalRating.datasetLabel'),
       data: [],
       backgroundColor: [...CHART_COLORS],
       ...CHART_DEFAULTS
@@ -168,6 +173,26 @@ export class PersonalRatingChartComponent implements OnInit, OnDestroy {
         const stats = this.calculatePersonalRatingStats();
         this.updateChartData(stats);
       });
+
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        const scales = this.chartOptions?.scales;
+        if (scales?.['x'] && 'title' in scales['x']) {
+          (scales['x'] as any).title.text = this.translate.instant('stats.user.personalRating.axis.rating');
+        }
+        if (scales?.['y'] && 'title' in scales['y']) {
+          (scales['y'] as any).title.text = this.translate.instant('stats.user.personalRating.axis.books');
+        }
+
+        const current = this.chartDataSubject.value;
+        const dataset = current.datasets?.[0];
+        this.chartDataSubject.next({
+          ...current,
+          datasets: dataset ? [{...dataset, label: this.translate.instant('stats.user.personalRating.datasetLabel')}] : []
+        });
+        this.chart?.chart?.update();
+      });
   }
 
   ngOnDestroy(): void {
@@ -188,7 +213,7 @@ export class PersonalRatingChartComponent implements OnInit, OnDestroy {
       this.chartDataSubject.next({
         labels: allLabels,
         datasets: [{
-          label: 'Books by Personal Rating',
+          label: this.translate.instant('stats.user.personalRating.datasetLabel'),
           data: dataValues,
           backgroundColor: colors,
           borderColor: colors.map(color => color),

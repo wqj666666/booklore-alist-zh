@@ -10,10 +10,11 @@ import {BookdropService, PatternExtractResult} from '../../service/bookdrop.serv
 import {MessageService} from 'primeng/api';
 import {NgClass} from '@angular/common';
 import {Tooltip} from 'primeng/tooltip';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 interface PatternPlaceholder {
   name: string;
-  description: string;
+  descriptionKey: string;
   example: string;
 }
 
@@ -36,6 +37,7 @@ interface PreviewResult {
     ProgressSpinner,
     NgClass,
     Tooltip,
+    TranslateModule,
   ],
   templateUrl: './bookdrop-pattern-extract-dialog.component.html',
   styleUrl: './bookdrop-pattern-extract-dialog.component.scss'
@@ -46,6 +48,7 @@ export class BookdropPatternExtractDialogComponent implements OnInit {
   private readonly config = inject(DynamicDialogConfig);
   private readonly bookdropService = inject(BookdropService);
   private readonly messageService = inject(MessageService);
+  private readonly translateService = inject(TranslateService);
 
   @ViewChild('patternInput', {static: false}) patternInput?: ElementRef<HTMLInputElement>;
 
@@ -57,7 +60,6 @@ export class BookdropPatternExtractDialogComponent implements OnInit {
   isExtracting = false;
   previewResults: PreviewResult[] = [];
 
-  patternPlaceholderText = 'e.g., {SeriesName} - Ch {SeriesNumber}';
   spinnerStyle = {width: '24px', height: '24px'};
 
   patternForm = new FormGroup({
@@ -65,32 +67,32 @@ export class BookdropPatternExtractDialogComponent implements OnInit {
   });
 
   availablePlaceholders: PatternPlaceholder[] = [
-    {name: '*', description: 'Wildcard - skips any text (not a metadata field)', example: 'anything'},
-    {name: 'SeriesName', description: 'Series or comic name', example: 'Chronicles of Earth'},
-    {name: 'Title', description: 'Book title', example: 'The Lost City'},
-    {name: 'Subtitle', description: 'Book subtitle', example: 'A Tale of Adventure'},
-    {name: 'Authors', description: 'Author name(s)', example: 'John Smith'},
-    {name: 'SeriesNumber', description: 'Book number in series', example: '25'},
-    {name: 'Published', description: 'Full date with format', example: '{Published:yyyy-MM-dd}'},
-    {name: 'Publisher', description: 'Publisher name', example: 'Epic Press'},
-    {name: 'Language', description: 'Language code', example: 'en'},
-    {name: 'SeriesTotal', description: 'Total books in series', example: '50'},
-    {name: 'ISBN10', description: 'ISBN-10 identifier', example: '1234567890'},
-    {name: 'ISBN13', description: 'ISBN-13 identifier', example: '1234567890123'},
-    {name: 'ASIN', description: 'Amazon ASIN', example: 'B012345678'},
+    {name: '*', descriptionKey: 'bookdrop.patternExtract.placeholder.wildcard.description', example: 'anything'},
+    {name: 'SeriesName', descriptionKey: 'bookdrop.patternExtract.placeholder.seriesName.description', example: 'Chronicles of Earth'},
+    {name: 'Title', descriptionKey: 'bookdrop.patternExtract.placeholder.title.description', example: 'The Lost City'},
+    {name: 'Subtitle', descriptionKey: 'bookdrop.patternExtract.placeholder.subtitle.description', example: 'A Tale of Adventure'},
+    {name: 'Authors', descriptionKey: 'bookdrop.patternExtract.placeholder.authors.description', example: 'John Smith'},
+    {name: 'SeriesNumber', descriptionKey: 'bookdrop.patternExtract.placeholder.seriesNumber.description', example: '25'},
+    {name: 'Published', descriptionKey: 'bookdrop.patternExtract.placeholder.published.description', example: '{Published:yyyy-MM-dd}'},
+    {name: 'Publisher', descriptionKey: 'bookdrop.patternExtract.placeholder.publisher.description', example: 'Epic Press'},
+    {name: 'Language', descriptionKey: 'bookdrop.patternExtract.placeholder.language.description', example: 'en'},
+    {name: 'SeriesTotal', descriptionKey: 'bookdrop.patternExtract.placeholder.seriesTotal.description', example: '50'},
+    {name: 'ISBN10', descriptionKey: 'bookdrop.patternExtract.placeholder.isbn10.description', example: '1234567890'},
+    {name: 'ISBN13', descriptionKey: 'bookdrop.patternExtract.placeholder.isbn13.description', example: '1234567890123'},
+    {name: 'ASIN', descriptionKey: 'bookdrop.patternExtract.placeholder.asin.description', example: 'B012345678'},
   ];
 
   commonPatterns = [
-    {label: 'Author - Title', pattern: '{Authors} - {Title}'},
-    {label: 'Title - Author', pattern: '{Title} - {Authors}'},
-    {label: 'Title (Year)', pattern: '{Title} ({Published:yyyy})'},
-    {label: 'Author - Title (Year)', pattern: '{Authors} - {Title} ({Published:yyyy})'},
-    {label: 'Series #Number', pattern: '{SeriesName} #{SeriesNumber}'},
-    {label: 'Series - Chapter Number', pattern: '{SeriesName} - Chapter {SeriesNumber}'},
-    {label: 'Series - Vol Number', pattern: '{SeriesName} - Vol {SeriesNumber}'},
-    {label: '[Tag] Series - Chapter Number', pattern: '[*] {SeriesName} - Chapter {SeriesNumber}'},
-    {label: 'Title by Author', pattern: '{Title} by {Authors}'},
-    {label: 'Series vX (of Total)', pattern: '{SeriesName} v{SeriesNumber} (of {SeriesTotal})'},
+    {labelKey: 'bookdrop.patternExtract.commonPatterns.authorTitle', pattern: '{Authors} - {Title}'},
+    {labelKey: 'bookdrop.patternExtract.commonPatterns.titleAuthor', pattern: '{Title} - {Authors}'},
+    {labelKey: 'bookdrop.patternExtract.commonPatterns.titleYear', pattern: '{Title} ({Published:yyyy})'},
+    {labelKey: 'bookdrop.patternExtract.commonPatterns.authorTitleYear', pattern: '{Authors} - {Title} ({Published:yyyy})'},
+    {labelKey: 'bookdrop.patternExtract.commonPatterns.seriesNumber', pattern: '{SeriesName} #{SeriesNumber}'},
+    {labelKey: 'bookdrop.patternExtract.commonPatterns.seriesChapterNumber', pattern: '{SeriesName} - Chapter {SeriesNumber}'},
+    {labelKey: 'bookdrop.patternExtract.commonPatterns.seriesVolNumber', pattern: '{SeriesName} - Vol {SeriesNumber}'},
+    {labelKey: 'bookdrop.patternExtract.commonPatterns.tagSeriesChapterNumber', pattern: '[*] {SeriesName} - Chapter {SeriesNumber}'},
+    {labelKey: 'bookdrop.patternExtract.commonPatterns.titleByAuthor', pattern: '{Title} by {Authors}'},
+    {labelKey: 'bookdrop.patternExtract.commonPatterns.seriesVolumeOfTotal', pattern: '{SeriesName} v{SeriesNumber} (of {SeriesTotal})'},
   ];
 
   ngOnInit(): void {
@@ -218,8 +220,11 @@ export class BookdropPatternExtractDialogComponent implements OnInit {
         this.isExtracting = false;
         this.messageService.add({
           severity: 'success',
-          summary: 'Extraction Complete',
-          detail: `Successfully extracted metadata from ${result.successfullyExtracted} of ${result.totalFiles} files.`,
+          summary: this.translateService.instant('bookdrop.patternExtract.toast.success.summary'),
+          detail: this.translateService.instant('bookdrop.patternExtract.toast.success.detail', {
+            successfullyExtracted: result.successfullyExtracted,
+            totalFiles: result.totalFiles
+          }),
         });
         this.dialogRef.close(result);
       },
@@ -228,8 +233,8 @@ export class BookdropPatternExtractDialogComponent implements OnInit {
         console.error('Pattern extraction failed:', err);
         this.messageService.add({
           severity: 'error',
-          summary: 'Extraction Failed',
-          detail: 'An error occurred during pattern extraction.',
+          summary: this.translateService.instant('bookdrop.patternExtract.toast.failure.summary'),
+          detail: this.translateService.instant('bookdrop.patternExtract.toast.failure.detail'),
         });
       },
     });
@@ -253,7 +258,11 @@ export class BookdropPatternExtractDialogComponent implements OnInit {
   }
 
   getPlaceholderTooltip(placeholder: PatternPlaceholder): string {
-    return `${placeholder.description} (e.g., ${placeholder.example})`;
+    const description = this.translateService.instant(placeholder.descriptionKey);
+    const example = this.translateService.instant('bookdrop.patternExtract.placeholder.example', {
+      example: placeholder.example
+    });
+    return `${description} ${example}`;
   }
 
   getPreviewClass(preview: PreviewResult): Record<string, boolean> {
@@ -272,10 +281,12 @@ export class BookdropPatternExtractDialogComponent implements OnInit {
   }
 
   getErrorMessage(preview: PreviewResult): string {
-    return preview.errorMessage || 'Pattern did not match';
+    return preview.errorMessage || this.translateService.instant('bookdrop.patternExtract.preview.error.defaultMessage');
   }
 
   getErrorTooltip(preview: PreviewResult): string {
-    return preview.success ? '' : (preview.errorMessage || 'Pattern did not match filename structure');
+    return preview.success
+      ? ''
+      : (preview.errorMessage || this.translateService.instant('bookdrop.patternExtract.preview.error.defaultTooltip'));
   }
 }

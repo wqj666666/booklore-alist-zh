@@ -3,27 +3,27 @@
     <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
       <div class="form-grid">
         <div class="form-field">
-          <label for="title">Title *</label>
+          <label for="title">{{ 'metadata.coverSearch.label.titleRequired' | translate }}</label>
           <input
             pInputText
             id="title"
             formControlName="title"
-            placeholder="Enter book title"
+            [placeholder]="'metadata.coverSearch.placeholder.title' | translate"
           />
           @if (searchForm.get('title')?.invalid && searchForm.get('title')?.touched) {
             <small class="error-message">
-              Title is required
+              {{ 'metadata.coverSearch.validation.titleRequired' | translate }}
             </small>
           }
         </div>
 
         <div class="form-field">
-          <label for="author">Author</label>
+          <label for="author">{{ 'metadata.coverSearch.label.author' | translate }}</label>
           <input
             pInputText
             id="author"
             formControlName="author"
-            placeholder="Enter author name"
+            [placeholder]="'metadata.coverSearch.placeholder.author' | translate"
           />
         </div>
 
@@ -33,7 +33,7 @@
             <p-button
               type="submit"
               outlined
-              label="Search Covers"
+              [label]="'metadata.coverSearch.button.searchCovers' | translate"
               icon="pi pi-search"
               [loading]="loading"
               [disabled]="searchForm.invalid">
@@ -41,7 +41,7 @@
 
             <p-button
               type="button"
-              label="Clear"
+              [label]="'metadata.coverSearch.button.clear' | translate"
               icon="pi pi-times"
               (click)="onClear()"
               styleClass="p-button-secondary p-button-outlined">
@@ -57,14 +57,14 @@
       @if (loading) {
         <div class="loading-container">
           <p-progressSpinner></p-progressSpinner>
-          <p>Searching for book covers...</p>
+          <p>{{ 'metadata.coverSearch.status.searching' | translate }}</p>
         </div>
       }
 
       @if (!loading && coverImages.length === 0) {
         <div class="no-results">
           <i class="pi pi-info-circle"></i>
-          <p>No cover images found. Try adjusting your search terms.</p>
+          <p>{{ 'metadata.coverSearch.empty.noResults' | translate }}</p>
         </div>
       }
 
@@ -74,7 +74,7 @@
             <div class="cover-item">
               <p-image
                 [src]="cover.url"
-                [alt]="'Book cover ' + (i + 1)"
+                [alt]="'metadata.coverSearch.alt.bookCover' | translate:{ index: i + 1 }"
                 appendTo="body"
                 [preview]="true">
               </p-image>
@@ -86,9 +86,9 @@
               <p-button
                 class="select-button"
                 (click)="selectAndSave(cover)"
-                label="Pick & Save"
+                [label]="'metadata.coverSearch.button.pickAndSave' | translate"
                 severity="info"
-                title="Select & Save this cover">
+                [title]="'metadata.coverSearch.title.selectAndSave' | translate">
               </p-button>
             </div>
           }

@@ -11,6 +11,7 @@ import {EmailV2ProviderService} from './email-v2-provider.service';
 import {EmailProvider} from '../email-provider.model';
 import {UserService} from '../../user-management/user.service';
 import {DialogLauncherService} from '../../../../shared/services/dialog-launcher.service';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-email-v2-provider',
@@ -22,7 +23,8 @@ import {DialogLauncherService} from '../../../../shared/services/dialog-launcher
     ReactiveFormsModule,
     TableModule,
     Tooltip,
-    FormsModule
+    FormsModule,
+    TranslateModule
   ],
   templateUrl: './email-v2-provider.component.html',
   styleUrl: './email-v2-provider.component.scss'
@@ -35,6 +37,7 @@ export class EmailV2ProviderComponent implements OnInit {
   private emailProvidersService = inject(EmailV2ProviderService);
   private messageService = inject(MessageService);
   private userService = inject(UserService);
+  private translateService = inject(TranslateService);
   defaultProviderId: unknown;
   currentUserId: number | null = null;
   isAdmin: boolean = false;
@@ -63,8 +66,8 @@ export class EmailV2ProviderComponent implements OnInit {
       error: () => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to load Email Providers',
+          summary: this.translateService.instant('settings.emailV2.provider.toast.loadError.summary'),
+          detail: this.translateService.instant('settings.emailV2.provider.toast.loadError.detail'),
         });
       },
     });
@@ -85,37 +88,37 @@ export class EmailV2ProviderComponent implements OnInit {
         provider.isEditing = false;
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: 'Provider updated successfully',
+          summary: this.translateService.instant('settings.emailV2.provider.toast.updateSuccess.summary'),
+          detail: this.translateService.instant('settings.emailV2.provider.toast.updateSuccess.detail'),
         });
         this.loadEmailProviders();
       },
       error: () => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to update provider',
+          summary: this.translateService.instant('settings.emailV2.provider.toast.updateError.summary'),
+          detail: this.translateService.instant('settings.emailV2.provider.toast.updateError.detail'),
         });
       },
     });
   }
 
   deleteProvider(provider: EmailProvider): void {
-    if (confirm(`Are you sure you want to delete provider "${provider.name}"?`)) {
+    if (confirm(this.translateService.instant('settings.emailV2.provider.confirmDelete', {name: provider.name}))) {
       this.emailProvidersService.deleteProvider(provider.id).subscribe({
         next: () => {
           this.messageService.add({
             severity: 'success',
-            summary: 'Success',
-            detail: `Provider "${provider.name}" deleted successfully`,
+            summary: this.translateService.instant('settings.emailV2.provider.toast.deleteSuccess.summary'),
+            detail: this.translateService.instant('settings.emailV2.provider.toast.deleteSuccess.detail', {name: provider.name}),
           });
           this.loadEmailProviders();
         },
         error: () => {
           this.messageService.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to delete provider',
+            summary: this.translateService.instant('settings.emailV2.provider.toast.deleteError.summary'),
+            detail: this.translateService.instant('settings.emailV2.provider.toast.deleteError.detail'),
           });
         },
       });
@@ -137,16 +140,16 @@ export class EmailV2ProviderComponent implements OnInit {
         this.defaultProviderId = provider.id;
         this.messageService.add({
           severity: 'success',
-          summary: 'Default Provider Set',
-          detail: `${provider.name} is now the default email provider.`
+          summary: this.translateService.instant('settings.emailV2.provider.toast.defaultSetSuccess.summary'),
+          detail: this.translateService.instant('settings.emailV2.provider.toast.defaultSetSuccess.detail', {name: provider.name})
         });
       },
       error: (err) => {
         console.error('Failed to set default provider', err);
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: `Failed to set ${provider.name} as the default provider. Please try again.`
+          summary: this.translateService.instant('settings.emailV2.provider.toast.defaultSetError.summary'),
+          detail: this.translateService.instant('settings.emailV2.provider.toast.defaultSetError.detail', {name: provider.name})
         });
       }
     });
@@ -159,18 +162,24 @@ export class EmailV2ProviderComponent implements OnInit {
   toggleShared(provider: EmailProvider): void {
     this.emailProvidersService.updateProvider(provider).subscribe({
       next: () => {
+        const sharedStateKey = provider.shared
+          ? 'settings.emailV2.provider.sharedState.shared'
+          : 'settings.emailV2.provider.sharedState.notShared';
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: `Provider "${provider.name}" is now ${provider.shared ? 'shared' : 'not shared'}`,
+          summary: this.translateService.instant('settings.emailV2.provider.toast.sharedUpdateSuccess.summary'),
+          detail: this.translateService.instant('settings.emailV2.provider.toast.sharedUpdateSuccess.detail', {
+            name: provider.name,
+            state: this.translateService.instant(sharedStateKey)
+          }),
         });
       },
       error: () => {
         provider.shared = !provider.shared;
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to update shared status',
+          summary: this.translateService.instant('settings.emailV2.provider.toast.sharedUpdateError.summary'),
+          detail: this.translateService.instant('settings.emailV2.provider.toast.sharedUpdateError.detail'),
         });
       },
     });

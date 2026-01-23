@@ -62,7 +62,7 @@
               icon="pi pi-times"
               [severity]="task.value.review ? 'danger' : 'secondary'"
               size="small"
-              [pTooltip]="task.value.review ? 'Preserve current metadata, discard new fetched metadata' : ''"
+              [pTooltip]="task.value.review ? ('shared.metadataProgressWidget.tooltip.discardFetchedMetadata' | translate) : ''"
               [tooltipPosition]="task.value.review ? 'top' : undefined"
               outlined
               (click)="clearTask(task.key)">
@@ -75,7 +75,7 @@
               icon="pi pi-stop"
               severity="danger"
               size="small"
-              pTooltip="Cancel this task"
+              [pTooltip]="'shared.metadataProgressWidget.tooltip.cancelTask' | translate"
               tooltipPosition="top"
               outlined
               (click)="cancelTask(task.key)">

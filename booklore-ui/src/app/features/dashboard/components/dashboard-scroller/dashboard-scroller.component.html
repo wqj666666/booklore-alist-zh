@@ -1,6 +1,10 @@
 <div class="dashboard-scroller-container">
   <h2 class="dashboard-scroller-title">
-    {{ title }}
+    @if (titleKey) {
+      {{ titleKey | translate }}
+    } @else {
+      {{ title }}
+    }
     @if (isMagicShelf) {
       <i class="pi pi-sparkles magic-shelf-icon"></i>
     }
@@ -11,7 +15,7 @@
       <div class="empty-state-icon">
         <i class="pi pi-book"></i>
       </div>
-      <p>No books found for this scroller.</p>
+      <p>{{ 'dashboard.scroller.noBooks' | translate }}</p>
     </div>
   }
 
@@ -35,7 +39,7 @@
       <div class="error-icon">
         <i class="pi pi-exclamation-triangle"></i>
       </div>
-      <p>Failed to load books! Please try refreshing the page.</p>
+      <p>{{ 'dashboard.scroller.failedToLoad' | translate }}</p>
     </div>
   }
 </div>

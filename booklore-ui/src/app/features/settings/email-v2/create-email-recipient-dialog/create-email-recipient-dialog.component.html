@@ -4,8 +4,8 @@
       <i class="pi pi-user header-icon"></i>
     </div>
     <div class="header-text">
-      <h2 class="panel-title">Create Email Recipient</h2>
-      <p class="panel-description">Add a new recipient for email notifications</p>
+      <h2 class="panel-title">{{ 'settings.emailV2.createRecipientDialog.title' | translate }}</h2>
+      <p class="panel-description">{{ 'settings.emailV2.createRecipientDialog.description' | translate }}</p>
     </div>
     <p-button
       icon="pi pi-times"
@@ -14,7 +14,7 @@
       [text]="true"
       [rounded]="true"
       class="close-button"
-      pTooltip="Close"
+      [pTooltip]="'common.close' | translate"
       tooltipPosition="left"/>
   </div>
 
@@ -23,7 +23,7 @@
       <div class="form-group highlight-group">
         <label for="recipientName" class="form-label">
           <i class="pi pi-user label-icon"></i>
-          Recipient Name
+          {{ 'settings.emailV2.createRecipientDialog.field.name.label' | translate }}
           <span class="required-indicator">*</span>
         </label>
         <div class="input-wrapper">
@@ -33,7 +33,7 @@
             pInputText
             formControlName="name"
             class="input-full"
-            placeholder="Enter recipient name..."
+            [placeholder]="'settings.emailV2.createRecipientDialog.field.name.placeholder' | translate"
             [class.filled]="emailRecipientForm.get('name')?.value"
            
           />
@@ -42,7 +42,7 @@
           }
         </div>
         @if (emailRecipientForm.get('name')?.invalid && (emailRecipientForm.get('name')?.dirty || emailRecipientForm.get('name')?.touched)) {
-          <small class="field-error">Recipient name is required.</small>
+          <small class="field-error">{{ 'settings.emailV2.createRecipientDialog.field.name.errorRequired' | translate }}</small>
         }
       </div>
 
@@ -51,7 +51,7 @@
       <div class="form-group highlight-group">
         <label for="email" class="form-label">
           <i class="pi pi-at label-icon"></i>
-          Email Address
+          {{ 'settings.emailV2.createRecipientDialog.field.email.label' | translate }}
           <span class="required-indicator">*</span>
         </label>
         <div class="input-wrapper">
@@ -61,7 +61,7 @@
             pInputText
             formControlName="email"
             class="input-full"
-            placeholder="Enter email address..."
+            [placeholder]="'settings.emailV2.createRecipientDialog.field.email.placeholder' | translate"
             [class.filled]="emailRecipientForm.get('email')?.value"
           />
           @if (emailRecipientForm.get('email')?.value && emailRecipientForm.get('email')?.valid) {
@@ -69,7 +69,7 @@
           }
         </div>
         @if (emailRecipientForm.get('email')?.invalid && (emailRecipientForm.get('email')?.dirty || emailRecipientForm.get('email')?.touched)) {
-          <small class="field-error">Valid email is required.</small>
+          <small class="field-error">{{ 'settings.emailV2.createRecipientDialog.field.email.errorInvalid' | translate }}</small>
         }
       </div>
 
@@ -79,8 +79,8 @@
         <div class="checkbox-row">
           <p-checkbox formControlName="defaultRecipient" [binary]="true" inputId="defaultRecipient"></p-checkbox>
           <label for="defaultRecipient" class="checkbox-label">
-            <span class="checkbox-title">Default Recipient</span>
-            <span class="checkbox-description">Set as default recipient for all notifications</span>
+            <span class="checkbox-title">{{ 'settings.emailV2.createRecipientDialog.field.defaultRecipient.title' | translate }}</span>
+            <span class="checkbox-description">{{ 'settings.emailV2.createRecipientDialog.field.defaultRecipient.description' | translate }}</span>
           </label>
         </div>
       </div>
@@ -91,25 +91,25 @@
         @if (emailRecipientForm.invalid) {
           <div class="validation-message error">
             <i class="pi pi-exclamation-circle"></i>
-            <span>Please fill in all required fields</span>
+            <span>{{ 'settings.emailV2.createRecipientDialog.validation.invalid' | translate }}</span>
           </div>
         } @else {
           <div class="validation-message success">
             <i class="pi pi-check-circle"></i>
-            <span>Ready to add recipient</span>
+            <span>{{ 'settings.emailV2.createRecipientDialog.validation.valid' | translate }}</span>
           </div>
         }
       </div>
       <div class="footer-actions">
         <p-button
-          label="Cancel"
+          [label]="'common.cancel' | translate"
           severity="secondary"
           [outlined]="true"
           (onClick)="closeDialog()"
           type="button"
         />
         <p-button
-          label="Add Recipient"
+          [label]="'settings.emailV2.createRecipientDialog.action.addRecipient' | translate"
           icon="pi pi-plus"
           severity="success"
           type="submit"

@@ -25,6 +25,7 @@ import {Tooltip} from "primeng/tooltip";
 import {Divider} from "primeng/divider";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Component, inject, OnDestroy} from '@angular/core';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: "app-series-page",
@@ -48,7 +49,8 @@ import {Component, inject, OnDestroy} from '@angular/core';
     VirtualScrollerModule,
     TieredMenu,
     Tooltip,
-    Divider
+    Divider,
+    TranslateModule
   ],
   animations: [
     trigger('slideInOut', [

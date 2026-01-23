@@ -5,24 +5,21 @@ import {MessageService} from 'primeng/api';
 import {Observable, Subject} from 'rxjs';
 import {FormsModule} from '@angular/forms';
 import {filter, takeUntil} from 'rxjs/operators';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sidebar-sorting-preferences',
   imports: [
     Select,
-    FormsModule
+    FormsModule,
+    TranslateModule
   ],
   templateUrl: './sidebar-sorting-preferences.component.html',
   styleUrl: './sidebar-sorting-preferences.component.scss'
 })
 export class SidebarSortingPreferencesComponent implements OnInit, OnDestroy {
 
-  readonly sortingOptions = [
-    {label: 'Name | Ascending', value: {field: 'name', order: 'asc'}},
-    {label: 'Name | Descending', value: {field: 'name', order: 'desc'}},
-    {label: 'Creation Date | Ascending', value: {field: 'id', order: 'asc'}},
-    {label: 'Creation Date | Descending', value: {field: 'id', order: 'desc'}},
-  ];
+  sortingOptions: {label: string; value: {field: string; order: 'asc' | 'desc'}}[] = [];
 
   selectedLibrarySorting: SidebarLibrarySorting = {field: 'id', order: 'asc'};
   selectedShelfSorting: SidebarShelfSorting = {field: 'id', order: 'asc'};
@@ -30,12 +27,16 @@ export class SidebarSortingPreferencesComponent implements OnInit, OnDestroy {
 
   private readonly userService = inject(UserService);
   private readonly messageService = inject(MessageService);
+  private readonly translateService = inject(TranslateService);
   private readonly destroy$ = new Subject<void>();
 
   userData$: Observable<UserState> = this.userService.userState$;
   private currentUser: User | null = null;
 
   ngOnInit(): void {
+    this.rebuildOptions();
+    this.translateService.onLangChange.pipe(takeUntil(this.destroy$)).subscribe(() => this.rebuildOptions());
+
     this.userData$.pipe(
       filter(userState => !!userState?.user && userState.loaded),
       takeUntil(this.destroy$)
@@ -69,8 +70,8 @@ export class SidebarSortingPreferencesComponent implements OnInit, OnDestroy {
     this.userService.updateUserSetting(this.currentUser.id, rootKey, updatedValue);
     this.messageService.add({
       severity: 'success',
-      summary: 'Preferences Updated',
-      detail: 'Your preferences have been saved successfully.',
+      summary: this.translateService.instant('settings.toast.preferencesUpdated.summary'),
+      detail: this.translateService.instant('settings.toast.preferencesUpdated.detail'),
       life: 1500
     });
   }
@@ -85,5 +86,14 @@ export class SidebarSortingPreferencesComponent implements OnInit, OnDestroy {
 
   onMagicShelfSortingChange() {
     this.updatePreference(['sidebarMagicShelfSorting'], this.selectedMagicShelfSorting);
+  }
+
+  private rebuildOptions(): void {
+    this.sortingOptions = [
+      {label: this.translateService.instant('settings.sidebarSortingPreferences.option.nameAsc'), value: {field: 'name', order: 'asc'}},
+      {label: this.translateService.instant('settings.sidebarSortingPreferences.option.nameDesc'), value: {field: 'name', order: 'desc'}},
+      {label: this.translateService.instant('settings.sidebarSortingPreferences.option.creationDateAsc'), value: {field: 'id', order: 'asc'}},
+      {label: this.translateService.instant('settings.sidebarSortingPreferences.option.creationDateDesc'), value: {field: 'id', order: 'desc'}},
+    ];
   }
 }

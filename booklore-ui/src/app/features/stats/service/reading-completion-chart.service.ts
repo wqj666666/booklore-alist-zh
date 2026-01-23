@@ -1,11 +1,13 @@
 import {inject, Injectable, OnDestroy} from '@angular/core';
-import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, EMPTY, Observable, Subject} from 'rxjs';
 import {catchError, filter, first, map, switchMap, takeUntil} from 'rxjs/operators';
 import {LibraryFilterService} from './library-filter.service';
 import {BookService} from '../../book/service/book.service';
 import {Book, ReadStatus} from '../../book/model/book.model';
 import {BookState} from '../../book/model/state/book-state.model';
 import {ChartConfiguration, ChartData, TooltipItem} from 'chart.js';
+import {TranslateService} from '@ngx-translate/core';
+import {LanguageService} from '../../../core/i18n/language.service';
 
 interface CompletionStats {
   category: string;
@@ -39,110 +41,23 @@ type CompletionChartData = ChartData<'bar', number[], string>;
 export class ReadingCompletionChartService implements OnDestroy {
   private readonly bookService = inject(BookService);
   private readonly libraryFilterService = inject(LibraryFilterService);
+  private readonly translateService = inject(TranslateService);
+  private readonly languageService = inject(LanguageService);
   private readonly destroy$ = new Subject<void>();
 
   public readonly completionChartType = 'bar' as const;
 
-  public readonly completionChartOptions: ChartConfiguration<'bar'>['options'] = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      x: {
-        stacked: true,
-        ticks: {
-          color: '#ffffff',
-          font: {size: 10},
-          maxRotation: 45,
-          minRotation: 0
-        },
-        grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
-        },
-        title: {
-          display: true,
-          text: 'Categories',
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11
-          },
-        }
-      },
-      y: {
-        stacked: true,
-        beginAtZero: true,
-        ticks: {
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11
-          },
-          stepSize: 1,
-          maxTicksLimit: 25
-        },
-        grid: {
-          color: 'rgba(255, 255, 255, 0.05)'
-        },
-        title: {
-          display: true,
-          text: 'Number of Books',
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11.5
-          },
-        }
-      }
-    },
-    plugins: {
-      legend: {
-        display: true,
-        position: 'top',
-        labels: {
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 10
-          },
-          padding: 15,
-          boxWidth: 12
-        }
-      },
-      tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.9)',
-        titleColor: '#ffffff',
-        bodyColor: '#ffffff',
-        borderColor: '#ffffff',
-        borderWidth: 1,
-        cornerRadius: 6,
-        displayColors: true,
-        padding: 12,
-        titleFont: {size: 14, weight: 'bold'},
-        bodyFont: {size: 12},
-        callbacks: {
-          title: (context) => {
-            const dataIndex = context[0].dataIndex;
-            const stats = this.getLastCalculatedStats();
-            return stats[dataIndex]?.category || 'Unknown Category';
-          },
-          label: this.formatTooltipLabel.bind(this)
-        }
-      }
-    },
-    interaction: {
-      intersect: false,
-      mode: 'index'
-    }
-  };
+  public completionChartOptions: ChartConfiguration<'bar'>['options'] = this.buildOptions();
 
   private readonly completionChartDataSubject = new BehaviorSubject<CompletionChartData>({
     labels: [],
     datasets: Object.values(ReadStatus).map(status => ({
       label: this.formatReadStatusLabel(status),
+      readStatus: status,
       data: [],
       backgroundColor: READ_STATUS_COLORS[status],
       ...CHART_DEFAULTS
-    }))
+    })) as any
   });
 
   public readonly completionChartData$: Observable<CompletionChartData> =
@@ -156,9 +71,10 @@ export class ReadingCompletionChartService implements OnDestroy {
         filter(state => state.loaded),
         first(),
         switchMap(() =>
-          this.libraryFilterService.selectedLibrary$.pipe(
-            takeUntil(this.destroy$)
-          )
+          combineLatest([
+            this.libraryFilterService.selectedLibrary$,
+            this.languageService.language$
+          ]).pipe(takeUntil(this.destroy$))
         ),
         catchError((error) => {
           console.error('Error processing completion stats:', error);
@@ -166,6 +82,7 @@ export class ReadingCompletionChartService implements OnDestroy {
         })
       )
       .subscribe(() => {
+        this.completionChartOptions = this.buildOptions();
         const stats = this.calculateCompletionStats();
         this.updateChartData(stats);
       });
@@ -191,10 +108,11 @@ export class ReadingCompletionChartService implements OnDestroy {
 
       const datasets = Object.values(ReadStatus).map(status => ({
         label: this.formatReadStatusLabel(status),
+        readStatus: status,
         data: topCategories.map(s => s.readStatusCounts[status] || 0),
         backgroundColor: READ_STATUS_COLORS[status],
         ...CHART_DEFAULTS
-      }));
+      })) as any;
 
       this.completionChartDataSubject.next({
         labels,
@@ -241,7 +159,7 @@ export class ReadingCompletionChartService implements OnDestroy {
     }>();
 
     books.forEach(book => {
-      const categories = book.metadata?.categories || ['Uncategorized'];
+      const categories = book.metadata?.categories || [this.translateService.instant('stats.library.chart.common.uncategorized')];
 
       categories.forEach(category => {
         if (!categoryMap.has(category)) {
@@ -273,9 +191,18 @@ export class ReadingCompletionChartService implements OnDestroy {
   }
 
   private formatReadStatusLabel(status: ReadStatus): string {
-    return status.split('_').map(word =>
-      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-    ).join(' ');
+    const statusKeyMapping: Record<ReadStatus, string> = {
+      [ReadStatus.UNREAD]: 'stats.user.readStatus.status.unread',
+      [ReadStatus.READING]: 'stats.user.readStatus.status.currentlyReading',
+      [ReadStatus.RE_READING]: 'stats.user.readStatus.status.rereading',
+      [ReadStatus.READ]: 'stats.user.readStatus.status.read',
+      [ReadStatus.PARTIALLY_READ]: 'stats.user.readStatus.status.partiallyRead',
+      [ReadStatus.PAUSED]: 'stats.user.readStatus.status.paused',
+      [ReadStatus.WONT_READ]: 'stats.user.readStatus.status.wontRead',
+      [ReadStatus.ABANDONED]: 'stats.user.readStatus.status.abandoned',
+      [ReadStatus.UNSET]: 'stats.user.readStatus.status.noStatus'
+    };
+    return this.translateService.instant(statusKeyMapping[status] || 'stats.user.readStatus.status.unknown');
   }
 
   private formatTooltipLabel(context: TooltipItem<'bar'>): string {
@@ -283,14 +210,116 @@ export class ReadingCompletionChartService implements OnDestroy {
     const stats = this.getLastCalculatedStats();
 
     if (!stats || dataIndex >= stats.length) {
-      return `${context.parsed.y} books`;
+      return this.translateService.instant(
+        context.parsed.y === 1 ? 'stats.library.units.bookCountOne' : 'stats.library.units.bookCountMany',
+        {count: context.parsed.y}
+      );
     }
 
-    const category = stats[dataIndex];
     const value = context.parsed.y;
-    const datasetLabel = context.dataset.label;
+    const datasetLabel = String(context.dataset.label ?? '');
+    const countLabel = this.translateService.instant(
+      value === 1 ? 'stats.library.units.bookCountOne' : 'stats.library.units.bookCountMany',
+      {count: value}
+    );
+    return this.translateService.instant('stats.library.chart.topCategories.tooltipLabel', {
+      status: datasetLabel,
+      countLabel
+    });
+  }
 
-    return `${datasetLabel}: ${value}`;
+  private buildOptions(): ChartConfiguration<'bar'>['options'] {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          stacked: true,
+          ticks: {
+            color: '#ffffff',
+            font: {size: 10},
+            maxRotation: 45,
+            minRotation: 0
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.1)'
+          },
+          title: {
+            display: true,
+            text: this.translateService.instant('stats.library.chart.topCategories.axis.xTitle'),
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11
+            },
+          }
+        },
+        y: {
+          stacked: true,
+          beginAtZero: true,
+          ticks: {
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11
+            },
+            stepSize: 1,
+            maxTicksLimit: 25
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.05)'
+          },
+          title: {
+            display: true,
+            text: this.translateService.instant('stats.library.chart.common.axis.numberOfBooks'),
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11.5
+            },
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          labels: {
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 10
+            },
+            padding: 15,
+            boxWidth: 12
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.9)',
+          titleColor: '#ffffff',
+          bodyColor: '#ffffff',
+          borderColor: '#ffffff',
+          borderWidth: 1,
+          cornerRadius: 6,
+          displayColors: true,
+          padding: 12,
+          titleFont: {size: 14, weight: 'bold'},
+          bodyFont: {size: 12},
+          callbacks: {
+            title: (context) => {
+              const dataIndex = context[0].dataIndex;
+              const stats = this.getLastCalculatedStats();
+              return stats[dataIndex]?.category || this.translateService.instant('stats.library.chart.common.unknownCategory');
+            },
+            label: this.formatTooltipLabel.bind(this)
+          }
+        }
+      },
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      }
+    };
   }
 
   private getLastCalculatedStats(): CompletionStats[] {

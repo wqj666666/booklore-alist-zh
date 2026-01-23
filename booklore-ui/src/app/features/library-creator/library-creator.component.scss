@@ -853,7 +853,7 @@
 
 .folder-card {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 0.75rem;
   padding: 0.875rem;
   background: var(--ground-background);
@@ -863,13 +863,23 @@
 
   &:hover {
     border-color: var(--primary-color);
-    transform: translateX(3px);
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 
     .folder-icon {
       color: var(--primary-color);
       transform: scale(1.08);
     }
+  }
+
+  &.alist-enabled {
+    border-color: var(--p-blue-500);
+    background: linear-gradient(135deg, var(--ground-background) 0%, rgba(59, 130, 246, 0.05) 100%);
+  }
+
+  .folder-card-main {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
   }
 
   .folder-icon-section {
@@ -947,9 +957,96 @@
     }
   }
 
-  @media (max-width: 640px) {
+  .folder-storage-config {
+    display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    gap: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--border-color);
+  }
+
+  .storage-type-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+
+    .storage-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-secondary-color);
+      min-width: 60px;
+    }
+
+    .storage-options {
+      display: flex;
+      gap: 0.5rem;
+
+      .storage-option {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.375rem 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        background: var(--overlay-background);
+        color: var(--text-secondary-color);
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        i {
+          font-size: 0.875rem;
+        }
+
+        &:hover {
+          border-color: var(--primary-color);
+          color: var(--primary-color);
+        }
+
+        &.active {
+          background: var(--primary-color);
+          border-color: var(--primary-color);
+          color: var(--primary-contrast-color);
+
+          i {
+            color: var(--primary-contrast-color);
+          }
+        }
+      }
+    }
+  }
+
+  .alist-path-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+
+    .alist-path-label {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--p-blue-500);
+
+      i {
+        font-size: 0.875rem;
+      }
+    }
+
+    .alist-path-field {
+      width: 100%;
+      font-size: 0.875rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .folder-card-main {
+      flex-direction: column;
+      align-items: flex-start;
+    }
 
     .folder-icon-section {
       align-self: flex-start;
@@ -957,6 +1054,12 @@
 
     .folder-details {
       width: 100%;
+    }
+
+    .storage-type-toggle {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
     }
   }
 
@@ -988,6 +1091,35 @@
 
       .folder-meta {
         font-size: 0.65rem;
+      }
+    }
+
+    .folder-storage-config {
+      padding-top: 0.5rem;
+    }
+
+    .storage-type-toggle {
+      .storage-label {
+        font-size: 0.75rem;
+      }
+
+      .storage-options .storage-option {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+
+        i {
+          font-size: 0.75rem;
+        }
+      }
+    }
+
+    .alist-path-input {
+      .alist-path-label {
+        font-size: 0.75rem;
+      }
+
+      .alist-path-field {
+        font-size: 0.8rem;
       }
     }
   }

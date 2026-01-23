@@ -1,6 +1,6 @@
 import {Component, HostListener, inject, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {CommonModule, Location} from '@angular/common';
+import {Location} from '@angular/common';
 import {PageTitleService} from "../../../shared/service/page-title.service";
 import {CbxReaderService} from '../../book/service/cbx-reader.service';
 import {BookService} from '../../book/service/book.service';
@@ -23,12 +23,13 @@ import {ProgressSpinner} from 'primeng/progressspinner';
 import {FormsModule} from "@angular/forms";
 import {NewPdfReaderService} from '../../book/service/new-pdf-reader.service';
 import {ReadingSessionService} from '../../../shared/service/reading-session.service';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 
 @Component({
   selector: 'app-cbx-reader',
   standalone: true,
-  imports: [ProgressSpinner, FormsModule],
+  imports: [ProgressSpinner, FormsModule, TranslateModule],
   templateUrl: './cbx-reader.component.html',
   styleUrl: './cbx-reader.component.scss'
 })
@@ -63,6 +64,7 @@ export class CbxReaderComponent implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
   private pageTitle = inject(PageTitleService);
   private readingSessionService = inject(ReadingSessionService);
+  private translate = inject(TranslateService);
 
 
   showFitModeDropdown: boolean = false;
@@ -70,11 +72,11 @@ export class CbxReaderComponent implements OnInit, OnDestroy {
   showFitModeSubmenu: boolean = false;
 
   fitModeOptions = [
-    {value: CbxFitMode.FIT_PAGE, label: 'Fit Page', icon: '⬜'},
-    {value: CbxFitMode.FIT_WIDTH, label: 'Fit Width', icon: '↔️'},
-    {value: CbxFitMode.FIT_HEIGHT, label: 'Fit Height', icon: '↕️'},
-    {value: CbxFitMode.ACTUAL_SIZE, label: 'Actual Size', icon: '1:1'},
-    {value: CbxFitMode.AUTO, label: 'Automatic', icon: '🔄'}
+    {value: CbxFitMode.FIT_PAGE, labelKey: 'readers.cbx.fitMode.fitPage', icon: '⬜'},
+    {value: CbxFitMode.FIT_WIDTH, labelKey: 'readers.cbx.fitMode.fitWidth', icon: '↔️'},
+    {value: CbxFitMode.FIT_HEIGHT, labelKey: 'readers.cbx.fitMode.fitHeight', icon: '↕️'},
+    {value: CbxFitMode.ACTUAL_SIZE, labelKey: 'readers.cbx.fitMode.actualSize', icon: '1:1'},
+    {value: CbxFitMode.AUTO, labelKey: 'readers.cbx.fitMode.automatic', icon: '🔄'}
   ];
 
   scrollMode: CbxScrollMode = CbxScrollMode.PAGINATED;
@@ -173,15 +175,17 @@ export class CbxReaderComponent implements OnInit, OnDestroy {
               this.readingSessionService.startSession(this.bookId, "CBX", (this.currentPage + 1).toString(), percentage);
             },
             error: (err) => {
-              const errorMessage = err?.error?.message || 'Failed to load pages';
-              this.messageService.add({severity: 'error', summary: 'Error', detail: errorMessage});
+              const fallbackDetail = this.translate.instant('readers.cbx.toast.loadPagesFailedFallback');
+              const detail = err?.error?.message || fallbackDetail;
+              this.messageService.add({severity: 'error', summary: this.translate.instant('readers.toast.errorSummary'), detail});
               this.isLoading = false;
             }
           });
         },
         error: (err) => {
-          const errorMessage = err?.error?.message || 'Failed to load the book';
-          this.messageService.add({severity: 'error', summary: 'Error', detail: errorMessage});
+          const fallbackDetail = this.translate.instant('readers.cbx.toast.loadBookFailedFallback');
+          const detail = err?.error?.message || fallbackDetail;
+          this.messageService.add({severity: 'error', summary: this.translate.instant('readers.toast.errorSummary'), detail});
           this.isLoading = false;
         }
       });
@@ -578,7 +582,12 @@ export class CbxReaderComponent implements OnInit, OnDestroy {
 
   private handleSwipeGesture() {
     const delta = this.touchEndX - this.touchStartX;
-    if (Math.abs(delta) >= 50) delta < 0 ? this.nextPage() : this.previousPage();
+    if (Math.abs(delta) < 50) return;
+    if (delta < 0) {
+      this.nextPage();
+    } else {
+      this.previousPage();
+    }
   }
 
   private enforcePortraitSinglePageView() {
@@ -690,13 +699,17 @@ export class CbxReaderComponent implements OnInit, OnDestroy {
   }
 
   getPreviousBookTooltip(): string {
-    if (!this.previousBookInSeries) return 'No Previous Book';
-    return `Previous Book: ${this.getBookDisplayTitle(this.previousBookInSeries)}`;
+    if (!this.previousBookInSeries) return this.translate.instant('readers.cbx.series.noPreviousBookTooltip');
+    return this.translate.instant('readers.cbx.series.previousBookTooltip', {
+      title: this.getBookDisplayTitle(this.previousBookInSeries)
+    });
   }
 
   getNextBookTooltip(): string {
-    if (!this.nextBookInSeries) return 'No Next Book';
-    return `Next Book: ${this.getBookDisplayTitle(this.nextBookInSeries)}`;
+    if (!this.nextBookInSeries) return this.translate.instant('readers.cbx.series.noNextBookTooltip');
+    return this.translate.instant('readers.cbx.series.nextBookTooltip', {
+      title: this.getBookDisplayTitle(this.nextBookInSeries)
+    });
   }
 
   ngOnDestroy(): void {

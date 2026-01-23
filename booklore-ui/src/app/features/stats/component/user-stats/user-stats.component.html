@@ -3,11 +3,11 @@
     <div class="header-content">
       <div class="greeting">
         <i class="pi pi-chart-line"></i>
-        <h2>{{ userName }}'s Reading Statistics</h2>
+        <h2>{{ 'stats.user.title' | translate:{name: userName} }}</h2>
       </div>
       <button class="config-toggle-btn" (click)="toggleConfigPanel()">
         <i class="pi pi-cog"></i>
-        <span>Customize Layout</span>
+        <span>{{ 'stats.user.actions.customizeLayout' | translate }}</span>
       </button>
     </div>
   </div>
@@ -19,7 +19,7 @@
     [resizable]="false"
     [style]="{width: '600px', maxWidth: '90vw'}"
     styleClass="config-dialog"
-    header="Chart Configuration">
+    [header]="'stats.user.config.header' | translate">
 
     <div class="config-dialog-content">
       <div class="config-list" cdkDropList (cdkDropListDropped)="drop($event)">
@@ -28,7 +28,7 @@
             <div class="drag-handle" cdkDragHandle>
               <i class="pi pi-bars"></i>
             </div>
-            <span class="chart-title">{{ chart.title }}</span>
+            <span class="chart-title">{{ chart.title | translate }}</span>
             <button
               class="visibility-toggle"
               (click)="toggleChart(chart.id)"
@@ -43,18 +43,18 @@
     <ng-template pTemplate="footer">
       <p-button class="reset-btn" (click)="resetLayout()" severity="danger">
         <i class="pi pi-refresh"></i>
-        <span>Reset Layout</span>
+        <span>{{ 'stats.user.actions.resetLayout' | translate }}</span>
       </p-button>
       <p-button class="hide-all-btn" (click)="hideAllCharts()" severity="secondary">
         <i class="pi pi-eye-slash"></i>
-        <span>Hide All</span>
+        <span>{{ 'stats.user.actions.hideAll' | translate }}</span>
       </p-button>
       <p-button class="show-all-btn" (click)="showAllCharts()" severity="secondary">
         <i class="pi pi-eye"></i>
-        <span>Show All</span>
+        <span>{{ 'stats.user.actions.showAll' | translate }}</span>
       </p-button>
       <p-button class="close-btn" (click)="toggleConfigPanel()" severity="secondary">
-        <span>Close</span>
+        <span>{{ 'common.close' | translate }}</span>
       </p-button>
     </ng-template>
   </p-dialog>

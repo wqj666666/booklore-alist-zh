@@ -2,10 +2,10 @@
   <div class="settings-header">
     <h2 class="settings-title">
       <i class="pi pi-sliders-h"></i>
-      Metadata Settings
+      {{ 'settings.metadata.title' | translate }}
     </h2>
     <p class="settings-description">
-      Configure how metadata is retrieved, stored, and managed for your books. Set up automatic downloads, persistence options, and provider preferences.
+      {{ 'settings.metadata.description' | translate }}
     </p>
   </div>
 
@@ -14,7 +14,7 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-download"></i>
-          Auto-Download Metadata
+          {{ 'settings.metadata.section.autoDownload.title' | translate }}
         </h3>
       </div>
 
@@ -22,7 +22,7 @@
         <div class="setting-item">
           <div class="setting-info">
             <div class="setting-label-row">
-              <label class="setting-label">Auto-Download for BookDrop Files</label>
+              <label class="setting-label">{{ 'settings.metadata.section.autoDownload.bookdrop.label' | translate }}</label>
               <p-toggleswitch
                 [(ngModel)]="metadataDownloadOnBookdrop"
                 (onChange)="onMetadataDownloadOnBookdropToggle($event.checked)">
@@ -30,7 +30,7 @@
             </div>
             <p class="setting-description">
               <i class="pi pi-exclamation-triangle"></i>
-              Automatically downloads metadata from your configured sources (Amazon, Goodreads, etc.) when files are added to the Bookdrop folder. Use with caution if adding many files at once as metadata fetching can take time.
+              {{ 'settings.metadata.section.autoDownload.bookdrop.description' | translate }}
             </p>
           </div>
         </div>
@@ -45,7 +45,7 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-cloud"></i>
-          Metadata Providers
+          {{ 'settings.metadata.section.providers.title' | translate }}
         </h3>
       </div>
 
@@ -58,7 +58,7 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-star"></i>
-          Public Reviews
+          {{ 'settings.metadata.section.publicReviews.title' | translate }}
         </h3>
       </div>
 
@@ -71,7 +71,7 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-sliders-h"></i>
-          Metadata Match Weights
+          {{ 'settings.metadata.section.matchWeights.title' | translate }}
         </h3>
       </div>
 

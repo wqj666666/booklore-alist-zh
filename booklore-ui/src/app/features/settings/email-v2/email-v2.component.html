@@ -2,11 +2,11 @@
   <div class="settings-header">
     <h2 class="settings-title">
       <i class="pi pi-envelope"></i>
-      Email Configuration
+      {{ 'settings.emailV2.title' | translate }}
       <app-external-doc-link docType="email"></app-external-doc-link>
     </h2>
     <p class="settings-description">
-      Configure email settings to send books directly to your devices or recipients. Set up email providers (like Gmail, Outlook, or custom SMTP servers) and manage recipient email addresses.
+      {{ 'settings.emailV2.description' | translate }}
     </p>
   </div>
 
@@ -22,11 +22,11 @@
     <div class="access-denied-card">
       <i class="pi pi-lock"></i>
       <div class="access-denied-content">
-        <h3>Access Restricted</h3>
+        <h3>{{ 'settings.emailV2.accessDenied.title' | translate }}</h3>
         <p>
-          Access to Email Configuration is restricted.
+          {{ 'settings.emailV2.accessDenied.line1' | translate }}
           <br>
-          Please contact your administrator to request permission.
+          {{ 'settings.emailV2.accessDenied.line2' | translate }}
         </p>
       </div>
     </div>

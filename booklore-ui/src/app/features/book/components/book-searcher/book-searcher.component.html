@@ -8,7 +8,7 @@
       (input)="onSearchInputChange()"
       (focus)="isSearchFocused = true"
       (blur)="onSearchBlur()"
-      placeholder="Title, Author, Series, Genre, or ISBN..."
+      [placeholder]="'book.searcher.placeholder' | translate"
       class="search-input"
     />
     @if (searchQuery) {
@@ -18,7 +18,7 @@
         [text]="true"
         [rounded]="true"
         class="clear-search-btn"
-        aria-label="Clear Search">
+        [attr.aria-label]="'book.searcher.a11y.clearSearch' | translate">
       </p-button>
     }
   </p-iconfield>
@@ -34,7 +34,7 @@
             <div class="search-item-content">
               <img
                 [attr.src]="urlHelper.getThumbnailUrl(book.id, book.metadata?.coverUpdatedOn)"
-                alt="Book Cover"
+                [attr.alt]="'book.searcher.a11y.bookCoverAlt' | translate"
                 class="search-book-cover"
               />
               <div class="search-book-details">

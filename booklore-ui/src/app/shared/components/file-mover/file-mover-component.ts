@@ -15,6 +15,7 @@ import {LibraryService} from "../../../features/book/service/library.service";
 import {AppSettingsService} from '../../service/app-settings.service';
 import {Select} from 'primeng/select';
 import {Library, LibraryPath} from '../../../features/book/model/library.model';
+import {TranslateModule} from '@ngx-translate/core';
 
 interface FilePreview {
   bookId: number;
@@ -36,7 +37,7 @@ interface FilePreview {
 @Component({
   selector: 'app-file-mover-component',
   standalone: true,
-  imports: [Button, FormsModule, TableModule, Divider, Select],
+  imports: [Button, FormsModule, TableModule, Divider, Select, TranslateModule],
   templateUrl: './file-mover-component.html',
   styleUrl: './file-mover-component.scss'
 })

@@ -27,6 +27,7 @@ import {BookNavigationService} from '../../../../book/service/book-navigation.se
 import {BookMetadataHostService} from '../../../../../shared/service/book-metadata-host.service';
 import {Router} from '@angular/router';
 import {UserService} from '../../../../settings/user-management/user.service';
+import {TranslateModule, TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: "app-metadata-editor",
@@ -48,6 +49,7 @@ import {UserService} from '../../../../settings/user-management/user.service';
     Textarea,
     Image,
     LazyLoadImageModule,
+    TranslateModule,
   ],
 })
 export class MetadataEditorComponent implements OnInit {
@@ -69,6 +71,7 @@ export class MetadataEditorComponent implements OnInit {
   private metadataHostService = inject(BookMetadataHostService);
   private router = inject(Router);
   private userService = inject(UserService);
+  private translateService = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
   metadataForm: FormGroup;
@@ -431,8 +434,8 @@ export class MetadataEditorComponent implements OnInit {
           this.isSaving = false;
           this.messageService.add({
             severity: "info",
-            summary: "Success",
-            detail: "Book metadata updated",
+            summary: this.translateService.instant("metadata.editor.toast.saveSuccess.summary"),
+            detail: this.translateService.instant("metadata.editor.toast.saveSuccess.detail"),
           });
           this.prepareAutoComplete();
         },
@@ -440,8 +443,8 @@ export class MetadataEditorComponent implements OnInit {
           this.isSaving = false;
           this.messageService.add({
             severity: "error",
-            summary: "Error",
-            detail: err?.error?.message || "Failed to update book metadata",
+            summary: this.translateService.instant("metadata.editor.toast.saveFailed.summary"),
+            detail: err?.error?.message || this.translateService.instant("metadata.editor.toast.saveFailed.detail"),
           });
         },
       });
@@ -625,20 +628,24 @@ export class MetadataEditorComponent implements OnInit {
           if (shouldLockAllFields !== undefined) {
             this.messageService.add({
               severity: "success",
-              summary: shouldLockAllFields
-                ? "Metadata Locked"
-                : "Metadata Unlocked",
-              detail: shouldLockAllFields
-                ? "All fields have been successfully locked."
-                : "All fields have been successfully unlocked.",
+              summary: this.translateService.instant(
+                shouldLockAllFields
+                  ? "metadata.editor.toast.lockAllSuccess.summary"
+                  : "metadata.editor.toast.unlockAllSuccess.summary"
+              ),
+              detail: this.translateService.instant(
+                shouldLockAllFields
+                  ? "metadata.editor.toast.lockAllSuccess.detail"
+                  : "metadata.editor.toast.unlockAllSuccess.detail"
+              ),
             });
           }
         },
         error: () => {
           this.messageService.add({
             severity: "error",
-            summary: "Error",
-            detail: "Failed to update lock state",
+            summary: this.translateService.instant("metadata.editor.toast.lockUpdateFailed.summary"),
+            detail: this.translateService.instant("metadata.editor.toast.lockUpdateFailed.detail"),
           });
         },
       });
@@ -661,8 +668,8 @@ export class MetadataEditorComponent implements OnInit {
       this.isUploading = false;
       this.messageService.add({
         severity: "error",
-        summary: "Upload Failed",
-        detail: "An error occurred while uploading the cover",
+        summary: this.translateService.instant("metadata.editor.toast.uploadFailed.summary"),
+        detail: this.translateService.instant("metadata.editor.toast.uploadFailed.detail"),
         life: 3000,
       });
     }
@@ -672,8 +679,8 @@ export class MetadataEditorComponent implements OnInit {
     this.isUploading = false;
     this.messageService.add({
       severity: "error",
-      summary: "Upload Error",
-      detail: "An error occurred while uploading the cover",
+      summary: this.translateService.instant("metadata.editor.toast.uploadFailed.summary"),
+      detail: this.translateService.instant("metadata.editor.toast.uploadFailed.detail"),
       life: 3000,
     });
   }
@@ -686,15 +693,15 @@ export class MetadataEditorComponent implements OnInit {
             this.bookService.handleBookUpdate(updatedBook);
             this.messageService.add({
               severity: "success",
-              summary: "Success",
-              detail: "Book cover regenerated successfully.",
+              summary: this.translateService.instant("metadata.editor.toast.coverRegenerated.summary"),
+              detail: this.translateService.instant("metadata.editor.toast.coverRegenerated.detail"),
             });
           },
           error: () => {
             this.messageService.add({
               severity: "warning",
-              summary: "Partial Success",
-              detail: "Cover regenerated but failed to refresh display. Please refresh the page.",
+              summary: this.translateService.instant("metadata.editor.toast.coverRegeneratedPartial.summary"),
+              detail: this.translateService.instant("metadata.editor.toast.coverRegeneratedPartial.detail"),
             });
           },
         });
@@ -713,15 +720,15 @@ export class MetadataEditorComponent implements OnInit {
               this.bookService.handleBookUpdate(updatedBook);
               this.messageService.add({
                 severity: "success",
-                summary: "Success",
-                detail: "Custom cover generated successfully.",
+                summary: this.translateService.instant("metadata.editor.toast.customCoverGenerated.summary"),
+                detail: this.translateService.instant("metadata.editor.toast.customCoverGenerated.detail"),
               });
             },
             error: () => {
               this.messageService.add({
                 severity: "warning",
-                summary: "Partial Success",
-                detail: "Cover generated but failed to refresh display. Please refresh the page.",
+                summary: this.translateService.instant("metadata.editor.toast.customCoverGeneratedPartial.summary"),
+                detail: this.translateService.instant("metadata.editor.toast.customCoverGeneratedPartial.detail"),
               });
             },
           });
@@ -729,8 +736,8 @@ export class MetadataEditorComponent implements OnInit {
         error: (err) => {
           this.messageService.add({
             severity: "error",
-            summary: "Error",
-            detail: "Failed to generate custom cover",
+            summary: this.translateService.instant("metadata.editor.toast.customCoverGenerateFailed.summary"),
+            detail: this.translateService.instant("metadata.editor.toast.customCoverGenerateFailed.detail"),
           });
         }
       });

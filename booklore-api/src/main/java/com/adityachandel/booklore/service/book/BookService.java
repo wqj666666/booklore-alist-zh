@@ -21,6 +21,8 @@ import com.adityachandel.booklore.model.enums.BookFileType;
 import com.adityachandel.booklore.model.enums.ReadStatus;
 import com.adityachandel.booklore.repository.*;
 import com.adityachandel.booklore.service.monitoring.MonitoringRegistrationService;
+import com.adityachandel.booklore.service.storage.StorageBackend;
+import com.adityachandel.booklore.service.storage.StorageBackendSelector;
 import com.adityachandel.booklore.service.user.UserProgressService;
 import com.adityachandel.booklore.util.FileService;
 import com.adityachandel.booklore.util.FileUtils;
@@ -35,7 +37,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -64,6 +65,7 @@ public class BookService {
     private final BookDownloadService bookDownloadService;
     private final MonitoringRegistrationService monitoringRegistrationService;
     private final BookUpdateService bookUpdateService;
+    private final StorageBackendSelector storageBackendSelector;
 
 
     private void setBookProgress(Book book, UserBookProgressEntity progress) {
@@ -309,13 +311,18 @@ public class BookService {
         return bookDownloadService.downloadBook(bookId);
     }
 
-    public ResponseEntity<ByteArrayResource> getBookContent(long bookId) throws IOException {
+    public ResponseEntity<ByteArrayResource> getBookContent(long bookId) {
         BookEntity bookEntity = bookRepository.findById(bookId).orElseThrow(() -> ApiError.BOOK_NOT_FOUND.createException(bookId));
-        try (FileInputStream inputStream = new FileInputStream(FileUtils.getBookFullPath(bookEntity))) {
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(new ByteArrayResource(inputStream.readAllBytes()));
-        }
+        
+        // 使用存储后端获取文件内容
+        StorageBackend backend = storageBackendSelector.getBackend(bookEntity);
+        String relativePath = storageBackendSelector.getRelativePath(bookEntity.getPrimaryBookFile());
+        
+        byte[] content = backend.read(relativePath);
+        
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(new ByteArrayResource(content));
     }
 
 

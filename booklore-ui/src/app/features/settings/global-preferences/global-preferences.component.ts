@@ -12,6 +12,7 @@ import {filter, take} from 'rxjs/operators';
 import {InputText} from 'primeng/inputtext';
 import {Slider} from 'primeng/slider';
 import {ExternalDocLinkComponent} from '../../../shared/components/external-doc-link/external-doc-link.component';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-global-preferences',
@@ -22,7 +23,8 @@ import {ExternalDocLinkComponent} from '../../../shared/components/external-doc-
     FormsModule,
     InputText,
     Slider,
-    ExternalDocLinkComponent
+    ExternalDocLinkComponent,
+    TranslateModule
   ],
   templateUrl: './global-preferences.component.html',
   styleUrl: './global-preferences.component.scss'
@@ -45,6 +47,7 @@ export class GlobalPreferencesComponent implements OnInit {
   private appSettingsService = inject(AppSettingsService);
   private bookService = inject(BookService);
   private messageService = inject(MessageService);
+  private translateService = inject(TranslateService);
 
   appSettings$: Observable<AppSettings | null> = this.appSettingsService.appSettings$;
   maxFileUploadSizeInMb?: number;
@@ -87,7 +90,11 @@ export class GlobalPreferencesComponent implements OnInit {
 
   saveFileSize() {
     if (!this.maxFileUploadSizeInMb || this.maxFileUploadSizeInMb <= 0) {
-      this.showMessage('error', 'Invalid Input', 'Please enter a valid max file upload size in MB.');
+      this.showMessageByKey(
+        'error',
+        'settings.application.toast.invalidInput.summary',
+        'settings.application.toast.invalidInput.detail'
+      );
       return;
     }
     this.saveSetting(AppSettingKey.MAX_FILE_UPLOAD_SIZE_IN_MB, this.maxFileUploadSizeInMb);
@@ -96,22 +103,34 @@ export class GlobalPreferencesComponent implements OnInit {
   regenerateCovers(): void {
     this.bookService.regenerateCovers().subscribe({
       next: () =>
-        this.showMessage('success', 'Cover Regeneration Started', 'Book covers are being regenerated.'),
+        this.showMessageByKey(
+          'success',
+          'settings.application.toast.coverRegenerationStarted.summary',
+          'settings.application.toast.coverRegenerationStarted.detail'
+        ),
       error: () =>
-        this.showMessage('error', 'Error', 'Failed to start cover regeneration.')
+        this.showMessageByKey(
+          'error',
+          'settings.application.toast.coverRegenerationError.summary',
+          'settings.application.toast.coverRegenerationError.detail'
+        )
     });
   }
 
   private saveSetting(key: string, value: unknown): void {
     this.appSettingsService.saveSettings([{key, newValue: value}]).subscribe({
       next: () =>
-        this.showMessage('success', 'Settings Saved', 'The settings were successfully saved!'),
+        this.showMessageByKey('success', 'settings.toast.saved.summary', 'settings.toast.saved.detail'),
       error: () =>
-        this.showMessage('error', 'Error', 'There was an error saving the settings.')
+        this.showMessageByKey('error', 'settings.toast.saveError.summary', 'settings.toast.saveError.detail')
     });
   }
 
-  private showMessage(severity: 'success' | 'error', summary: string, detail: string): void {
-    this.messageService.add({severity, summary, detail});
+  private showMessageByKey(severity: 'success' | 'error', summaryKey: string, detailKey: string): void {
+    this.messageService.add({
+      severity,
+      summary: this.translateService.instant(summaryKey),
+      detail: this.translateService.instant(detailKey)
+    });
   }
 }

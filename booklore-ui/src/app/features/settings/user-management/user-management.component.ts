@@ -22,6 +22,7 @@ import {filter, take, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {Tooltip} from 'primeng/tooltip';
 import {DialogLauncherService} from '../../../shared/services/dialog-launcher.service';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-user-management',
@@ -36,6 +37,7 @@ import {DialogLauncherService} from '../../../shared/services/dialog-launcher.se
     LowerCasePipe,
     TitleCasePipe,
     Tooltip,
+    TranslateModule,
     ButtonDirective
   ],
   templateUrl: './user-management.component.html',
@@ -47,6 +49,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   private userService = inject(UserService);
   private libraryService = inject(LibraryService);
   private messageService = inject(MessageService);
+  private translateService = inject(TranslateService);
   private readonly destroy$ = new Subject<void>();
 
   users: UserWithEditing[] = [];
@@ -105,8 +108,8 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       error: () => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to fetch users',
+          summary: this.translateService.instant('settings.userManagement.toast.fetchUsersFailed.summary'),
+          detail: this.translateService.instant('settings.userManagement.toast.fetchUsersFailed.detail'),
         });
       },
     });
@@ -149,38 +152,41 @@ export class UserManagementComponent implements OnInit, OnDestroy {
           this.loadUsers();
           this.messageService.add({
             severity: 'success',
-            summary: 'Success',
-            detail: 'User updated successfully',
+            summary: this.translateService.instant('settings.userManagement.toast.userUpdated.summary'),
+            detail: this.translateService.instant('settings.userManagement.toast.userUpdated.detail'),
           });
         },
         error: () => {
           this.messageService.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to update user',
+            summary: this.translateService.instant('settings.userManagement.toast.updateUserFailed.summary'),
+            detail: this.translateService.instant('settings.userManagement.toast.updateUserFailed.detail'),
           });
         },
       });
   }
 
   deleteUser(user: User) {
-    if (confirm(`Are you sure you want to delete ${user.username}?`)) {
+    const confirmMessage = this.translateService.instant('settings.userManagement.confirm.deleteUser.message', {username: user.username});
+    if (confirm(confirmMessage)) {
       this.userService.deleteUser(user.id).subscribe({
         next: () => {
           this.messageService.add({
             severity: 'success',
-            summary: 'Success',
-            detail: `User ${user.username} deleted successfully`,
+            summary: this.translateService.instant('settings.userManagement.toast.userDeleted.summary'),
+            detail: this.translateService.instant('settings.userManagement.toast.userDeleted.detail', {username: user.username}),
           });
           this.loadUsers();
         },
         error: (err) => {
+          const backendMessage = err?.error?.message;
+          const detail = backendMessage
+            ? this.translateService.instant('settings.userManagement.toast.deleteUserFailed.detailWithMessage', {username: user.username, message: backendMessage})
+            : this.translateService.instant('settings.userManagement.toast.deleteUserFailed.detail', {username: user.username});
           this.messageService.add({
             severity: 'error',
-            summary: 'Error',
-            detail:
-              err.error?.message ||
-              `Failed to delete user ${user.username}`,
+            summary: this.translateService.instant('settings.userManagement.toast.deleteUserFailed.summary'),
+            detail,
           });
         },
       });
@@ -197,12 +203,12 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
   submitPasswordChange() {
     if (!this.newPassword || !this.confirmNewPassword) {
-      this.passwordError = 'Both fields are required';
+      this.passwordError = this.translateService.instant('settings.userManagement.passwordDialog.error.bothFieldsRequired');
       return;
     }
 
     if (this.newPassword !== this.confirmNewPassword) {
-      this.passwordError = 'Passwords do not match';
+      this.passwordError = this.translateService.instant('settings.userManagement.passwordDialog.error.passwordsDoNotMatch');
       return;
     }
 
@@ -213,13 +219,16 @@ export class UserManagementComponent implements OnInit, OnDestroy {
           next: () => {
             this.messageService.add({
               severity: 'success',
-              summary: 'Success',
-              detail: 'Password changed successfully',
+              summary: this.translateService.instant('settings.userManagement.toast.passwordChanged.summary'),
+              detail: this.translateService.instant('settings.userManagement.toast.passwordChanged.detail'),
             });
             this.isPasswordDialogVisible = false;
           },
           error: (err) => {
-            this.passwordError = err;
+            const backendMessage = err?.error?.message;
+            this.passwordError = backendMessage
+              ? this.translateService.instant('settings.userManagement.passwordDialog.error.changeFailedWithMessage', {message: backendMessage})
+              : this.translateService.instant('settings.userManagement.passwordDialog.error.changeFailed');
           }
         });
     }

@@ -5,6 +5,7 @@ import {ReaderPreferencesService} from './reader-preferences.service';
 import {CbxFitMode, CbxPageSpread, CbxPageViewMode, PdfPageSpread, PdfPageViewMode, User, UserService} from '../user-management/user.service';
 import {MessageService} from 'primeng/api';
 import {of, Subject} from 'rxjs';
+import {TranslateService} from '@ngx-translate/core';
 
 const mockUser: User = {
   id: 1,
@@ -72,6 +73,7 @@ describe('ReaderPreferencesService', () => {
   let service: ReaderPreferencesService;
   let userServiceMock: any;
   let messageServiceMock: any;
+  let translateServiceMock: any;
   let destroy$: Subject<void>;
 
   beforeEach(() => {
@@ -83,12 +85,16 @@ describe('ReaderPreferencesService', () => {
     messageServiceMock = {
       add: vi.fn()
     };
+    translateServiceMock = {
+      instant: vi.fn((key: string) => key)
+    };
 
     TestBed.configureTestingModule({
       providers: [
         ReaderPreferencesService,
         {provide: UserService, useValue: userServiceMock},
-        {provide: MessageService, useValue: messageServiceMock}
+        {provide: MessageService, useValue: messageServiceMock},
+        {provide: TranslateService, useValue: translateServiceMock}
       ]
     });
 
@@ -153,6 +159,7 @@ describe('ReaderPreferencesService - API Contract Tests', () => {
   let service: ReaderPreferencesService;
   let userServiceMock: any;
   let messageServiceMock: any;
+  let translateServiceMock: any;
 
   beforeEach(() => {
     userServiceMock = {
@@ -162,12 +169,16 @@ describe('ReaderPreferencesService - API Contract Tests', () => {
     messageServiceMock = {
       add: vi.fn()
     };
+    translateServiceMock = {
+      instant: vi.fn((key: string) => key)
+    };
 
     TestBed.configureTestingModule({
       providers: [
         ReaderPreferencesService,
         {provide: UserService, useValue: userServiceMock},
-        {provide: MessageService, useValue: messageServiceMock}
+        {provide: MessageService, useValue: messageServiceMock},
+        {provide: TranslateService, useValue: translateServiceMock}
       ]
     });
 
@@ -207,7 +218,7 @@ describe('ReaderPreferencesService - API Contract Tests', () => {
     expect(messageServiceMock.add).toHaveBeenCalledWith(
       expect.objectContaining({
         severity: 'success',
-        summary: 'Preferences Updated'
+        summary: 'settings.toast.preferencesUpdated.summary'
       })
     );
   });

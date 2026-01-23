@@ -12,8 +12,8 @@
                 fill="white"/>
             </svg>
           </div>
-          <h1 class="login-title">Welcome Back</h1>
-          <p class="login-subtitle">Sign in to continue your journey</p>
+          <h1 class="login-title">{{ 'auth.login.title' | translate }}</h1>
+          <p class="login-subtitle">{{ 'auth.login.subtitle' | translate }}</p>
         </div>
 
         @if (showOidcBypassInfo) {
@@ -21,21 +21,21 @@
             <div class="warning-content">
               <div class="warning-header">
                 <i class="pi pi-exclamation-triangle"></i>
-                <span>OIDC Authentication Issues</span>
+                <span>{{ 'auth.login.oidcWarning.title' | translate }}</span>
               </div>
               <p class="warning-message">{{ oidcBypassMessage }}</p>
               <div class="warning-actions">
                 <p-button
                   size="small"
                   severity="warn"
-                  label="Retry OIDC"
+                  [label]="'auth.login.oidcWarning.retryOidc' | translate"
                   icon="pi pi-refresh"
                   (click)="retryOidc()"
                 />
                 <p-button
                   size="small"
                   severity="success"
-                  label="Use Local Login"
+                  [label]="'auth.login.oidcWarning.useLocalLogin' | translate"
                   icon="pi pi-times"
                   (click)="dismissOidcWarning()"
                 />
@@ -48,7 +48,7 @@
           <div class="form-field">
             <label for="username" class="form-label">
               <i class="pi pi-user"></i>
-              <span>Username</span>
+              <span>{{ 'auth.login.form.usernameLabel' | translate }}</span>
             </label>
             <input
               fluid
@@ -57,7 +57,7 @@
               name="username"
               required
               [(ngModel)]="username"
-              placeholder="Enter your username"
+              [placeholder]="'auth.login.form.usernamePlaceholder' | translate"
               class="form-input"
               autocomplete="username"
             />
@@ -66,7 +66,7 @@
           <div class="form-field">
             <label for="password" class="form-label">
               <i class="pi pi-lock"></i>
-              <span>Password</span>
+              <span>{{ 'auth.login.form.passwordLabel' | translate }}</span>
             </label>
             <p-password
               id="password"
@@ -74,7 +74,7 @@
               required
               [(ngModel)]="password"
               [feedback]="false"
-              placeholder="Enter your password"
+              [placeholder]="'auth.login.form.passwordPlaceholder' | translate"
               [toggleMask]="true"
               [fluid]="true"
               autocomplete="current-password"
@@ -84,7 +84,7 @@
           <p-button
             fluid
             type="submit"
-            label="Sign In"
+            [label]="'auth.login.actions.signIn' | translate"
             icon="pi pi-sign-in"
             [disabled]="!loginForm.valid || !username || !password"
             class="login-button">
@@ -98,13 +98,13 @@
 
           @if (oidcEnabled && !isOidcBypassed) {
             <div class="divider">
-              <span>or continue with</span>
+              <span>{{ 'auth.login.oidc.orContinueWith' | translate }}</span>
             </div>
 
             <p-button
               fluid
               severity="secondary"
-              [label]="isOidcLoginInProgress ? 'Redirecting to ' + oidcName + '...' : oidcName"
+              [label]="isOidcLoginInProgress ? ('auth.login.oidc.redirectingTo' | translate:{provider: oidcName}) : oidcName"
               [icon]="isOidcLoginInProgress ? 'pi pi-spin pi-spinner' : 'pi pi-id-card'"
               [disabled]="isOidcLoginInProgress"
               (click)="loginWithOidc()"
@@ -115,7 +115,7 @@
                 type="button"
                 class="text-link"
                 (click)="bypassOidc()">
-                Having trouble with {{ oidcName }}? Use local login
+                {{ 'auth.login.oidc.havingTroubleUseLocal' | translate:{provider: oidcName} }}
               </button>
             </div>
           }
@@ -126,7 +126,7 @@
                 type="button"
                 class="text-link primary"
                 (click)="enableOidc()">
-                Re-enable {{ oidcName }} login
+                {{ 'auth.login.oidc.reEnableLogin' | translate:{provider: oidcName} }}
               </button>
             </div>
           }

@@ -14,13 +14,14 @@ import {Tooltip} from 'primeng/tooltip';
 import {MetadataProgressService} from '../../../../shared/service/metadata-progress.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {MetadataPickerComponent} from '../book-metadata-center/metadata-picker/metadata-picker.component';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-metadata-review-dialog-component',
   standalone: true,
   templateUrl: './metadata-review-dialog-component.html',
   styleUrls: ['./metadata-review-dialog-component.scss'],
-  imports: [CommonModule, MetadataPickerComponent, ProgressSpinner, Button, Divider, ProgressBar, Tooltip],
+  imports: [CommonModule, MetadataPickerComponent, ProgressSpinner, Button, Divider, ProgressBar, Tooltip, TranslateModule],
 })
 export class MetadataReviewDialogComponent implements OnInit {
 

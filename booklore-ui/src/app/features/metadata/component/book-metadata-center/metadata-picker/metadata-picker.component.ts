@@ -17,6 +17,7 @@ import {AutoComplete} from 'primeng/autocomplete';
 import {AutoCompleteSelectEvent} from 'primeng/autocomplete';
 import {Image} from 'primeng/image';
 import {LazyLoadImageModule} from 'ng-lazyload-image';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-metadata-picker',
@@ -36,53 +37,54 @@ import {LazyLoadImageModule} from 'ng-lazyload-image';
     Textarea,
     AutoComplete,
     Image,
-    LazyLoadImageModule
+    LazyLoadImageModule,
+    TranslateModule
   ]
 })
 export class MetadataPickerComponent implements OnInit {
 
   metadataFieldsTop = [
-    {label: 'Title', controlName: 'title', lockedKey: 'titleLocked', fetchedKey: 'title'},
-    {label: 'Subtitle', controlName: 'subtitle', lockedKey: 'subtitleLocked', fetchedKey: 'subtitle'},
-    {label: 'Publisher', controlName: 'publisher', lockedKey: 'publisherLocked', fetchedKey: 'publisher'},
-    {label: 'Published', controlName: 'publishedDate', lockedKey: 'publishedDateLocked', fetchedKey: 'publishedDate'}
+    {labelKey: 'metadata.picker.field.title', controlName: 'title', lockedKey: 'titleLocked', fetchedKey: 'title'},
+    {labelKey: 'metadata.picker.field.subtitle', controlName: 'subtitle', lockedKey: 'subtitleLocked', fetchedKey: 'subtitle'},
+    {labelKey: 'metadata.picker.field.publisher', controlName: 'publisher', lockedKey: 'publisherLocked', fetchedKey: 'publisher'},
+    {labelKey: 'metadata.picker.field.publishedDate', controlName: 'publishedDate', lockedKey: 'publishedDateLocked', fetchedKey: 'publishedDate'}
   ];
 
   metadataChips = [
-    {label: 'Authors', controlName: 'authors', lockedKey: 'authorsLocked', fetchedKey: 'authors'},
-    {label: 'Genres', controlName: 'categories', lockedKey: 'categoriesLocked', fetchedKey: 'categories'},
-    {label: 'Moods', controlName: 'moods', lockedKey: 'moodsLocked', fetchedKey: 'moods'},
-    {label: 'Tags', controlName: 'tags', lockedKey: 'tagsLocked', fetchedKey: 'tags'},
+    {labelKey: 'metadata.picker.field.authors', controlName: 'authors', lockedKey: 'authorsLocked', fetchedKey: 'authors'},
+    {labelKey: 'metadata.picker.field.genres', controlName: 'categories', lockedKey: 'categoriesLocked', fetchedKey: 'categories'},
+    {labelKey: 'metadata.picker.field.moods', controlName: 'moods', lockedKey: 'moodsLocked', fetchedKey: 'moods'},
+    {labelKey: 'metadata.picker.field.tags', controlName: 'tags', lockedKey: 'tagsLocked', fetchedKey: 'tags'},
   ];
 
   metadataDescription = [
-    {label: 'Description', controlName: 'description', lockedKey: 'descriptionLocked', fetchedKey: 'description'},
+    {labelKey: 'metadata.picker.field.description', controlName: 'description', lockedKey: 'descriptionLocked', fetchedKey: 'description'},
   ];
 
   metadataFieldsBottom = [
-    {label: 'Series', controlName: 'seriesName', lockedKey: 'seriesNameLocked', fetchedKey: 'seriesName'},
-    {label: 'Book #', controlName: 'seriesNumber', lockedKey: 'seriesNumberLocked', fetchedKey: 'seriesNumber'},
-    {label: 'Total Books', controlName: 'seriesTotal', lockedKey: 'seriesTotalLocked', fetchedKey: 'seriesTotal'},
-    {label: 'Language', controlName: 'language', lockedKey: 'languageLocked', fetchedKey: 'language'},
-    {label: 'ISBN-10', controlName: 'isbn10', lockedKey: 'isbn10Locked', fetchedKey: 'isbn10'},
-    {label: 'ISBN-13', controlName: 'isbn13', lockedKey: 'isbn13Locked', fetchedKey: 'isbn13'},
-    {label: 'ASIN', controlName: 'asin', lockedKey: 'asinLocked', fetchedKey: 'asin'},
-    {label: 'Amz Reviews', controlName: 'amazonReviewCount', lockedKey: 'amazonReviewCountLocked', fetchedKey: 'amazonReviewCount'},
-    {label: 'Amz Rating', controlName: 'amazonRating', lockedKey: 'amazonRatingLocked', fetchedKey: 'amazonRating'},
-    {label: 'Comicvine ID', controlName: 'comicvineId', lockedKey: 'comicvineIdLocked', fetchedKey: 'comicvineId'},
-    {label: 'Goodreads ID', controlName: 'goodreadsId', lockedKey: 'goodreadsIdLocked', fetchedKey: 'goodreadsId'},
-    {label: 'GR Reviews', controlName: 'goodreadsReviewCount', lockedKey: 'goodreadsReviewCountLocked', fetchedKey: 'goodreadsReviewCount'},
-    {label: 'GR Rating', controlName: 'goodreadsRating', lockedKey: 'goodreadsRatingLocked', fetchedKey: 'goodreadsRating'},
-    {label: 'Hardcover ID', controlName: 'hardcoverId', lockedKey: 'hardcoverIdLocked', fetchedKey: 'hardcoverId'},
-    {label: 'Hardcover Book ID', controlName: 'hardcoverBookId', lockedKey: 'hardcoverBookIdLocked', fetchedKey: 'hardcoverBookId'},
-    {label: 'HC Reviews', controlName: 'hardcoverReviewCount', lockedKey: 'hardcoverReviewCountLocked', fetchedKey: 'hardcoverReviewCount'},
-    {label: 'HC Rating', controlName: 'hardcoverRating', lockedKey: 'hardcoverRatingLocked', fetchedKey: 'hardcoverRating'},
-    {label: 'LC ID', controlName: 'lubimyczytacId', lockedKey: 'lubimyczytacIdLocked', fetchedKey: 'lubimyczytacId'},
-    {label: 'LC Rating', controlName: 'lubimyczytacRating', lockedKey: 'lubimyczytacRatingLocked', fetchedKey: 'lubimyczytacRating'},
-    {label: 'Ranobedb ID', controlName: 'ranobedbId', lockedKey: 'ranobedbIdLocked', fetchedKey: 'ranobedbId'},
-    {label: 'RD Rating', controlName: 'ranobedbRating', lockedKey: 'ranobedbRatingLocked', fetchedKey: 'ranobedbRating'},
-    {label: 'Google ID', controlName: 'googleId', lockedKey: 'googleIdLocked', fetchedKey: 'googleId'},
-    {label: 'Pages', controlName: 'pageCount', lockedKey: 'pageCountLocked', fetchedKey: 'pageCount'}
+    {labelKey: 'metadata.picker.field.seriesName', controlName: 'seriesName', lockedKey: 'seriesNameLocked', fetchedKey: 'seriesName'},
+    {labelKey: 'metadata.picker.field.seriesNumber', controlName: 'seriesNumber', lockedKey: 'seriesNumberLocked', fetchedKey: 'seriesNumber'},
+    {labelKey: 'metadata.picker.field.seriesTotal', controlName: 'seriesTotal', lockedKey: 'seriesTotalLocked', fetchedKey: 'seriesTotal'},
+    {labelKey: 'metadata.picker.field.language', controlName: 'language', lockedKey: 'languageLocked', fetchedKey: 'language'},
+    {labelKey: 'metadata.picker.field.isbn10', controlName: 'isbn10', lockedKey: 'isbn10Locked', fetchedKey: 'isbn10'},
+    {labelKey: 'metadata.picker.field.isbn13', controlName: 'isbn13', lockedKey: 'isbn13Locked', fetchedKey: 'isbn13'},
+    {labelKey: 'metadata.picker.field.asin', controlName: 'asin', lockedKey: 'asinLocked', fetchedKey: 'asin'},
+    {labelKey: 'metadata.picker.field.amazonReviewCount', controlName: 'amazonReviewCount', lockedKey: 'amazonReviewCountLocked', fetchedKey: 'amazonReviewCount'},
+    {labelKey: 'metadata.picker.field.amazonRating', controlName: 'amazonRating', lockedKey: 'amazonRatingLocked', fetchedKey: 'amazonRating'},
+    {labelKey: 'metadata.picker.field.comicvineId', controlName: 'comicvineId', lockedKey: 'comicvineIdLocked', fetchedKey: 'comicvineId'},
+    {labelKey: 'metadata.picker.field.goodreadsId', controlName: 'goodreadsId', lockedKey: 'goodreadsIdLocked', fetchedKey: 'goodreadsId'},
+    {labelKey: 'metadata.picker.field.goodreadsReviewCount', controlName: 'goodreadsReviewCount', lockedKey: 'goodreadsReviewCountLocked', fetchedKey: 'goodreadsReviewCount'},
+    {labelKey: 'metadata.picker.field.goodreadsRating', controlName: 'goodreadsRating', lockedKey: 'goodreadsRatingLocked', fetchedKey: 'goodreadsRating'},
+    {labelKey: 'metadata.picker.field.hardcoverId', controlName: 'hardcoverId', lockedKey: 'hardcoverIdLocked', fetchedKey: 'hardcoverId'},
+    {labelKey: 'metadata.picker.field.hardcoverBookId', controlName: 'hardcoverBookId', lockedKey: 'hardcoverBookIdLocked', fetchedKey: 'hardcoverBookId'},
+    {labelKey: 'metadata.picker.field.hardcoverReviewCount', controlName: 'hardcoverReviewCount', lockedKey: 'hardcoverReviewCountLocked', fetchedKey: 'hardcoverReviewCount'},
+    {labelKey: 'metadata.picker.field.hardcoverRating', controlName: 'hardcoverRating', lockedKey: 'hardcoverRatingLocked', fetchedKey: 'hardcoverRating'},
+    {labelKey: 'metadata.picker.field.lubimyczytacId', controlName: 'lubimyczytacId', lockedKey: 'lubimyczytacIdLocked', fetchedKey: 'lubimyczytacId'},
+    {labelKey: 'metadata.picker.field.lubimyczytacRating', controlName: 'lubimyczytacRating', lockedKey: 'lubimyczytacRatingLocked', fetchedKey: 'lubimyczytacRating'},
+    {labelKey: 'metadata.picker.field.ranobedbId', controlName: 'ranobedbId', lockedKey: 'ranobedbIdLocked', fetchedKey: 'ranobedbId'},
+    {labelKey: 'metadata.picker.field.ranobedbRating', controlName: 'ranobedbRating', lockedKey: 'ranobedbRatingLocked', fetchedKey: 'ranobedbRating'},
+    {labelKey: 'metadata.picker.field.googleId', controlName: 'googleId', lockedKey: 'googleIdLocked', fetchedKey: 'googleId'},
+    {labelKey: 'metadata.picker.field.pageCount', controlName: 'pageCount', lockedKey: 'pageCountLocked', fetchedKey: 'pageCount'}
   ];
 
   @Input() reviewMode!: boolean;
@@ -128,6 +130,7 @@ export class MetadataPickerComponent implements OnInit {
   isSaving = false;
 
   private messageService = inject(MessageService);
+  private translateService = inject(TranslateService);
   private bookService = inject(BookService);
   protected urlHelper = inject(UrlHelperService);
   private destroyRef = inject(DestroyRef);
@@ -395,11 +398,19 @@ export class MetadataPickerComponent implements OnInit {
             this.savedFields[field] = true;
           }
         });
-        this.messageService.add({severity: 'info', summary: 'Success', detail: 'Book metadata updated'});
+        this.messageService.add({
+          severity: 'info',
+          summary: this.translateService.instant('metadata.picker.toast.saveSuccess.summary'),
+          detail: this.translateService.instant('metadata.picker.toast.saveSuccess.detail')
+        });
       },
       error: () => {
         this.isSaving = false;
-        this.messageService.add({severity: 'error', summary: 'Error', detail: 'Failed to update book metadata'});
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translateService.instant('metadata.picker.toast.saveFailed.summary'),
+          detail: this.translateService.instant('metadata.picker.toast.saveFailed.detail')
+        });
       }
     });
   }
@@ -538,18 +549,24 @@ export class MetadataPickerComponent implements OnInit {
         if (shouldLockAllFields !== undefined) {
           this.messageService.add({
             severity: 'success',
-            summary: shouldLockAllFields ? 'Metadata Locked' : 'Metadata Unlocked',
-            detail: shouldLockAllFields
-              ? 'All fields have been successfully locked.'
-              : 'All fields have been successfully unlocked.',
+            summary: this.translateService.instant(
+              shouldLockAllFields
+                ? 'metadata.picker.toast.lockAllSuccess.summary'
+                : 'metadata.picker.toast.unlockAllSuccess.summary'
+            ),
+            detail: this.translateService.instant(
+              shouldLockAllFields
+                ? 'metadata.picker.toast.lockAllSuccess.detail'
+                : 'metadata.picker.toast.unlockAllSuccess.detail'
+            ),
           });
         }
       },
       error: () => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to update lock state',
+          summary: this.translateService.instant('metadata.picker.toast.lockUpdateFailed.summary'),
+          detail: this.translateService.instant('metadata.picker.toast.lockUpdateFailed.detail'),
         });
       }
     });
@@ -604,10 +621,11 @@ export class MetadataPickerComponent implements OnInit {
     }
     const isLocked = this.metadataForm.get(`${field}Locked`)?.value;
     if (isLocked) {
+      const fieldLabel = this.getFieldLabel(field);
       this.messageService.add({
         severity: 'warn',
-        summary: 'Action Blocked',
-        detail: `${field} is locked and cannot be updated.`
+        summary: this.translateService.instant('metadata.picker.toast.actionBlocked.summary'),
+        detail: this.translateService.instant('metadata.picker.toast.actionBlocked.detail', {field: fieldLabel})
       });
       return;
     }
@@ -620,6 +638,20 @@ export class MetadataPickerComponent implements OnInit {
       this.copiedFields[field] = true;
       this.highlightCopiedInput(field);
     }
+  }
+
+  private getFieldLabel(controlName: string): string {
+    if (controlName === 'cover' || controlName === 'thumbnailUrl') {
+      return this.translateService.instant('metadata.picker.field.cover');
+    }
+    const fields = [
+      ...this.metadataFieldsTop,
+      ...this.metadataChips,
+      ...this.metadataDescription,
+      ...this.metadataFieldsBottom
+    ];
+    const field = fields.find(f => f.controlName === controlName);
+    return field?.labelKey ? this.translateService.instant(field.labelKey) : controlName;
   }
 
   private getNumberOrCopied(field: string): number | null {

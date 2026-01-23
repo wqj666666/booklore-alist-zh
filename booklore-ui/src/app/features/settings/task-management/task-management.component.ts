@@ -7,11 +7,12 @@ import {Select} from 'primeng/select';
 import {FormsModule} from '@angular/forms';
 import {TaskInfo, MetadataReplaceMode, TaskHistory, TASK_TYPE_CONFIG, TaskCreateRequest, TaskCronConfigRequest, TaskProgressPayload, TaskService, TaskStatus, TaskType, LibraryRescanOptions} from './task.service';
 import {MetadataRefreshRequest} from '../../metadata/model/request/metadata-refresh-request.model';
-import {finalize, forkJoin, Subscription} from 'rxjs';
+import {finalize, forkJoin, Subject, Subscription, takeUntil} from 'rxjs';
 import {ExternalDocLinkComponent} from '../../../shared/components/external-doc-link/external-doc-link.component';
 import {ToggleSwitch} from 'primeng/toggleswitch';
 import {Badge} from 'primeng/badge';
 import {Tooltip} from 'primeng/tooltip';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-task-management',
@@ -25,7 +26,8 @@ import {Tooltip} from 'primeng/tooltip';
     ExternalDocLinkComponent,
     ToggleSwitch,
     Badge,
-    Tooltip
+    Tooltip,
+    TranslateModule
   ],
   templateUrl: './task-management.component.html',
   styleUrl: './task-management.component.scss'
@@ -34,6 +36,7 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
   // Services
   private messageService = inject(MessageService);
   private taskService = inject(TaskService);
+  private translateService = inject(TranslateService);
 
   // State
   taskInfos: TaskInfo[] = [];
@@ -41,18 +44,10 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
   loading = false;
   executingTasks = new Set<string>();
   private subscription?: Subscription;
+  private readonly destroy$ = new Subject<void>();
 
   // Metadata Replace Options
-  metadataReplaceOptions = [
-    {
-      label: 'Update Missing Metadata Only (Recommended)',
-      value: MetadataReplaceMode.REPLACE_MISSING
-    },
-    {
-      label: 'Replace All Metadata (Overwrite Existing)',
-      value: MetadataReplaceMode.REPLACE_ALL
-    }
-  ];
+  metadataReplaceOptions: Array<{ label: string; value: MetadataReplaceMode }> = [];
   selectedMetadataReplaceMode: MetadataReplaceMode = MetadataReplaceMode.REPLACE_MISSING;
 
   // Cron Editing State
@@ -70,12 +65,16 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
   // ============================================================================
 
   ngOnInit(): void {
+    this.refreshMetadataReplaceOptions();
+    this.translateService.onLangChange.pipe(takeUntil(this.destroy$)).subscribe(() => this.refreshMetadataReplaceOptions());
     this.loadTasks();
     this.subscribeToTaskProgress();
   }
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   // ============================================================================
@@ -100,7 +99,7 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error loading tasks:', error);
-          this.showMessage('error', 'Error', 'Failed to load tasks');
+          this.showMessage('error', 'settings.taskManagement.toast.loadError.summary', 'settings.taskManagement.toast.loadError.detail');
         }
       });
   }
@@ -160,7 +159,7 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
   runTask(type: string): void {
     const history = this.taskHistories.get(type);
     if (!this.canRunTask(history) && !this.isTaskStale(history)) {
-      this.showMessage('warn', 'Task Already Running', 'This task is already in progress or pending.');
+      this.showMessage('warn', 'settings.taskManagement.toast.alreadyRunning.summary', 'settings.taskManagement.toast.alreadyRunning.detail');
       return;
     }
 
@@ -189,21 +188,50 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (isAsync) {
-            this.showMessage('info', 'Task Queued', `${this.getTaskDisplayName(type)} has been queued and will run in the background.`);
+            this.showMessage(
+              'info',
+              'settings.taskManagement.toast.taskQueued.summary',
+              'settings.taskManagement.toast.taskQueued.detail',
+              {taskName: this.getTaskDisplayName(type)}
+            );
           } else {
             if (response.status === TaskStatus.COMPLETED) {
-              this.showMessage('success', 'Task Completed', `${this.getTaskDisplayName(type)} has been completed successfully.`);
+              this.showMessage(
+                'success',
+                'settings.taskManagement.toast.taskCompleted.summary',
+                'settings.taskManagement.toast.taskCompleted.detail',
+                {taskName: this.getTaskDisplayName(type)}
+              );
             } else if (response.status === TaskStatus.FAILED) {
-              this.showMessage('error', 'Task Failed', response.message || `${this.getTaskDisplayName(type)} failed to complete.`);
+              if (response.message) {
+                this.showMessage('error', 'settings.taskManagement.toast.taskFailed.summary', response.message, undefined, false);
+              } else {
+                this.showMessage(
+                  'error',
+                  'settings.taskManagement.toast.taskFailed.summary',
+                  'settings.taskManagement.toast.taskFailed.detail',
+                  {taskName: this.getTaskDisplayName(type)}
+                );
+              }
             } else {
-              this.showMessage('success', 'Task Started', `${this.getTaskDisplayName(type)} has been started successfully.`);
+              this.showMessage(
+                'success',
+                'settings.taskManagement.toast.taskStarted.summary',
+                'settings.taskManagement.toast.taskStarted.detail',
+                {taskName: this.getTaskDisplayName(type)}
+              );
             }
           }
           this.loadTasks();
         },
         error: (error) => {
           console.error('Error starting task:', error);
-          this.showMessage('error', 'Error', `Failed to start ${this.getTaskDisplayName(type)}.`);
+          this.showMessage(
+            'error',
+            'settings.taskManagement.toast.startError.summary',
+            'settings.taskManagement.toast.startError.detail',
+            {taskName: this.getTaskDisplayName(type)}
+          );
         }
       });
   }
@@ -211,7 +239,7 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
   cancelTask(taskType: string): void {
     const history = this.taskHistories.get(taskType);
     if (!history?.id) {
-      this.showMessage('error', 'Error', 'Cannot cancel task without ID.');
+      this.showMessage('error', 'settings.taskManagement.toast.cancelMissingId.summary', 'settings.taskManagement.toast.cancelMissingId.detail');
       return;
     }
 
@@ -221,15 +249,23 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.cancelled) {
-            this.showMessage('success', 'Task Cancelled', response.message || 'Task has been cancelled successfully.');
+            if (response.message) {
+              this.showMessage('success', 'settings.taskManagement.toast.taskCancelled.summary', response.message, undefined, false);
+            } else {
+              this.showMessage('success', 'settings.taskManagement.toast.taskCancelled.summary', 'settings.taskManagement.toast.taskCancelled.detail');
+            }
             this.loadTasks();
           } else {
-            this.showMessage('error', 'Cancellation Failed', response.message || 'Failed to cancel the task.');
+            if (response.message) {
+              this.showMessage('error', 'settings.taskManagement.toast.cancelFailed.summary', response.message, undefined, false);
+            } else {
+              this.showMessage('error', 'settings.taskManagement.toast.cancelFailed.summary', 'settings.taskManagement.toast.cancelFailed.detail');
+            }
           }
         },
         error: (error) => {
           console.error('Error cancelling task:', error);
-          this.showMessage('error', 'Error', 'Failed to cancel the task. The task may already be completed or failed.');
+          this.showMessage('error', 'settings.taskManagement.toast.cancelError.summary', 'settings.taskManagement.toast.cancelError.detail');
           this.loadTasks();
         }
       });
@@ -346,11 +382,11 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
           if (taskInfoIndex !== -1) {
             this.taskInfos[taskInfoIndex].cronConfig = updatedConfig;
           }
-          this.showMessage('success', 'Cron Updated', 'Scheduled task configuration has been updated successfully.');
+          this.showMessage('success', 'settings.taskManagement.toast.cronUpdated.summary', 'settings.taskManagement.toast.cronUpdated.detail');
         },
         error: (error) => {
           console.error('Error updating cron config:', error);
-          this.showMessage('error', 'Error', 'Failed to update scheduled task configuration.');
+          this.showMessage('error', 'settings.taskManagement.toast.cronUpdateFailed.summary', 'settings.taskManagement.toast.cronUpdateFailed.detail');
         }
       });
   }
@@ -369,22 +405,25 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
     const parts = trimmed.split(/\s+/);
 
     if (parts.length !== 6) {
-      this.cronValidationError = 'Cron expression must have exactly 6 fields (seconds, minutes, hours, day, month, weekday)';
+      this.cronValidationError = this.translateService.instant('settings.taskManagement.cron.validation.fieldCount');
       return;
     }
 
     const validations = [
-      {field: parts[0], name: 'Seconds', range: [0, 59]},
-      {field: parts[1], name: 'Minutes', range: [0, 59]},
-      {field: parts[2], name: 'Hours', range: [0, 23]},
-      {field: parts[3], name: 'Day of Month', range: [1, 31]},
-      {field: parts[4], name: 'Month', range: [1, 12]},
-      {field: parts[5], name: 'Day of Week', range: [0, 7]}
+      {field: parts[0], nameKey: 'settings.taskManagement.cron.field.seconds', range: [0, 59]},
+      {field: parts[1], nameKey: 'settings.taskManagement.cron.field.minutes', range: [0, 59]},
+      {field: parts[2], nameKey: 'settings.taskManagement.cron.field.hours', range: [0, 23]},
+      {field: parts[3], nameKey: 'settings.taskManagement.cron.field.dayOfMonth', range: [1, 31]},
+      {field: parts[4], nameKey: 'settings.taskManagement.cron.field.month', range: [1, 12]},
+      {field: parts[5], nameKey: 'settings.taskManagement.cron.field.dayOfWeek', range: [0, 7]}
     ];
 
     for (const validation of validations) {
       if (!this.isValidCronField(validation.field, validation.range[0], validation.range[1])) {
-        this.cronValidationError = `Invalid ${validation.name} field: ${validation.field}`;
+        this.cronValidationError = this.translateService.instant('settings.taskManagement.cron.validation.invalidField', {
+          fieldName: this.translateService.instant(validation.nameKey),
+          fieldValue: validation.field
+        });
         return;
       }
     }
@@ -428,14 +467,27 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
   // UI Helper Methods - Task Information
   // ============================================================================
 
+  private translateOrFallback(key: string, fallback: string): string {
+    const translated = this.translateService.instant(key);
+    return translated === key ? fallback : translated;
+  }
+
+  private getI18nTaskTypeKey(taskType: string): string {
+    return taskType
+      .toLowerCase()
+      .replace(/_([a-z0-9])/g, (_, c: string) => c.toUpperCase());
+  }
+
   getTaskDisplayName(type: string): string {
     const taskInfo = this.taskInfos.find(t => t.taskType === type);
-    return taskInfo?.name || type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+    const fallback = taskInfo?.name || type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+    return this.translateOrFallback(`settings.taskManagement.taskType.${this.getI18nTaskTypeKey(type)}.name`, fallback);
   }
 
   getTaskDescription(type: string): string {
     const taskInfo = this.taskInfos.find(t => t.taskType === type);
-    return taskInfo?.description || 'System maintenance task.';
+    const fallback = taskInfo?.description || this.translateService.instant('settings.taskManagement.task.defaultDescription');
+    return this.translateOrFallback(`settings.taskManagement.taskType.${this.getI18nTaskTypeKey(type)}.description`, fallback);
   }
 
   getTaskDisplayOrder(type: string): number {
@@ -496,19 +548,19 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
   getTaskStatusMessage(taskType: string): string {
     const history = this.taskHistories.get(taskType);
     if (this.isTaskStale(history)) {
-      return 'Task appears to be stuck (no updates received)';
+      return this.translateService.instant('settings.taskManagement.statusMessage.stuck');
     }
-    return history?.message || 'Processing...';
+    return history?.message || this.translateService.instant('settings.taskManagement.statusMessage.processing');
   }
 
   getLastRunMessage(taskType: string): string {
     const history = this.taskHistories.get(taskType);
     if (!history?.completedAt && !history?.updatedAt) {
-      return 'Never run';
+      return this.translateService.instant('settings.taskManagement.lastRun.never');
     }
 
     const dateStr = history.completedAt || history.updatedAt;
-    if (!dateStr) return 'Never run';
+    if (!dateStr) return this.translateService.instant('settings.taskManagement.lastRun.never');
 
     const date = new Date(dateStr);
     const now = new Date();
@@ -517,10 +569,10 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
+    if (diffMins < 1) return this.translateService.instant('settings.taskManagement.lastRun.justNow');
+    if (diffMins < 60) return this.translateService.instant('settings.taskManagement.lastRun.minutesAgo', {minutes: diffMins});
+    if (diffHours < 24) return this.translateService.instant('settings.taskManagement.lastRun.hoursAgo', {hours: diffHours});
+    if (diffDays < 7) return this.translateService.instant('settings.taskManagement.lastRun.daysAgo', {days: diffDays});
 
     return date.toLocaleDateString();
   }
@@ -555,9 +607,9 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
   getTaskButtonLabel(taskType: string): string {
     const history = this.taskHistories.get(taskType);
     if (this.isTaskStale(history)) {
-      return 'Re-run';
+      return this.translateService.instant('settings.taskManagement.action.rerun');
     }
-    return 'Run';
+    return this.translateService.instant('settings.taskManagement.action.run');
   }
 
   getCancelButtonIcon(taskType: string): string {
@@ -574,9 +626,9 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
   getMetadataReplaceDescription(mode: MetadataReplaceMode): string {
     switch (mode) {
       case MetadataReplaceMode.REPLACE_MISSING:
-        return 'Only update books that are missing metadata information. Existing metadata will be preserved.';
+        return this.translateService.instant('settings.taskManagement.metadataReplace.description.replaceMissing');
       case MetadataReplaceMode.REPLACE_ALL:
-        return 'Replace all metadata for all books, even if they already have metadata. Use with caution as this will overwrite existing data.';
+        return this.translateService.instant('settings.taskManagement.metadataReplace.description.replaceAll');
       default:
         return '';
     }
@@ -591,11 +643,30 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
     return date.toLocaleString();
   }
 
-  private showMessage(severity: 'success' | 'info' | 'warn' | 'error', summary: string, detail: string): void {
+  private refreshMetadataReplaceOptions(): void {
+    this.metadataReplaceOptions = [
+      {
+        label: this.translateService.instant('settings.taskManagement.metadataReplace.option.replaceMissing'),
+        value: MetadataReplaceMode.REPLACE_MISSING
+      },
+      {
+        label: this.translateService.instant('settings.taskManagement.metadataReplace.option.replaceAll'),
+        value: MetadataReplaceMode.REPLACE_ALL
+      }
+    ];
+  }
+
+  private showMessage(
+    severity: 'success' | 'info' | 'warn' | 'error',
+    summaryKey: string,
+    detailKeyOrText: string,
+    params?: Record<string, unknown>,
+    translateDetail: boolean = true
+  ): void {
     this.messageService.add({
       severity,
-      summary,
-      detail
+      summary: this.translateService.instant(summaryKey, params),
+      detail: translateDetail ? this.translateService.instant(detailKeyOrText, params) : detailKeyOrText
     });
   }
 }

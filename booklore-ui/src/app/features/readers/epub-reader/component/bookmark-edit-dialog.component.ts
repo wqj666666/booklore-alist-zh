@@ -9,6 +9,7 @@ import { InputNumber } from 'primeng/inputnumber';
 import { Button } from 'primeng/button';
 import { BookMark, UpdateBookMarkRequest } from '../../../../shared/service/book-mark.service';
 import { PrimeTemplate } from 'primeng/api';
+import {TranslateModule} from '@ngx-translate/core';
 
 export interface BookmarkFormData {
   title: string;
@@ -29,7 +30,8 @@ export interface BookmarkFormData {
     Textarea,
     InputNumber,
     Button,
-    PrimeTemplate
+    PrimeTemplate,
+    TranslateModule
   ],
   template: `
     <p-dialog
@@ -41,13 +43,13 @@ export interface BookmarkFormData {
       [resizable]="false"
       [closeOnEscape]="true"
       [appendTo]="'body'"
-      header="Edit Bookmark"
+      [header]="'readers.epub.bookmarkEditDialog.title' | translate"
       (onHide)="onDialogHide()">
 
       @if (formData) {
         <div class="p-4">
           <div class="field mb-4">
-            <label for="title" class="block text-sm font-medium mb-2">Title <span class="text-red-500">*</span></label>
+            <label for="title" class="block text-sm font-medium mb-2">{{ 'readers.epub.bookmarkEditDialog.fields.title.label' | translate }} <span class="text-red-500">*</span></label>
             <input
               pInputText
               id="title"
@@ -56,16 +58,16 @@ export interface BookmarkFormData {
               class="w-full"
               [class.ng-invalid]="titleError"
               [class.ng-dirty]="titleError"
-              placeholder="Enter bookmark title"
+              [placeholder]="'readers.epub.bookmarkEditDialog.fields.title.placeholder' | translate"
               [maxlength]="255"
               (ngModelChange)="titleError = false">
             @if (titleError) {
-              <small class="text-red-500">Title is required</small>
+              <small class="text-red-500">{{ 'readers.epub.bookmarkEditDialog.fields.title.required' | translate }}</small>
             }
           </div>
 
           <div class="field mb-4">
-            <label for="color" class="block text-sm font-medium mb-2">Color</label>
+            <label for="color" class="block text-sm font-medium mb-2">{{ 'readers.epub.bookmarkEditDialog.fields.color.label' | translate }}</label>
             <div class="flex align-items-center gap-2">
               <p-colorPicker
                 [(ngModel)]="formData.color"
@@ -82,21 +84,21 @@ export interface BookmarkFormData {
           </div>
 
           <div class="field mb-4">
-            <label for="notes" class="block text-sm font-medium mb-2">Notes</label>
+            <label for="notes" class="block text-sm font-medium mb-2">{{ 'readers.epub.bookmarkEditDialog.fields.notes.label' | translate }}</label>
             <textarea
               pInputTextarea
               id="notes"
               [(ngModel)]="formData.notes"
               class="w-full"
               rows="3"
-              placeholder="Add notes about this bookmark"
+              [placeholder]="'readers.epub.bookmarkEditDialog.fields.notes.placeholder' | translate"
               [maxlength]="2000">
             </textarea>
             <small class="text-muted">{{ formData.notes.length || 0 }}/2000</small>
           </div>
 
           <div class="field mb-4">
-            <label for="priority" class="block text-sm font-medium mb-2">Priority (1 = High, 5 = Low)</label>
+            <label for="priority" class="block text-sm font-medium mb-2">{{ 'readers.epub.bookmarkEditDialog.fields.priority.label' | translate }}</label>
             <p-inputNumber
               id="priority"
               [(ngModel)]="formData.priority"
@@ -117,14 +119,14 @@ export interface BookmarkFormData {
       <ng-template pTemplate="footer">
         <div class="flex justify-content-between">
           <p-button
-            label="Cancel"
+            [label]="'common.cancel' | translate"
             icon="pi pi-times"
             (click)="onCancel()"
             [text]="true"
             severity="secondary">
           </p-button>
           <p-button
-            label="Save"
+            [label]="'common.save' | translate"
             icon="pi pi-check"
             (click)="onSave()"
             [loading]="isSaving"

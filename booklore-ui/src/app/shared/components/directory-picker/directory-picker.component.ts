@@ -1,6 +1,7 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {DynamicDialogRef} from 'primeng/dynamicdialog';
-import {UtilityService} from './utility.service';
+import {NgClass} from '@angular/common';
+import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
+import {StorageType, UtilityService} from './utility.service';
 import {TableModule} from 'primeng/table';
 import {InputText} from 'primeng/inputtext';
 
@@ -12,6 +13,12 @@ import {InputIcon} from 'primeng/inputicon';
 import {Button} from 'primeng/button';
 import {IconField} from 'primeng/iconfield';
 import {Tooltip} from 'primeng/tooltip';
+import {TranslateModule} from '@ngx-translate/core';
+
+export interface DirectoryPickerResult {
+  folders: string[];
+  storageType: StorageType;
+}
 
 @Component({
   selector: 'app-directory-picker-v2',
@@ -27,7 +34,9 @@ import {Tooltip} from 'primeng/tooltip';
     Button,
     InputIcon,
     IconField,
-    Tooltip
+    Tooltip,
+    TranslateModule,
+    NgClass
   ],
   styleUrls: ['./directory-picker.component.scss']
 })
@@ -43,18 +52,44 @@ export class DirectoryPickerComponent implements OnInit {
   breadcrumbItems: MenuItem[] = [];
   home: MenuItem = {icon: 'pi pi-home', command: () => this.navigateToRoot()};
 
+  // Storage type support
+  storageType: StorageType = 'local';
+  alistEnabled: boolean = false;
+
   private utilityService = inject(UtilityService);
   private dynamicDialogRef = inject(DynamicDialogRef);
+  private dynamicDialogConfig = inject(DynamicDialogConfig);
 
   ngOnInit() {
+    // Check if AList is enabled
+    this.utilityService.isAlistEnabled().subscribe(enabled => {
+      this.alistEnabled = enabled;
+    });
+
+    // Get initial storage type from dialog config
+    const data = this.dynamicDialogConfig?.data;
+    if (data?.storageType) {
+      this.storageType = data.storageType;
+    }
+
     const initialPath = '/';
     this.getFolders(initialPath);
+  }
+
+  switchStorageType(type: StorageType): void {
+    if (this.storageType === type) return;
+
+    this.storageType = type;
+    this.selectedFolders = [];
+    this.selectedFoldersMap = {};
+    this.searchQuery = '';
+    this.navigateToRoot();
   }
 
   getFolders(path: string): void {
     this.isLoading = true;
     this.filteredPaths = [];
-    this.utilityService.getFolders(path).subscribe({
+    this.utilityService.getFoldersByType(path, this.storageType).subscribe({
       next: (folders: string[]) => {
         setTimeout(() => {
           this.paths = folders;
@@ -143,7 +178,11 @@ export class DirectoryPickerComponent implements OnInit {
   }
 
   onSelect(): void {
-    this.dynamicDialogRef.close(this.selectedFolders);
+    const result: DirectoryPickerResult = {
+      folders: this.selectedFolders,
+      storageType: this.storageType
+    };
+    this.dynamicDialogRef.close(result);
   }
 
   onCancel(): void {

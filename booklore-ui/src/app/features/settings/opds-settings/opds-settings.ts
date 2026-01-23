@@ -19,6 +19,7 @@ import {AppSettingsService} from '../../../shared/service/app-settings.service';
 import {AppSettingKey} from '../../../shared/model/app-settings.model';
 import {ExternalDocLinkComponent} from '../../../shared/components/external-doc-link/external-doc-link.component';
 import {Select} from 'primeng/select';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-opds-settings',
@@ -33,7 +34,8 @@ import {Select} from 'primeng/select';
     Password,
     ToggleSwitch,
     ExternalDocLinkComponent,
-    Select
+    Select,
+    TranslateModule
 ],
   providers: [ConfirmationService],
   templateUrl: './opds-settings.html',
@@ -49,6 +51,7 @@ export class OpdsSettings implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
   private userService = inject(UserService);
   private appSettingsService = inject(AppSettingsService);
+  private translateService = inject(TranslateService);
 
   users: OpdsUserV2[] = [];
   loading = false;
@@ -63,20 +66,14 @@ export class OpdsSettings implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
   dummyPassword: string = "***********************";
 
-  sortOrderOptions = [
-    { label: 'Recently Added', value: 'RECENT' as OpdsSortOrder },
-    { label: 'Title (A-Z)', value: 'TITLE_ASC' as OpdsSortOrder },
-    { label: 'Title (Z-A)', value: 'TITLE_DESC' as OpdsSortOrder },
-    { label: 'Author (A-Z)', value: 'AUTHOR_ASC' as OpdsSortOrder },
-    { label: 'Author (Z-A)', value: 'AUTHOR_DESC' as OpdsSortOrder },
-    { label: 'Series (A-Z)', value: 'SERIES_ASC' as OpdsSortOrder },
-    { label: 'Series (Z-A)', value: 'SERIES_DESC' as OpdsSortOrder },
-    { label: 'Rating (Low to High)', value: 'RATING_ASC' as OpdsSortOrder },
-    { label: 'Rating (High to Low)', value: 'RATING_DESC' as OpdsSortOrder }
-  ];
+  sortOrderOptions: Array<{ label: string; value: OpdsSortOrder }> = [];
 
   ngOnInit(): void {
     this.loading = true;
+    this.refreshSortOrderOptions();
+    this.translateService.onLangChange.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.refreshSortOrderOptions();
+    });
 
     let prevHasPermission = false;
     this.userService.userState$.pipe(
@@ -115,7 +112,7 @@ export class OpdsSettings implements OnInit, OnDestroy {
       takeUntil(this.destroy$),
       catchError(err => {
         console.error('Error loading users:', err);
-        this.showMessage('error', 'Error', 'Failed to load users');
+        this.showMessage('error', 'settings.opds.toast.loadUsersError.summary', 'settings.opds.toast.loadUsersError.detail');
         return of([]);
       })
     ).subscribe(users => {
@@ -134,22 +131,28 @@ export class OpdsSettings implements OnInit, OnDestroy {
       next: user => {
         this.users.push(user);
         this.resetCreateUserDialog();
-        this.showMessage('success', 'Success', 'User created successfully');
+        this.showMessage('success', 'settings.opds.toast.userCreated.summary', 'settings.opds.toast.userCreated.detail');
       },
       error: err => {
         console.error('Error creating user:', err);
-        const message = err?.error?.message || 'Failed to create user';
-        this.showMessage('error', 'Error', message);
+        const message = err?.error?.message;
+        if (message) {
+          this.showMessage('error', 'settings.opds.toast.createUserError.summary', message);
+        } else {
+          this.showMessage('error', 'settings.opds.toast.createUserError.summary', 'settings.opds.toast.createUserError.detail');
+        }
       }
     });
   }
 
   confirmDelete(user: OpdsUserV2): void {
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete user "${user.username}"?`,
-      header: 'Delete Confirmation',
+      message: this.translateService.instant('settings.opds.confirm.deleteUser.message', { username: user.username }),
+      header: this.translateService.instant('settings.opds.confirm.deleteUser.header'),
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
+      acceptLabel: this.translateService.instant('common.delete'),
+      rejectLabel: this.translateService.instant('common.cancel'),
       accept: () => this.deleteUser(user)
     });
   }
@@ -161,12 +164,12 @@ export class OpdsSettings implements OnInit, OnDestroy {
       takeUntil(this.destroy$),
       catchError(err => {
         console.error('Error deleting user:', err);
-        this.showMessage('error', 'Error', 'Failed to delete user');
+        this.showMessage('error', 'settings.opds.toast.deleteUserError.summary', 'settings.opds.toast.deleteUserError.detail');
         return of(null);
       })
     ).subscribe(() => {
       this.users = this.users.filter(u => u.id !== user.id);
-      this.showMessage('success', 'Success', 'User deleted successfully');
+      this.showMessage('success', 'settings.opds.toast.userDeleted.summary', 'settings.opds.toast.userDeleted.detail');
     });
   }
 
@@ -176,7 +179,7 @@ export class OpdsSettings implements OnInit, OnDestroy {
 
   copyEndpoint(): void {
     navigator.clipboard.writeText(this.opdsEndpoint).then(() => {
-      this.showMessage('success', 'Copied', 'OPDS endpoint copied to clipboard');
+      this.showMessage('success', 'settings.opds.toast.endpointCopied.summary', 'settings.opds.toast.endpointCopied.detail');
     });
   }
 
@@ -192,13 +195,14 @@ export class OpdsSettings implements OnInit, OnDestroy {
   private saveSetting(key: string, value: unknown): void {
     this.appSettingsService.saveSettings([{key, newValue: value}]).subscribe({
       next: () => {
-        const successMessage = (value === true)
-          ? 'OPDS Server Enabled.'
-          : 'OPDS Server Disabled.';
-        this.showMessage('success', 'Settings Saved', successMessage);
+        this.showMessage(
+          'success',
+          'settings.toast.saved.summary',
+          value === true ? 'settings.opds.toast.serverEnabled.detail' : 'settings.opds.toast.serverDisabled.detail'
+        );
       },
       error: () => {
-        this.showMessage('error', 'Error', 'There was an error saving the settings.');
+        this.showMessage('error', 'settings.toast.saveError.summary', 'settings.toast.saveError.detail');
       }
     });
   }
@@ -208,14 +212,23 @@ export class OpdsSettings implements OnInit, OnDestroy {
     this.newUser = {username: '', password: '', sortOrder: 'RECENT'};
   }
 
-  private showMessage(severity: string, summary: string, detail: string): void {
-    this.messageService.add({severity, summary, detail});
+  private showMessage(
+    severity: string,
+    summaryKey: string,
+    detailKey: string,
+    params?: Record<string, unknown>
+  ): void {
+    this.messageService.add({
+      severity,
+      summary: this.translateService.instant(summaryKey, params),
+      detail: this.translateService.instant(detailKey, params)
+    });
   }
 
   getSortOrderLabel(sortOrder?: OpdsSortOrder): string {
-    if (!sortOrder) return 'Recently Added';
-    const option = this.sortOrderOptions.find(o => o.value === sortOrder);
-    return option ? option.label : 'Recently Added';
+    const resolved = sortOrder ?? 'RECENT';
+    const option = this.sortOrderOptions.find(o => o.value === resolved);
+    return option?.label ?? this.translateService.instant('settings.opds.sortOrder.recent');
   }
 
   startEdit(user: OpdsUserV2): void {
@@ -235,7 +248,11 @@ export class OpdsSettings implements OnInit, OnDestroy {
       takeUntil(this.destroy$),
       catchError(err => {
         console.error('Error updating sort order:', err);
-        this.showMessage('error', 'Error', 'Failed to update sort order');
+        this.showMessage(
+          'error',
+          'settings.opds.toast.updateSortOrderError.summary',
+          'settings.opds.toast.updateSortOrderError.detail'
+        );
         return of(null);
       })
     ).subscribe(updatedUser => {
@@ -244,10 +261,28 @@ export class OpdsSettings implements OnInit, OnDestroy {
         if (index !== -1) {
           this.users[index] = updatedUser;
         }
-        this.showMessage('success', 'Success', 'Sort order updated successfully');
+        this.showMessage(
+          'success',
+          'settings.opds.toast.sortOrderUpdated.summary',
+          'settings.opds.toast.sortOrderUpdated.detail'
+        );
       }
       this.cancelEdit();
     });
+  }
+
+  private refreshSortOrderOptions(): void {
+    this.sortOrderOptions = [
+      { label: this.translateService.instant('settings.opds.sortOrder.recent'), value: 'RECENT' },
+      { label: this.translateService.instant('settings.opds.sortOrder.titleAsc'), value: 'TITLE_ASC' },
+      { label: this.translateService.instant('settings.opds.sortOrder.titleDesc'), value: 'TITLE_DESC' },
+      { label: this.translateService.instant('settings.opds.sortOrder.authorAsc'), value: 'AUTHOR_ASC' },
+      { label: this.translateService.instant('settings.opds.sortOrder.authorDesc'), value: 'AUTHOR_DESC' },
+      { label: this.translateService.instant('settings.opds.sortOrder.seriesAsc'), value: 'SERIES_ASC' },
+      { label: this.translateService.instant('settings.opds.sortOrder.seriesDesc'), value: 'SERIES_DESC' },
+      { label: this.translateService.instant('settings.opds.sortOrder.ratingAsc'), value: 'RATING_ASC' },
+      { label: this.translateService.instant('settings.opds.sortOrder.ratingDesc'), value: 'RATING_DESC' }
+    ];
   }
 
   ngOnDestroy(): void {

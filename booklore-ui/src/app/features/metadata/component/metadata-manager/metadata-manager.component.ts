@@ -18,6 +18,8 @@ import {InputIcon} from 'primeng/inputicon';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {ExternalDocLinkComponent} from '../../../../shared/components/external-doc-link/external-doc-link.component';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {LanguageService} from '../../../../core/i18n/language.service';
 
 interface MetadataItem {
   value: string;
@@ -30,8 +32,9 @@ type MetadataType = 'authors' | 'categories' | 'moods' | 'tags' | 'series' | 'pu
 
 interface TabConfig {
   type: MetadataType;
-  label: string;
-  placeholder: string;
+  labelKey: string;
+  labelPluralKey: string;
+  placeholderKey: string;
   selectAllKey: 'selectAllAuthors' | 'selectAllCategories' | 'selectAllMoods' | 'selectAllTags' | 'selectAllSeries' | 'selectAllPublishers' | 'selectAllLanguages';
   icon: string;
 }
@@ -56,7 +59,8 @@ interface TabConfig {
     Tooltip,
     IconField,
     InputIcon,
-    ExternalDocLinkComponent
+    ExternalDocLinkComponent,
+    TranslateModule
   ],
   providers: [ConfirmationService],
   templateUrl: './metadata-manager.component.html',
@@ -68,8 +72,11 @@ export class MetadataManagerComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private pageTitle = inject(PageTitleService);
+  private translateService = inject(TranslateService);
+  private languageService = inject(LanguageService);
 
   private routeSub!: Subscription;
+  private languageSub!: Subscription;
 
   authors: MetadataItem[] = [];
   categories: MetadataItem[] = [];
@@ -119,13 +126,13 @@ export class MetadataManagerComponent implements OnInit, OnDestroy {
   }
 
   tabConfigs: TabConfig[] = [
-    {type: 'authors', label: 'Author', placeholder: 'Search authors...', selectAllKey: 'selectAllAuthors', icon: 'pi-user'},
-    {type: 'categories', label: 'Genre', placeholder: 'Search genres...', selectAllKey: 'selectAllCategories', icon: 'pi-tag'},
-    {type: 'moods', label: 'Mood', placeholder: 'Search moods...', selectAllKey: 'selectAllMoods', icon: 'pi-heart'},
-    {type: 'tags', label: 'Tag', placeholder: 'Search tags...', selectAllKey: 'selectAllTags', icon: 'pi-tags'},
-    {type: 'series', label: 'Series', placeholder: 'Search series...', selectAllKey: 'selectAllSeries', icon: 'pi-book'},
-    {type: 'publishers', label: 'Publisher', placeholder: 'Search publishers...', selectAllKey: 'selectAllPublishers', icon: 'pi-building'},
-    {type: 'languages', label: 'Language', placeholder: 'Search languages...', selectAllKey: 'selectAllLanguages', icon: 'pi-globe'}
+    {type: 'authors', labelKey: 'metadata.manager.tab.author', labelPluralKey: 'metadata.manager.tab.authors', placeholderKey: 'metadata.manager.placeholder.authors', selectAllKey: 'selectAllAuthors', icon: 'pi-user'},
+    {type: 'categories', labelKey: 'metadata.manager.tab.genre', labelPluralKey: 'metadata.manager.tab.genres', placeholderKey: 'metadata.manager.placeholder.categories', selectAllKey: 'selectAllCategories', icon: 'pi-tag'},
+    {type: 'moods', labelKey: 'metadata.manager.tab.mood', labelPluralKey: 'metadata.manager.tab.moods', placeholderKey: 'metadata.manager.placeholder.moods', selectAllKey: 'selectAllMoods', icon: 'pi-heart'},
+    {type: 'tags', labelKey: 'metadata.manager.tab.tag', labelPluralKey: 'metadata.manager.tab.tags', placeholderKey: 'metadata.manager.placeholder.tags', selectAllKey: 'selectAllTags', icon: 'pi-tags'},
+    {type: 'series', labelKey: 'metadata.manager.tab.series', labelPluralKey: 'metadata.manager.tab.seriesPlural', placeholderKey: 'metadata.manager.placeholder.series', selectAllKey: 'selectAllSeries', icon: 'pi-book'},
+    {type: 'publishers', labelKey: 'metadata.manager.tab.publisher', labelPluralKey: 'metadata.manager.tab.publishers', placeholderKey: 'metadata.manager.placeholder.publishers', selectAllKey: 'selectAllPublishers', icon: 'pi-building'},
+    {type: 'languages', labelKey: 'metadata.manager.tab.language', labelPluralKey: 'metadata.manager.tab.languages', placeholderKey: 'metadata.manager.placeholder.languages', selectAllKey: 'selectAllLanguages', icon: 'pi-globe'}
   ];
 
   ngOnInit() {
@@ -145,15 +152,23 @@ export class MetadataManagerComponent implements OnInit, OnDestroy {
       }
       this.updatePageTitle();
     });
+    this.languageSub = this.languageService.language$.subscribe(() => this.updatePageTitle());
   }
 
   updatePageTitle() {
     const currentTab = this.tabConfigs.find((tab) => tab.type === this._activeTab);
-    this.pageTitle.setPageTitle(`Metadata Manager: ${currentTab?.label ?? this._activeTab}`);
+    if (!currentTab) {
+      this.pageTitle.setPageTitle(this.translateService.instant('metadata.manager.title'));
+      return;
+    }
+    this.pageTitle.setPageTitle(
+      `${this.translateService.instant('metadata.manager.title')} - ${this.translateService.instant(currentTab.labelPluralKey)}`
+    );
   }
 
   ngOnDestroy(): void {
     this.routeSub.unsubscribe();
+    this.languageSub.unsubscribe();
   }
 
   loadMetadata() {
@@ -232,8 +247,8 @@ export class MetadataManagerComponent implements OnInit, OnDestroy {
     if (selected.length < 2) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Invalid Selection',
-        detail: 'Please select at least 2 items to merge.'
+        summary: this.translateService.instant('metadata.manager.toast.invalidSelection.summary'),
+        detail: this.translateService.instant('metadata.manager.toast.invalidSelection.mergeMin2')
       });
       return;
     }
@@ -260,8 +275,8 @@ export class MetadataManagerComponent implements OnInit, OnDestroy {
       if (selected.length === 0) {
         this.messageService.add({
           severity: 'warn',
-          summary: 'Invalid Selection',
-          detail: 'Please select at least 1 item to delete.'
+          summary: this.translateService.instant('metadata.manager.toast.invalidSelection.summary'),
+          detail: this.translateService.instant('metadata.manager.toast.invalidSelection.deleteMin1')
         });
         return;
       }
@@ -275,8 +290,8 @@ export class MetadataManagerComponent implements OnInit, OnDestroy {
     if (!this.currentRenameItem || !this.renameTarget.trim()) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Invalid Target',
-        detail: 'Please enter a valid name.'
+        summary: this.translateService.instant('metadata.manager.toast.invalidTarget.summary'),
+        detail: this.translateService.instant('metadata.manager.toast.invalidTarget.enterValidName')
       });
       return;
     }
@@ -286,8 +301,8 @@ export class MetadataManagerComponent implements OnInit, OnDestroy {
     if (targetValues.length === 0) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Invalid Target',
-        detail: 'Please enter at least one valid target value.'
+        summary: this.translateService.instant('metadata.manager.toast.invalidTarget.summary'),
+        detail: this.translateService.instant('metadata.manager.toast.invalidTarget.enterAtLeastOneValue')
       });
       return;
     }
@@ -295,8 +310,10 @@ export class MetadataManagerComponent implements OnInit, OnDestroy {
     if (this.isSingleValueField(this.currentMergeType) && targetValues.length > 1) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Invalid Target',
-        detail: `Each book can only have one ${this.currentMergeType.slice(0, -1)}. Please enter only one value.`
+        summary: this.translateService.instant('metadata.manager.toast.invalidTarget.summary'),
+        detail: this.translateService.instant('metadata.manager.toast.invalidTarget.singleValueOnly', {
+          type: this.getTypeLabel(this.currentMergeType, false)
+        })
       });
       return;
     }
@@ -314,19 +331,27 @@ export class MetadataManagerComponent implements OnInit, OnDestroy {
 
     const oldValue = this.currentRenameItem.value;
     const affectedBooks = this.currentRenameItem.count;
-    const action = targetValues.length === 1 ? 'renamed' : 'split';
-    const resultText = targetValues.length === 1
-      ? `"${targetValues[0]}"`
-      : `${targetValues.length} values`;
+    const action = targetValues.length === 1 ? 'rename' : 'split';
 
     this.loading = true;
     this.mergingInProgress = true;
     this.bookService.consolidateMetadata(this.currentMergeType, targetValues, [oldValue]).subscribe({
       next: () => {
+        const detail = action === 'rename'
+          ? this.translateService.instant('metadata.manager.toast.renameSuccess.detail', {
+            oldValue,
+            newValue: targetValues[0],
+            booksUpdated: affectedBooks
+          })
+          : this.translateService.instant('metadata.manager.toast.splitSuccess.detail', {
+            oldValue,
+            count: targetValues.length,
+            booksUpdated: affectedBooks
+          });
         this.messageService.add({
           severity: 'success',
-          summary: `${action === 'renamed' ? 'Rename' : 'Split'} Successful`,
-          detail: `Successfully ${action} "${oldValue}" ${action === 'renamed' ? 'to' : 'into'} ${resultText}. ${affectedBooks} book${affectedBooks > 1 ? 's' : ''} updated.`,
+          summary: this.translateService.instant(`metadata.manager.toast.${action}Success.summary`),
+          detail,
           life: 5000
         });
         this.showRenameDialog = false;
@@ -339,8 +364,8 @@ export class MetadataManagerComponent implements OnInit, OnDestroy {
       error: (error) => {
         this.messageService.add({
           severity: 'error',
-          summary: `${action === 'renamed' ? 'Rename' : 'Split'} Failed`,
-          detail: error?.error?.message || `An error occurred during ${action === 'renamed' ? 'rename' : 'split'}.`
+          summary: this.translateService.instant(`metadata.manager.toast.${action}Failed.summary`),
+          detail: error?.error?.message || this.translateService.instant(`metadata.manager.toast.${action}Failed.detail`)
         });
         this.loading = false;
         this.mergingInProgress = false;
@@ -353,8 +378,8 @@ export class MetadataManagerComponent implements OnInit, OnDestroy {
     if (!this.mergeTarget.trim()) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Invalid Target',
-        detail: 'Please enter a target value for merging.'
+        summary: this.translateService.instant('metadata.manager.toast.invalidTarget.summary'),
+        detail: this.translateService.instant('metadata.manager.toast.invalidTarget.enterMergeTarget')
       });
       return;
     }
@@ -364,8 +389,8 @@ export class MetadataManagerComponent implements OnInit, OnDestroy {
     if (targetValues.length === 0) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Invalid Target',
-        detail: 'Please enter at least one valid target value.'
+        summary: this.translateService.instant('metadata.manager.toast.invalidTarget.summary'),
+        detail: this.translateService.instant('metadata.manager.toast.invalidTarget.enterAtLeastOneValue')
       });
       return;
     }
@@ -373,8 +398,10 @@ export class MetadataManagerComponent implements OnInit, OnDestroy {
     if (this.isSingleValueField(this.currentMergeType) && targetValues.length > 1) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Invalid Target',
-        detail: `Each book can only have one ${this.currentMergeType.slice(0, -1)}. Please enter only one target value to standardize to.`
+        summary: this.translateService.instant('metadata.manager.toast.invalidTarget.summary'),
+        detail: this.translateService.instant('metadata.manager.toast.invalidTarget.singleValueOnlyMerge', {
+          type: this.getTypeLabel(this.currentMergeType, false)
+        })
       });
       return;
     }
@@ -386,8 +413,7 @@ export class MetadataManagerComponent implements OnInit, OnDestroy {
     const selected = this.getSelectedItems(this.currentMergeType);
     const valuesToMerge = selected.map(s => s.value);
     const affectedBooks = this.getTotalAffectedBooks(selected);
-    const operation = targetValues.length === 1 ? 'merge' : 'merge/split';
-    const operationPast = targetValues.length === 1 ? 'merged' : 'merged/split';
+    const operation = targetValues.length === 1 ? 'merge' : 'mergeSplit';
 
     this.loading = true;
     this.mergingInProgress = true;
@@ -395,8 +421,13 @@ export class MetadataManagerComponent implements OnInit, OnDestroy {
       next: () => {
         this.messageService.add({
           severity: 'success',
-          summary: `${operation === 'merge' ? 'Merge' : 'Merge/Split'} Successful`,
-          detail: `Successfully ${operationPast} ${selected.length} ${this.currentMergeType} into ${targetValues.length} value(s). ${affectedBooks} book${affectedBooks > 1 ? 's' : ''} updated.`,
+          summary: this.translateService.instant(`metadata.manager.toast.${operation}Success.summary`),
+          detail: this.translateService.instant(`metadata.manager.toast.${operation}Success.detail`, {
+            selectedCount: selected.length,
+            type: this.getTypeLabel(this.currentMergeType, true),
+            targetCount: targetValues.length,
+            booksUpdated: affectedBooks
+          }),
           life: 5000
         });
         this.showMergeDialog = false;
@@ -409,8 +440,8 @@ export class MetadataManagerComponent implements OnInit, OnDestroy {
       error: (error) => {
         this.messageService.add({
           severity: 'error',
-          summary: `${operation === 'merge' ? 'Merge' : 'Merge/Split'} Failed`,
-          detail: error?.error?.message || `An error occurred during ${operation}.`
+          summary: this.translateService.instant(`metadata.manager.toast.${operation}Failed.summary`),
+          detail: error?.error?.message || this.translateService.instant(`metadata.manager.toast.${operation}Failed.detail`)
         });
         this.loading = false;
         this.mergingInProgress = false;
@@ -426,8 +457,8 @@ export class MetadataManagerComponent implements OnInit, OnDestroy {
     if (itemsToDelete.length === 0) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Invalid Selection',
-        detail: 'Please select at least one item to delete.'
+        summary: this.translateService.instant('metadata.manager.toast.invalidSelection.summary'),
+        detail: this.translateService.instant('metadata.manager.toast.invalidSelection.deleteMin1')
       });
       return;
     }
@@ -447,8 +478,12 @@ export class MetadataManagerComponent implements OnInit, OnDestroy {
       next: () => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Delete Successful',
-          detail: `Successfully deleted ${itemCount} ${this.currentMergeType.slice(0, -1)}${itemCount > 1 ? 's' : ''}. ${affectedBooks} book${affectedBooks > 1 ? 's' : ''} updated.`,
+          summary: this.translateService.instant('metadata.manager.toast.deleteSuccess.summary'),
+          detail: this.translateService.instant('metadata.manager.toast.deleteSuccess.detail', {
+            itemCount,
+            type: this.getTypeLabel(this.currentMergeType, false),
+            booksUpdated: affectedBooks
+          }),
           life: 5000
         });
         this.showDeleteDialog = false;
@@ -461,13 +496,19 @@ export class MetadataManagerComponent implements OnInit, OnDestroy {
       error: (error) => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Delete Failed',
-          detail: error?.error?.message || 'An error occurred during deletion.'
+          summary: this.translateService.instant('metadata.manager.toast.deleteFailed.summary'),
+          detail: error?.error?.message || this.translateService.instant('metadata.manager.toast.deleteFailed.detail')
         });
         this.loading = false;
         this.deletingInProgress = false;
       }
     });
+  }
+
+  private getTypeLabel(type: MetadataType, plural: boolean): string {
+    const tab = this.tabConfigs.find(t => t.type === type);
+    if (!tab) return type;
+    return this.translateService.instant(plural ? tab.labelPluralKey : tab.labelKey);
   }
 
   getMetadataItems(type: MetadataType): MetadataItem[] {

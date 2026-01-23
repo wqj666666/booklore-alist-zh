@@ -1,10 +1,10 @@
 <div class="metadata-settings">
   <div class="setting-item">
     <div class="setting-info">
-      <label class="setting-label">Enabled Metadata Providers</label>
+      <label class="setting-label">{{ 'settings.metadataProviders.enabledProviders.label' | translate }}</label>
       <p class="setting-description">
         <i class="pi pi-info-circle"></i>
-        Enable or configure third-party metadata sources for enhanced book information. Each provider offers different types of data and coverage.
+        {{ 'settings.metadataProviders.enabledProviders.description' | translate }}
       </p>
     </div>
   </div>
@@ -14,34 +14,34 @@
       <div class="provider-control">
         <div class="provider-info">
           <p-checkbox [(ngModel)]="amazonEnabled" [binary]="true"></p-checkbox>
-          <label class="provider-label">Amazon</label>
+          <label class="provider-label">{{ 'settings.metadataProviders.provider.amazon' | translate }}</label>
         </div>
       </div>
 
       <div class="provider-config">
         <div class="config-field">
-          <label class="config-label">Region</label>
+          <label class="config-label">{{ 'settings.metadataProviders.amazon.region.label' | translate }}</label>
           <p-select
             [options]="amazonDomains"
             [(ngModel)]="selectedAmazonDomain"
-            placeholder="Select Domain"
+            [placeholder]="'settings.metadataProviders.amazon.region.placeholder' | translate"
             class="config-select">
           </p-select>
         </div>
 
         <div class="config-field">
           <div class="config-label-row">
-            <label class="config-label">Cookie (Optional, but highly recommended)</label>
+            <label class="config-label">{{ 'settings.metadataProviders.amazon.cookie.label' | translate }}</label>
             <app-external-doc-link docType="amazonCookie"></app-external-doc-link>
           </div>
           <p class="config-description">
             <i class="pi pi-info-circle"></i>
-            Providing your Amazon session cookie allows the app to access richer book metadata and bypass rate limits. Optional but recommended for best results.
+            {{ 'settings.metadataProviders.amazon.cookie.description' | translate }}
           </p>
           <input
             type="text"
             pInputText
-            placeholder="Paste your Amazon cookie"
+            [placeholder]="'settings.metadataProviders.amazon.cookie.placeholder' | translate"
             fluid
             class="max-w-[60rem]"
             [(ngModel)]="amazonCookie"/>
@@ -53,7 +53,7 @@
       <div class="provider-control">
         <div class="provider-info">
           <p-checkbox [(ngModel)]="goodreadsEnabled" [binary]="true"></p-checkbox>
-          <label class="provider-label">Goodreads</label>
+          <label class="provider-label">{{ 'settings.metadataProviders.provider.goodreads' | translate }}</label>
         </div>
       </div>
     </div>
@@ -62,18 +62,18 @@
       <div class="provider-control">
         <div class="provider-info">
           <p-checkbox [(ngModel)]="googleEnabled" [binary]="true"></p-checkbox>
-          <label class="provider-label">Google</label>
+          <label class="provider-label">{{ 'settings.metadataProviders.provider.google' | translate }}</label>
         </div>
       </div>
 
       <div class="provider-config">
         <div class="config-field">
-          <label class="config-label">Language restriction</label>
+          <label class="config-label">{{ 'settings.metadataProviders.google.languageRestriction.label' | translate }}</label>
           <p-select
             [options]="googleLanguages"
             [(ngModel)]="selectedGoogleLanguage"
             [showClear]="!!selectedGoogleLanguage"
-            placeholder="Select Language"
+            [placeholder]="'settings.metadataProviders.google.languageRestriction.placeholder' | translate"
             class="config-select">
           </p-select>
         </div>
@@ -88,20 +88,20 @@
             [(ngModel)]="hardcoverEnabled"
             [disabled]="!hardcoverToken">
           </p-checkbox>
-          <label class="provider-label">Hardcover</label>
+          <label class="provider-label">{{ 'settings.metadataProviders.provider.hardcover' | translate }}</label>
         </div>
       </div>
 
       <div class="provider-config">
         <div class="config-field">
           <div class="config-label-row">
-            <label class="config-label">API Token</label>
+            <label class="config-label">{{ 'settings.metadataProviders.hardcover.apiToken.label' | translate }}</label>
             <app-external-doc-link docType="hardcover"></app-external-doc-link>
           </div>
           <input
             type="text"
             pInputText
-            placeholder="Enter Hardcover API token"
+            [placeholder]="'settings.metadataProviders.hardcover.apiToken.placeholder' | translate"
             fluid
             class="max-w-[60rem]"
             [(ngModel)]="hardcoverToken"
@@ -118,17 +118,17 @@
             [(ngModel)]="comicvineEnabled"
             [disabled]="!comicvineToken">
           </p-checkbox>
-          <label class="provider-label">Comic Vine</label>
+          <label class="provider-label">{{ 'settings.metadataProviders.provider.comicVine' | translate }}</label>
         </div>
       </div>
 
       <div class="provider-config">
         <div class="config-field">
-          <label class="config-label">API Token</label>
+          <label class="config-label">{{ 'settings.metadataProviders.comicvine.apiToken.label' | translate }}</label>
           <input
             type="text"
             pInputText
-            placeholder="Enter Comic Vine API token"
+            [placeholder]="'settings.metadataProviders.comicvine.apiToken.placeholder' | translate"
             fluid
             class="max-w-[60rem]"
             [(ngModel)]="comicvineToken"
@@ -141,7 +141,7 @@
       <div class="provider-control">
         <div class="provider-info">
           <p-checkbox [(ngModel)]="doubanEnabled" [binary]="true"></p-checkbox>
-          <label class="provider-label">Douban</label>
+          <label class="provider-label">{{ 'settings.metadataProviders.provider.douban' | translate }}</label>
         </div>
       </div>
     </div>
@@ -150,7 +150,7 @@
       <div class="provider-control">
         <div class="provider-info">
           <p-checkbox [(ngModel)]="lubimyCzytacEnabled" [binary]="true"></p-checkbox>
-          <label class="provider-label">Lubimyczytac</label>
+          <label class="provider-label">{{ 'settings.metadataProviders.provider.lubimyczytac' | translate }}</label>
         </div>
       </div>
     </div>
@@ -159,13 +159,19 @@
       <div class="provider-control">
         <div class="provider-info">
           <p-checkbox [(ngModel)]="ranobedbEnabled" [binary]="true"></p-checkbox>
-          <label class="provider-label">Ranobedb</label>
+          <label class="provider-label">{{ 'settings.metadataProviders.provider.ranobedb' | translate }}</label>
         </div>
       </div>
     </div>
   </div>
 
   <div class="setting-actions">
-    <p-button label="Save" icon="pi pi-save" severity="success" [outlined]="true" (click)="saveSettings()"></p-button>
+    <p-button
+      [label]="'settings.metadataProviders.action.save' | translate"
+      icon="pi pi-save"
+      severity="success"
+      [outlined]="true"
+      (click)="saveSettings()"
+    ></p-button>
   </div>
 </div>

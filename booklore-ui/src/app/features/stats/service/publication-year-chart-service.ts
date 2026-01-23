@@ -1,5 +1,5 @@
 import {inject, Injectable, OnDestroy} from '@angular/core';
-import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, EMPTY, Observable, Subject} from 'rxjs';
 import {map, takeUntil, catchError, filter, first, switchMap} from 'rxjs/operators';
 import {ChartConfiguration, ChartData, ChartType, TooltipItem} from 'chart.js';
 
@@ -7,6 +7,8 @@ import {LibraryFilterService} from './library-filter.service';
 import {BookService} from '../../book/service/book.service';
 import {Book} from '../../book/model/book.model';
 import {BookState} from '../../book/model/state/book-state.model';
+import {TranslateService} from '@ngx-translate/core';
+import {LanguageService} from '../../../core/i18n/language.service';
 
 interface PublicationYearStats {
   year: string;
@@ -41,103 +43,18 @@ type YearChartData = ChartData<'line', number[], string>;
 export class PublicationYearChartService implements OnDestroy {
   private readonly bookService = inject(BookService);
   private readonly libraryFilterService = inject(LibraryFilterService);
+  private readonly translateService = inject(TranslateService);
+  private readonly languageService = inject(LanguageService);
   private readonly destroy$ = new Subject<void>();
 
   public readonly yearChartType = 'line' as const;
 
-  public readonly yearChartOptions: ChartConfiguration['options'] = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {display: false},
-      tooltip: {
-        enabled: true,
-        backgroundColor: 'rgba(0, 0, 0, 0.9)',
-        titleColor: '#ffffff',
-        bodyColor: '#ffffff',
-        borderColor: '#ffffff',
-        borderWidth: 1,
-        cornerRadius: 6,
-        displayColors: true,
-        padding: 12,
-        titleFont: {size: 14, weight: 'bold'},
-        bodyFont: {size: 13},
-        position: 'nearest',
-        callbacks: {
-          title: (context) => `Year ${context[0].label}`,
-          label: this.formatTooltipLabel.bind(this)
-        }
-      },
-      datalabels: {
-        display: true,
-        color: '#ffffff',
-        font: {
-          size: 10,
-          weight: 'bold'
-        },
-        align: 'top',
-        offset: 8,
-        formatter: (value: number) => value.toString()
-      }
-    },
-    interaction: {
-      intersect: false,
-      mode: 'point'
-    },
-    scales: {
-      x: {
-        beginAtZero: true,
-        ticks: {
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11.5
-          },
-          maxRotation: 45,
-          callback: function (value, index, values) {
-            // Show every 5th year to avoid crowding
-            return index % 5 === 0 ? this.getLabelForValue(value as number) : '';
-          }
-        },
-        grid: {color: 'rgba(255, 255, 255, 0.1)'},
-        title: {
-          display: true,
-          text: 'Publication Year',
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11.5
-          }
-        }
-      },
-      y: {
-        beginAtZero: true,
-        ticks: {
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11.5
-          },
-          stepSize: 1
-        },
-        grid: {color: 'rgba(255, 255, 255, 0.05)'},
-        title: {
-          display: true,
-          text: 'Number of Books',
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11.5
-          }
-        }
-      }
-    }
-  };
+  public yearChartOptions: ChartConfiguration['options'] = this.buildOptions();
 
   private readonly yearChartDataSubject = new BehaviorSubject<YearChartData>({
     labels: [],
     datasets: [{
-      label: 'Books Published',
+      label: this.translateService.instant('stats.library.chart.publicationYear.datasetLabel'),
       data: [],
       ...CHART_DEFAULTS
     }]
@@ -152,9 +69,10 @@ export class PublicationYearChartService implements OnDestroy {
         filter(state => state.loaded),
         first(),
         switchMap(() =>
-          this.libraryFilterService.selectedLibrary$.pipe(
-            takeUntil(this.destroy$)
-          )
+          combineLatest([
+            this.libraryFilterService.selectedLibrary$,
+            this.languageService.language$
+          ]).pipe(takeUntil(this.destroy$))
         ),
         catchError((error) => {
           console.error('Error processing publication year stats:', error);
@@ -162,6 +80,7 @@ export class PublicationYearChartService implements OnDestroy {
         })
       )
       .subscribe(() => {
+        this.yearChartOptions = this.buildOptions();
         const stats = this.calculatePublicationYearStats();
         this.updateChartData(stats);
       });
@@ -180,7 +99,7 @@ export class PublicationYearChartService implements OnDestroy {
       this.yearChartDataSubject.next({
         labels,
         datasets: [{
-          label: 'Books Published',
+          label: this.translateService.instant('stats.library.chart.publicationYear.datasetLabel'),
           data: dataValues,
           ...CHART_DEFAULTS
         }]
@@ -255,6 +174,100 @@ export class PublicationYearChartService implements OnDestroy {
 
   private formatTooltipLabel(context: TooltipItem<any>): string {
     const value = context.parsed.y;
-    return `${value} book${value === 1 ? '' : 's'} published`;
+    const countLabel = this.translateService.instant(
+      value === 1 ? 'stats.library.units.bookCountOne' : 'stats.library.units.bookCountMany',
+      {count: value}
+    );
+    return this.translateService.instant('stats.library.chart.publicationYear.tooltipLabel', {countLabel});
+  }
+
+  private buildOptions(): ChartConfiguration['options'] {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {display: false},
+        tooltip: {
+          enabled: true,
+          backgroundColor: 'rgba(0, 0, 0, 0.9)',
+          titleColor: '#ffffff',
+          bodyColor: '#ffffff',
+          borderColor: '#ffffff',
+          borderWidth: 1,
+          cornerRadius: 6,
+          displayColors: true,
+          padding: 12,
+          titleFont: {size: 14, weight: 'bold'},
+          bodyFont: {size: 13},
+          position: 'nearest',
+          callbacks: {
+            title: (context) => this.translateService.instant('stats.library.chart.publicationYear.tooltipTitle', {year: context[0].label}),
+            label: this.formatTooltipLabel.bind(this)
+          }
+        },
+        datalabels: {
+          display: true,
+          color: '#ffffff',
+          font: {
+            size: 10,
+            weight: 'bold'
+          },
+          align: 'top',
+          offset: 8,
+          formatter: (value: number) => value.toString()
+        }
+      },
+      interaction: {
+        intersect: false,
+        mode: 'point'
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          ticks: {
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11.5
+            },
+            maxRotation: 45,
+            callback: function (value, index, values) {
+              return index % 5 === 0 ? this.getLabelForValue(value as number) : '';
+            }
+          },
+          grid: {color: 'rgba(255, 255, 255, 0.1)'},
+          title: {
+            display: true,
+            text: this.translateService.instant('stats.library.chart.publicationYear.axis.xTitle'),
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11.5
+            }
+          }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: {
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11.5
+            },
+            stepSize: 1
+          },
+          grid: {color: 'rgba(255, 255, 255, 0.05)'},
+          title: {
+            display: true,
+            text: this.translateService.instant('stats.library.chart.publicationYear.axis.yTitle'),
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11.5
+            }
+          }
+        }
+      }
+    };
   }
 }

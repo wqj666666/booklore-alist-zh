@@ -4,9 +4,9 @@
       <i class="pi pi-user-plus header-icon"></i>
     </div>
     <div class="header-text">
-      <h2 class="panel-title">Create New User</h2>
+      <h2 class="panel-title">{{ 'settings.userManagement.createUserDialog.title' | translate }}</h2>
       <p class="panel-description">
-        Set up a new user account with permissions and library access
+        {{ 'settings.userManagement.createUserDialog.description' | translate }}
       </p>
     </div>
     <p-button
@@ -24,74 +24,74 @@
       <div class="form-section basic-info-section">
         <h3 class="section-title">
           <i class="pi pi-id-card"></i>
-          Basic Information
+          {{ 'settings.userManagement.createUserDialog.section.basicInformation' | translate }}
         </h3>
 
         <div class="form-fields-grid">
           <div class="form-field">
-            <label class="field-label">Full Name</label>
+            <label class="field-label">{{ 'settings.userManagement.label.fullName' | translate }}</label>
             <input
               type="text"
               pInputText
               formControlName="name"
-              placeholder="Enter full name..."
+              [placeholder]="'settings.userManagement.createUserDialog.placeholder.fullName' | translate"
               class="field-input"
             />
             @if (userForm.get('name')?.invalid && (userForm.get('name')?.dirty || userForm.get('name')?.touched)) {
               <small class="field-error">
                 <i class="pi pi-exclamation-circle"></i>
-                Name is required and must be at least 3 characters.
+                {{ 'settings.userManagement.createUserDialog.validation.name' | translate }}
               </small>
             }
           </div>
 
           <div class="form-field">
-            <label class="field-label">Email</label>
+            <label class="field-label">{{ 'settings.userManagement.label.email' | translate }}</label>
             <input
               type="email"
               pInputText
               formControlName="email"
-              placeholder="Enter email..."
+              [placeholder]="'settings.userManagement.createUserDialog.placeholder.email' | translate"
               class="field-input"
             />
             @if (userForm.get('email')?.invalid && (userForm.get('email')?.dirty || userForm.get('email')?.touched)) {
               <small class="field-error">
                 <i class="pi pi-exclamation-circle"></i>
-                Enter a valid email address.
+                {{ 'settings.userManagement.createUserDialog.validation.email' | translate }}
               </small>
             }
           </div>
 
           <div class="form-field">
-            <label class="field-label">Username</label>
+            <label class="field-label">{{ 'settings.userManagement.createUserDialog.label.username' | translate }}</label>
             <input
               type="text"
               pInputText
               formControlName="username"
-              placeholder="Enter username..."
+              [placeholder]="'settings.userManagement.createUserDialog.placeholder.username' | translate"
               class="field-input"
             />
             @if (userForm.get('username')?.invalid && (userForm.get('username')?.dirty || userForm.get('username')?.touched)) {
               <small class="field-error">
                 <i class="pi pi-exclamation-circle"></i>
-                Username is required.
+                {{ 'settings.userManagement.createUserDialog.validation.username' | translate }}
               </small>
             }
           </div>
 
           <div class="form-field">
-            <label class="field-label">Password</label>
+            <label class="field-label">{{ 'settings.userManagement.createUserDialog.label.password' | translate }}</label>
             <input
               type="password"
               pInputText
               formControlName="password"
-              placeholder="Enter password..."
+              [placeholder]="'settings.userManagement.createUserDialog.placeholder.password' | translate"
               class="field-input"
             />
             @if (userForm.get('password')?.invalid && (userForm.get('password')?.dirty || userForm.get('password')?.touched)) {
               <small class="field-error">
                 <i class="pi pi-exclamation-circle"></i>
-                Password must be at least 6 characters long.
+                {{ 'settings.userManagement.createUserDialog.validation.password' | translate }}
               </small>
             }
           </div>
@@ -103,15 +103,15 @@
       <div class="form-section">
         <h3 class="section-title">
           <i class="pi pi-book"></i>
-          Library Access
+          {{ 'settings.userManagement.createUserDialog.section.libraryAccess' | translate }}
         </h3>
 
         <div class="form-field">
-          <label class="field-label">Accessible Libraries</label>
+          <label class="field-label">{{ 'settings.userManagement.createUserDialog.label.accessibleLibraries' | translate }}</label>
           <p-multiselect
             [options]="libraries"
             formControlName="selectedLibraries"
-            placeholder="Select Libraries"
+            [placeholder]="'settings.userManagement.placeholder.selectLibraries' | translate"
             optionLabel="name"
             display="chip"
             class="field-input"
@@ -120,7 +120,7 @@
           @if (userForm.get('selectedLibraries')?.invalid && (userForm.get('selectedLibraries')?.dirty || userForm.get('selectedLibraries')?.touched)) {
             <small class="field-error">
               <i class="pi pi-exclamation-circle"></i>
-              At least one library must be selected.
+              {{ 'settings.userManagement.createUserDialog.validation.selectedLibraries' | translate }}
             </small>
           }
         </div>
@@ -131,14 +131,14 @@
       <div class="form-section">
         <h3 class="section-title">
           <i class="pi pi-shield"></i>
-          Permissions
+          {{ 'settings.userManagement.expanded.permissions.title' | translate }}
         </h3>
 
         <div class="permissions-container">
           <div class="permission-group">
             <h4 class="permission-group-title">
               <i class="pi pi-book"></i>
-              Book Management
+              {{ 'settings.userManagement.permissionGroup.bookManagement' | translate }}
             </h4>
             <div class="permission-group-items">
               <div class="permission-item">
@@ -147,7 +147,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-upload permission-icon"></i>
                   </div>
-                  <span class="permission-name">Upload Books</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.uploadBooks' | translate }}</span>
                 </label>
               </div>
 
@@ -157,7 +157,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-download permission-icon"></i>
                   </div>
-                  <span class="permission-name">Download Books</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.downloadBooks' | translate }}</span>
                 </label>
               </div>
 
@@ -167,7 +167,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-trash permission-icon"></i>
                   </div>
-                  <span class="permission-name">Delete Books</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.deleteBooks' | translate }}</span>
                 </label>
               </div>
 
@@ -177,7 +177,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-pencil permission-icon"></i>
                   </div>
-                  <span class="permission-name">Edit Metadata</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.editSingleMetadata' | translate }}</span>
                 </label>
               </div>
 
@@ -187,7 +187,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-folder permission-icon"></i>
                   </div>
-                  <span class="permission-name">Manage Library</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.manageLibrary' | translate }}</span>
                 </label>
               </div>
 
@@ -197,7 +197,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-envelope permission-icon"></i>
                   </div>
-                  <span class="permission-name">Email Books</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.emailBooks' | translate }}</span>
                 </label>
               </div>
             </div>
@@ -206,7 +206,7 @@
           <div class="permission-group">
             <h4 class="permission-group-title">
               <i class="pi pi-mobile"></i>
-              Device Sync
+              {{ 'settings.userManagement.permissionGroup.deviceSync' | translate }}
             </h4>
             <div class="permission-group-items">
               <div class="permission-item">
@@ -215,7 +215,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-sync permission-icon"></i>
                   </div>
-                  <span class="permission-name">KOReader Sync</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.koreaderSync' | translate }}</span>
                 </label>
               </div>
 
@@ -225,7 +225,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-tablet permission-icon"></i>
                   </div>
-                  <span class="permission-name">Kobo Sync</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.koboSync' | translate }}</span>
                 </label>
               </div>
 
@@ -235,7 +235,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-globe permission-icon"></i>
                   </div>
-                  <span class="permission-name">OPDS Feed Access</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.opdsFeedAccess' | translate }}</span>
                 </label>
               </div>
             </div>
@@ -244,7 +244,7 @@
           <div class="permission-group">
             <h4 class="permission-group-title">
               <i class="pi pi-eye"></i>
-              System Access
+              {{ 'settings.userManagement.permissionGroup.systemAccess' | translate }}
             </h4>
             <div class="permission-group-items">
               <div class="permission-item">
@@ -253,7 +253,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-cloud-upload permission-icon"></i>
                   </div>
-                  <span class="permission-name">Access Bookdrop</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.accessBookdrop' | translate }}</span>
                 </label>
               </div>
 
@@ -263,7 +263,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-chart-bar permission-icon"></i>
                   </div>
-                  <span class="permission-name">View Library Statistics</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.viewLibraryStatistics' | translate }}</span>
                 </label>
               </div>
 
@@ -273,7 +273,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-chart-line permission-icon"></i>
                   </div>
-                  <span class="permission-name">View User Reading Statistics</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.viewUserReadingStatistics' | translate }}</span>
                 </label>
               </div>
             </div>
@@ -282,7 +282,7 @@
           <div class="permission-group">
             <h4 class="permission-group-title">
               <i class="pi pi-cog"></i>
-              System Configuration
+              {{ 'settings.userManagement.permissionGroup.systemConfiguration' | translate }}
             </h4>
             <div class="permission-group-items">
               <div class="permission-item">
@@ -291,7 +291,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-cog permission-icon"></i>
                   </div>
-                  <span class="permission-name">Manage Metadata Configuration</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.manageMetadataConfiguration' | translate }}</span>
                 </label>
               </div>
 
@@ -301,7 +301,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-sliders-h permission-icon"></i>
                   </div>
-                  <span class="permission-name">Manage Application Preferences</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.manageApplicationPreferences' | translate }}</span>
                 </label>
               </div>
 
@@ -311,7 +311,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-list-check permission-icon"></i>
                   </div>
-                  <span class="permission-name">Access Task Manager</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.accessTaskManager' | translate }}</span>
                 </label>
               </div>
 
@@ -321,7 +321,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-images permission-icon"></i>
                   </div>
-                  <span class="permission-name">Manage Icons</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.manageIcons' | translate }}</span>
                 </label>
               </div>
               <div class="permission-item">
@@ -330,7 +330,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-palette permission-icon"></i>
                   </div>
-                  <span class="permission-name">Manage Fonts</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.manageFonts' | translate }}</span>
                 </label>
               </div>
             </div>
@@ -339,7 +339,7 @@
           <div class="permission-group">
             <h4 class="permission-group-title">
               <i class="pi pi-pencil"></i>
-              Metadata Editing
+              {{ 'settings.userManagement.permissionGroup.metadataEditing' | translate }}
             </h4>
             <div class="permission-group-items">
               <div class="permission-item">
@@ -348,7 +348,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-sync permission-icon"></i>
                   </div>
-                  <span class="permission-name">Bulk Auto Fetch Metadata</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.bulkAutoFetchMetadata' | translate }}</span>
                 </label>
               </div>
               <div class="permission-item">
@@ -357,7 +357,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-cog permission-icon"></i>
                   </div>
-                  <span class="permission-name">Bulk Custom Fetch Metadata</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.bulkCustomFetchMetadata' | translate }}</span>
                 </label>
               </div>
               <div class="permission-item">
@@ -366,7 +366,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-pencil permission-icon"></i>
                   </div>
-                  <span class="permission-name">Bulk Edit Metadata</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.accessBulkMetadataEditor' | translate }}</span>
                 </label>
               </div>
               <div class="permission-item">
@@ -375,7 +375,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-image permission-icon"></i>
                   </div>
-                  <span class="permission-name">Bulk Regenerate Cover</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.bulkRegenerateCover' | translate }}</span>
                 </label>
               </div>
               <div class="permission-item">
@@ -384,7 +384,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-folder-open permission-icon"></i>
                   </div>
-                  <span class="permission-name">Move/Organize Files</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.moveOrganizeFiles' | translate }}</span>
                 </label>
               </div>
               <div class="permission-item">
@@ -393,7 +393,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-lock-open permission-icon"></i>
                   </div>
-                  <span class="permission-name">Bulk Lock/Unlock Metadata</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.bulkLockUnlockMetadata' | translate }}</span>
                 </label>
               </div>
             </div>
@@ -402,7 +402,7 @@
           <div class="permission-group">
             <h4 class="permission-group-title">
               <i class="pi pi-refresh"></i>
-              Bulk Reset
+              {{ 'settings.userManagement.permissionGroup.bulkReset' | translate }}
             </h4>
             <div class="permission-group-items">
               <div class="permission-item">
@@ -411,7 +411,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-history permission-icon"></i>
                   </div>
-                  <span class="permission-name">Bulk Reset Booklore Read Progress</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.bulkResetBookloreReadProgress' | translate }}</span>
                 </label>
               </div>
               <div class="permission-item">
@@ -420,7 +420,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-tablet permission-icon"></i>
                   </div>
-                  <span class="permission-name">Bulk Reset KoReader Read Progress</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.bulkResetKoreaderReadProgress' | translate }}</span>
                 </label>
               </div>
               <div class="permission-item">
@@ -429,7 +429,7 @@
                   <div class="permission-icon-wrapper">
                     <i class="pi pi-check-square permission-icon"></i>
                   </div>
-                  <span class="permission-name">Bulk Reset Book Read Status</span>
+                  <span class="permission-name">{{ 'settings.userManagement.permission.bulkResetBookReadStatus' | translate }}</span>
                 </label>
               </div>
             </div>
@@ -438,7 +438,7 @@
           <div class="permission-group full-width">
             <h4 class="permission-group-title">
               <i class="pi pi-shield"></i>
-              Administration
+              {{ 'settings.userManagement.permissionGroup.administration' | translate }}
             </h4>
             <div class="permission-group-items">
               <div class="permission-item admin-permission">
@@ -447,7 +447,7 @@
                   <div class="permission-icon-wrapper admin-icon">
                     <i class="pi pi-shield permission-icon"></i>
                   </div>
-                  <span class="permission-name admin-name">Full Administrator Access</span>
+                  <span class="permission-name admin-name">{{ 'settings.userManagement.permission.fullAdministratorAccess' | translate }}</span>
                 </label>
               </div>
             </div>
@@ -459,18 +459,18 @@
     <div class="dialog-footer">
       <div class="footer-info">
         <i class="pi pi-info-circle"></i>
-        <span>All fields are required to create a user</span>
+        <span>{{ 'settings.userManagement.createUserDialog.footer.allFieldsRequired' | translate }}</span>
       </div>
       <div class="footer-actions">
         <p-button
-          label="Cancel"
+          [label]="'common.cancel' | translate"
           severity="secondary"
           [outlined]="true"
           type="button"
           (click)="closeDialog()"
         />
         <p-button
-          label="Create User"
+          [label]="'settings.userManagement.button.createUser' | translate"
           icon="pi pi-check"
           severity="success"
           [disabled]="userForm.invalid"

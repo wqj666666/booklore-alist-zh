@@ -7,6 +7,7 @@ import {Button} from 'primeng/button';
 import {InputText} from 'primeng/inputtext';
 import {EmailV2RecipientService} from '../email-v2-recipient/email-v2-recipient.service';
 import {Tooltip} from 'primeng/tooltip';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-create-email-recipient-dialog',
@@ -15,7 +16,8 @@ import {Tooltip} from 'primeng/tooltip';
     ReactiveFormsModule,
     Button,
     InputText,
-    Tooltip
+    Tooltip,
+    TranslateModule
   ],
   templateUrl: './create-email-recipient-dialog.component.html',
   styleUrls: ['./create-email-recipient-dialog.component.scss']
@@ -26,6 +28,7 @@ export class CreateEmailRecipientDialogComponent {
   private emailRecipientService = inject(EmailV2RecipientService);
   private messageService = inject(MessageService);
   private ref = inject(DynamicDialogRef);
+  private translateService = inject(TranslateService);
 
   constructor() {
     this.emailRecipientForm = this.fb.group({
@@ -43,8 +46,8 @@ export class CreateEmailRecipientDialogComponent {
     if (this.emailRecipientForm.invalid) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Validation Error',
-        detail: 'Please correct errors before submitting.'
+        summary: this.translateService.instant('settings.emailV2.createRecipientDialog.toast.validationError.summary'),
+        detail: this.translateService.instant('settings.emailV2.createRecipientDialog.toast.validationError.detail')
       });
       return;
     }
@@ -55,18 +58,19 @@ export class CreateEmailRecipientDialogComponent {
       next: () => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Recipient Added',
-          detail: `${emailRecipientData.name} has been successfully added.`
+          summary: this.translateService.instant('settings.emailV2.createRecipientDialog.toast.createSuccess.summary'),
+          detail: this.translateService.instant('settings.emailV2.createRecipientDialog.toast.createSuccess.detail', {name: emailRecipientData.name})
         });
         this.ref.close(true);
       },
       error: (err) => {
+        const serverMessage = err?.error?.message;
         this.messageService.add({
           severity: 'error',
-          summary: 'Recipient Creation Failed',
-          detail: err?.error?.message
-            ? `Unable to create recipient: ${err.error.message}`
-            : 'An unexpected error occurred while adding the recipient. Please try again later.'
+          summary: this.translateService.instant('settings.emailV2.createRecipientDialog.toast.createError.summary'),
+          detail: serverMessage
+            ? this.translateService.instant('settings.emailV2.createRecipientDialog.toast.createErrorWithMessage.detail', {message: serverMessage})
+            : this.translateService.instant('settings.emailV2.createRecipientDialog.toast.createError.detail')
         });
       }
     });

@@ -11,7 +11,7 @@
         <div class="cover-section">
           <p-image
             [src]="urlHelper.getCoverUrl(book.id, book.metadata?.coverUpdatedOn)"
-            alt="Cover Image"
+            [alt]="'metadata.editor.alt.coverImage' | translate"
             width="250"
             appendTo="body"
             lazyLoad
@@ -24,7 +24,7 @@
             <p-button
               icon="pi pi-refresh"
               (onClick)="regenerateCover(book.id)"
-              pTooltip="Regenerate cover (From File)"
+              [pTooltip]="'metadata.editor.tooltip.regenerateCoverFromFile' | translate"
               tooltipPosition="top"
               [outlined]="true"
               severity="warn"
@@ -34,7 +34,7 @@
             <p-button
               icon="pi pi-palette"
               (onClick)="generateCustomCover(book.id)"
-              pTooltip="Generate Custom Cover"
+              [pTooltip]="'metadata.editor.tooltip.generateCustomCover' | translate"
               tooltipPosition="top"
               [outlined]="true"
               severity="help"
@@ -48,13 +48,13 @@
               size="small"
               icon="pi pi-search"
               (onClick)="openCoverSearch()"
-              pTooltip="Search for cover"
+              [pTooltip]="'metadata.editor.tooltip.searchCover' | translate"
               tooltipPosition="top"
               severity="info">
             </p-button>
             <p-fileupload
               [chooseStyleClass]="'p-button-sm p-button-outlined p-button-danger'"
-              pTooltip="Upload cover"
+              [pTooltip]="'metadata.editor.tooltip.uploadCover' | translate"
               tooltipPosition="top"
               [disabled]="book.metadata!['coverLocked']"
               name="file"
@@ -69,10 +69,10 @@
               (onBeforeUpload)="onBeforeSend()">
             </p-fileupload>
             @if (!book.metadata!['coverLocked']) {
-              <p-button pTooltip="Lock Cover" tooltipPosition="top" size="small" icon="pi pi-lock-open" [outlined]="true" (onClick)="toggleLock('thumbnailUrl')" severity="success"></p-button>
+              <p-button [pTooltip]="'metadata.editor.tooltip.lockCover' | translate" tooltipPosition="top" size="small" icon="pi pi-lock-open" [outlined]="true" (onClick)="toggleLock('thumbnailUrl')" severity="success"></p-button>
             }
             @if (book.metadata!['coverLocked']) {
-              <p-button pTooltip="Unlock Cover" tooltipPosition="top" size="small" icon="pi pi-lock" [outlined]="true" (onClick)="toggleLock('thumbnailUrl')" severity="warn"></p-button>
+              <p-button [pTooltip]="'metadata.editor.tooltip.unlockCover' | translate" tooltipPosition="top" size="small" icon="pi pi-lock" [outlined]="true" (onClick)="toggleLock('thumbnailUrl')" severity="warn"></p-button>
             }
           </div>
         </div>
@@ -80,7 +80,7 @@
 
           <div class="field-row">
             <div class="field-group title-field">
-              <label for="title">Title</label>
+              <label for="title">{{ 'metadata.editor.label.title' | translate }}</label>
               <div class="field-with-lock">
                 <input pInputText id="title" formControlName="title"/>
                 @if (!book.metadata!['titleLocked']) {
@@ -93,7 +93,7 @@
             </div>
 
             <div class="field-group subtitle-field">
-              <label for="subtitle">Subtitle</label>
+              <label for="subtitle">{{ 'metadata.editor.label.subtitle' | translate }}</label>
               <div class="field-with-lock">
                 <input pInputText id="subtitle" formControlName="subtitle"/>
                 @if (!book.metadata!['subtitleLocked']) {
@@ -106,7 +106,7 @@
             </div>
 
             <div class="field-group language-field">
-              <label for="language">Language</label>
+              <label for="language">{{ 'metadata.editor.label.language' | translate }}</label>
               <div class="field-with-lock">
                 <input pInputText id="language" formControlName="language"/>
                 @if (!book.metadata!['languageLocked']) {
@@ -121,7 +121,7 @@
 
           <div class="field-row">
             <div class="field-group authors-field">
-              <label for="authors">Authors</label>
+              <label for="authors">{{ 'metadata.editor.label.authors' | translate }}</label>
               <div class="field-with-lock">
                 <p-autoComplete
                   formControlName="authors"
@@ -144,7 +144,7 @@
               </div>
             </div>
             <div class="field-group publisher-field">
-              <label for="publisher">Publisher</label>
+              <label for="publisher">{{ 'metadata.editor.label.publisher' | translate }}</label>
               <div class="field-with-lock">
                 <p-autoComplete
                   inputStyleClass="w-full"
@@ -166,7 +166,7 @@
               </div>
             </div>
             <div class="field-group date-field">
-              <label for="publishedDate">Publish Date</label>
+              <label for="publishedDate">{{ 'metadata.editor.label.publishedDate' | translate }}</label>
               <div class="field-with-lock">
                 <p-datepicker
                   formControlName="publishedDate"
@@ -191,7 +191,7 @@
 
           <div class="field-row">
             <div class="field-group full-width">
-              <label for="categories">Genres</label>
+              <label for="categories">{{ 'metadata.editor.label.genres' | translate }}</label>
               <div class="field-with-lock">
                 <div class="autocomplete-wrapper">
                   <p-autoComplete
@@ -218,7 +218,7 @@
 
           <div class="field-row">
             <div class="field-group full-width">
-              <label for="moods">Moods</label>
+              <label for="moods">{{ 'metadata.editor.label.moods' | translate }}</label>
               <div class="field-with-lock">
                 <div class="autocomplete-wrapper">
                   <p-autoComplete
@@ -244,7 +244,7 @@
           </div>
           <div class="field-row">
             <div class="field-group full-width">
-              <label for="tags">Tags</label>
+              <label for="tags">{{ 'metadata.editor.label.tags' | translate }}</label>
               <div class="field-with-lock">
                 <div class="autocomplete-wrapper">
                   <p-autoComplete
@@ -271,7 +271,7 @@
 
           <div class="field-row">
             <div class="field-group series-name-field">
-              <label for="seriesName">Series Name</label>
+              <label for="seriesName">{{ 'metadata.editor.label.seriesName' | translate }}</label>
               <div class="field-with-lock">
                 <p-autoComplete
                   inputStyleClass="w-full"
@@ -294,7 +294,7 @@
             </div>
 
             <div class="field-group small-field">
-              <label for="seriesNumber">Series #</label>
+              <label for="seriesNumber">{{ 'metadata.editor.label.seriesNumber' | translate }}</label>
               <div class="field-with-lock">
                 <input pInputText id="seriesNumber" formControlName="seriesNumber"/>
                 @if (!book.metadata!['seriesNumberLocked']) {
@@ -307,7 +307,7 @@
             </div>
 
             <div class="field-group small-field">
-              <label for="seriesTotal">Series Total</label>
+              <label for="seriesTotal">{{ 'metadata.editor.label.seriesTotal' | translate }}</label>
               <div class="field-with-lock">
                 <input pInputText id="seriesTotal" formControlName="seriesTotal"/>
                 @if (!book.metadata!['seriesTotalLocked']) {
@@ -320,7 +320,7 @@
             </div>
 
             <div class="field-group small-field">
-              <label for="pageCount">Pages</label>
+              <label for="pageCount">{{ 'metadata.editor.label.pageCount' | translate }}</label>
               <div class="field-with-lock">
                 <input pInputText id="pageCount" formControlName="pageCount"/>
                 @if (!book.metadata!['pageCountLocked']) {
@@ -337,9 +337,9 @@
 
       <div class="field-row metadata-ids-row">
         <div class="field-group metadata-id-field">
-          <label for="reviews">Public Reviews</label>
+          <label for="reviews">{{ 'metadata.editor.label.publicReviews' | translate }}</label>
           <div class="field-with-lock">
-            <input pSize="small" pInputText [disabled]="true" value="No Value"/>
+            <input pSize="small" pInputText [disabled]="true" [value]="'metadata.editor.value.noValue' | translate"/>
             @if (!book.metadata!['reviewsLocked']) {
               <p-button size="small" icon="pi pi-lock-open" [outlined]="true" (onClick)="toggleLock('reviews')" severity="success"></p-button>
             }
@@ -349,7 +349,7 @@
           </div>
         </div>
         <div class="field-group metadata-id-field">
-          <label for="isbn10">ISBN 10</label>
+          <label for="isbn10">{{ 'metadata.editor.label.isbn10' | translate }}</label>
           <div class="field-with-lock">
             <input pSize="small" pInputText id="isbn10" formControlName="isbn10"/>
             @if (!book.metadata!['isbn10Locked']) {
@@ -361,7 +361,7 @@
           </div>
         </div>
         <div class="field-group metadata-id-field">
-          <label for="isbn13">ISBN 13</label>
+          <label for="isbn13">{{ 'metadata.editor.label.isbn13' | translate }}</label>
           <div class="field-with-lock">
             <input pSize="small" pInputText id="isbn13" formControlName="isbn13"/>
             @if (!book.metadata!['isbn13Locked']) {
@@ -373,7 +373,7 @@
           </div>
         </div>
         <div class="field-group metadata-id-field">
-          <label for="asin">Amazon ASIN</label>
+          <label for="asin">{{ 'metadata.editor.label.asin' | translate }}</label>
           <div class="field-with-lock">
             <input pSize="small" pInputText id="asin" formControlName="asin"/>
             @if (!book.metadata!['asinLocked']) {
@@ -385,7 +385,7 @@
           </div>
         </div>
         <div class="field-group metadata-id-field">
-          <label for="amazonRating">Amazon ★</label>
+          <label for="amazonRating">{{ 'metadata.editor.label.amazonRating' | translate }}</label>
           <div class="field-with-lock">
             <input pSize="small" pInputText id="amazonRating" formControlName="amazonRating"/>
             @if (!book.metadata!['amazonRatingLocked']) {
@@ -397,7 +397,7 @@
           </div>
         </div>
         <div class="field-group metadata-id-field">
-          <label for="amazonRatingCount">Amazon #</label>
+          <label for="amazonRatingCount">{{ 'metadata.editor.label.amazonReviewCount' | translate }}</label>
           <div class="field-with-lock">
             <input pSize="small" pInputText id="amazonRatingCount" formControlName="amazonReviewCount"/>
             @if (!book.metadata!['amazonReviewCountLocked']) {
@@ -409,7 +409,7 @@
           </div>
         </div>
         <div class="field-group metadata-id-field">
-          <label for="googleId">Google Books ID</label>
+          <label for="googleId">{{ 'metadata.editor.label.googleId' | translate }}</label>
           <div class="field-with-lock">
             <input pSize="small" pInputText id="googleId" formControlName="googleId"/>
             @if (!book.metadata!['googleIdLocked']) {
@@ -424,7 +424,7 @@
 
       <div class="field-row metadata-ids-row">
         <div class="field-group metadata-id-field">
-          <label for="goodreadsId">Goodreads ID</label>
+          <label for="goodreadsId">{{ 'metadata.editor.label.goodreadsId' | translate }}</label>
           <div class="field-with-lock">
             <input pSize="small" pInputText id="goodreadsId" formControlName="goodreadsId"/>
             @if (!book.metadata!['goodreadsIdLocked']) {
@@ -436,7 +436,7 @@
           </div>
         </div>
         <div class="field-group metadata-id-field">
-          <label for="goodreadsRating">Goodreads ★</label>
+          <label for="goodreadsRating">{{ 'metadata.editor.label.goodreadsRating' | translate }}</label>
           <div class="field-with-lock">
             <input pSize="small" pInputText id="goodreadsRating" formControlName="goodreadsRating"/>
             @if (!book.metadata!['goodreadsRatingLocked']) {
@@ -448,7 +448,7 @@
           </div>
         </div>
         <div class="field-group metadata-id-field">
-          <label for="goodreadsReviewCount">Goodreads #</label>
+          <label for="goodreadsReviewCount">{{ 'metadata.editor.label.goodreadsReviewCount' | translate }}</label>
           <div class="field-with-lock">
             <input pSize="small" pInputText id="goodreadsReviewCount" formControlName="goodreadsReviewCount"/>
             @if (!book.metadata!['goodreadsReviewCountLocked']) {
@@ -460,7 +460,7 @@
           </div>
         </div>
         <div class="field-group metadata-id-field">
-          <label for="hardcoverId">Hardcover ID</label>
+          <label for="hardcoverId">{{ 'metadata.editor.label.hardcoverId' | translate }}</label>
           <div class="field-with-lock">
             <input pSize="small" pInputText id="hardcoverId" formControlName="hardcoverId"/>
             @if (!book.metadata!['hardcoverIdLocked']) {
@@ -472,7 +472,7 @@
           </div>
         </div>
         <div class="field-group metadata-id-field">
-          <label for="hardcoverBookId">Hardcover Book ID</label>
+          <label for="hardcoverBookId">{{ 'metadata.editor.label.hardcoverBookId' | translate }}</label>
           <div class="field-with-lock">
             <input pSize="small" pInputText id="hardcoverBookId" formControlName="hardcoverBookId"/>
             @if (!book.metadata!['hardcoverBookIdLocked']) {
@@ -484,7 +484,7 @@
           </div>
         </div>
         <div class="field-group metadata-id-field">
-          <label for="hardcoverRating">Hardcover ★</label>
+          <label for="hardcoverRating">{{ 'metadata.editor.label.hardcoverRating' | translate }}</label>
           <div class="field-with-lock">
             <input pSize="small" pInputText id="hardcoverRating" formControlName="hardcoverRating"/>
             @if (!book.metadata!['hardcoverRatingLocked']) {
@@ -496,7 +496,7 @@
           </div>
         </div>
         <div class="field-group metadata-id-field">
-          <label for="hardcoverReviewCount">Hardcover #</label>
+          <label for="hardcoverReviewCount">{{ 'metadata.editor.label.hardcoverReviewCount' | translate }}</label>
           <div class="field-with-lock">
             <input pSize="small" pInputText id="hardcoverReviewCount" formControlName="hardcoverReviewCount"/>
             @if (!book.metadata!['hardcoverReviewCountLocked']) {
@@ -511,7 +511,7 @@
 
       <div class="flex flex-col md:flex-row w-full gap-4 mt-2 pb-1">
         <div class="field-group metadata-id-field">
-          <label for="lubimyczytacId">LC ID</label>
+          <label for="lubimyczytacId">{{ 'metadata.editor.label.lubimyczytacId' | translate }}</label>
           <div class="field-with-lock">
             <input pSize="small" pInputText id="lubimyczytacId" formControlName="lubimyczytacId"/>
             @if (!book.metadata!['lubimyczytacIdLocked']) {
@@ -523,7 +523,7 @@
           </div>
         </div>
         <div class="field-group metadata-id-field">
-          <label for="lubimyczytacRating">LC ★</label>
+          <label for="lubimyczytacRating">{{ 'metadata.editor.label.lubimyczytacRating' | translate }}</label>
           <div class="field-with-lock">
             <input pSize="small" pInputText id="lubimyczytacRating" formControlName="lubimyczytacRating"/>
             @if (!book.metadata!['lubimyczytacRatingLocked']) {
@@ -535,7 +535,7 @@
           </div>
         </div>
         <div class="field-group metadata-id-field">
-          <label for="comicvineId">Comicvine ID</label>
+          <label for="comicvineId">{{ 'metadata.editor.label.comicvineId' | translate }}</label>
           <div class="field-with-lock">
             <input pSize="small" pInputText id="comicvineId" formControlName="comicvineId"/>
             @if (!book.metadata!['comicvineIdLocked']) {
@@ -547,7 +547,7 @@
           </div>
         </div>
         <div class="flex flex-col gap-1 md:w-1/6">
-          <label class="text-sm" for="ranobedbId">Ranobedb ID</label>
+          <label class="text-sm" for="ranobedbId">{{ 'metadata.editor.label.ranobedbId' | translate }}</label>
           <div class="flex withbutton">
             <input pSize="small" pInputText id="ranobedbId" formControlName="ranobedbId" class="w-full"/>
             @if (!book.metadata!['ranobedbIdLocked']) {
@@ -559,7 +559,7 @@
           </div>
         </div>
         <div class="flex flex-col gap-1 md:w-1/6">
-          <label class="text-sm" for="ranobedbRating">Ranobedb ★</label>
+          <label class="text-sm" for="ranobedbRating">{{ 'metadata.editor.label.ranobedbRating' | translate }}</label>
           <div class="flex withbutton">
             <input pSize="small" pInputText id="ranobedbRating" formControlName="ranobedbRating" class="w-full"/>
             @if (!book.metadata!['ranobedbRatingLocked']) {
@@ -574,7 +574,7 @@
 
       <div class="description-section">
         <div class="field-group description-field">
-          <label for="description">Description</label>
+          <label for="description">{{ 'metadata.editor.label.description' | translate }}</label>
           <div class="field-with-lock description-with-lock">
                 <textarea
                   id="description"
@@ -600,10 +600,10 @@
         <div class="desktop-actions">
           @if (showNavigationButtons) {
             <div class="navigation-left">
-              <p-button label="Close" icon="pi pi-times" [outlined]="true" severity="danger" (onClick)="closeDialog()"></p-button>
+              <p-button [label]="'common.close' | translate" icon="pi pi-times" [outlined]="true" severity="danger" (onClick)="closeDialog()"></p-button>
               <p-divider layout="vertical"/>
-              <p-button label="Previous Book" [disabled]="disablePrevious" icon="pi pi-arrow-left" [outlined]="true" severity="info" (onClick)="onPrevious()"></p-button>
-              <p-button label="Next Book" [disabled]="disableNext" icon="pi pi-arrow-right" iconPos="right" [outlined]="true" severity="info" (onClick)="onNext()"></p-button>
+              <p-button [label]="'metadata.editor.button.previousBook' | translate" [disabled]="disablePrevious" icon="pi pi-arrow-left" [outlined]="true" severity="info" (onClick)="onPrevious()"></p-button>
+              <p-button [label]="'metadata.editor.button.nextBook' | translate" [disabled]="disableNext" icon="pi pi-arrow-right" iconPos="right" [outlined]="true" severity="info" (onClick)="onNext()"></p-button>
             </div>
           }
 
@@ -616,7 +616,7 @@
                 rounded
                 outlined
                 severity="info"
-                pTooltip="Go to previous book"
+                [pTooltip]="'metadata.editor.tooltip.goToPreviousBook' | translate"
                 tooltipPosition="bottom">
               </p-button>
               <span class="navigation-position">
@@ -630,7 +630,7 @@
                 severity="info"
                 rounded
                 outlined
-                pTooltip="Go to next book"
+                [pTooltip]="'metadata.editor.tooltip.goToNextBook' | translate"
                 tooltipPosition="bottom">
               </p-button>
             </div>
@@ -638,20 +638,20 @@
 
           <div class="actions-right">
             <p-button
-              [label]="isAutoFetching ? 'Fetching…' : 'Auto Fetch'"
+              [label]="isAutoFetching ? ('metadata.editor.status.fetching' | translate) : ('metadata.editor.button.autoFetch' | translate)"
               [icon]="isAutoFetching ? 'pi pi-spin pi-spinner' : 'pi pi-bolt'"
               [outlined]="true"
               severity="info"
               (onClick)="autoFetch(book.id)"
               [disabled]="isAutoFetching"
-              pTooltip="Automatically fetch metadata using default sources"
+              [pTooltip]="'metadata.editor.tooltip.autoFetchDefault' | translate"
               tooltipPosition="top">
             </p-button>
             <p-divider layout="vertical"/>
-            <p-button label="Unlock All" icon="pi pi-lock-open" [outlined]="true" severity="success" (onClick)="unlockAll()" pTooltip="Unlock all metadata fields for editing" tooltipPosition="top"></p-button>
-            <p-button label="Lock All" icon="pi pi-lock" [outlined]="true" severity="warn" (onClick)="lockAll()" pTooltip="Lock all metadata fields to prevent changes" tooltipPosition="top"></p-button>
+            <p-button [label]="'metadata.editor.button.unlockAll' | translate" icon="pi pi-lock-open" [outlined]="true" severity="success" (onClick)="unlockAll()" [pTooltip]="'metadata.editor.tooltip.unlockAllFields' | translate" tooltipPosition="top"></p-button>
+            <p-button [label]="'metadata.editor.button.lockAll' | translate" icon="pi pi-lock" [outlined]="true" severity="warn" (onClick)="lockAll()" [pTooltip]="'metadata.editor.tooltip.lockAllFields' | translate" tooltipPosition="top"></p-button>
             <p-divider layout="vertical"/>
-            <p-button label="Save" icon="pi pi-check" [loading]="isSaving" [disabled]="isSaving" (onClick)="onSave()"></p-button>
+            <p-button [label]="'common.save' | translate" icon="pi pi-check" [loading]="isSaving" [disabled]="isSaving" (onClick)="onSave()"></p-button>
           </div>
         </div>
 
@@ -659,9 +659,9 @@
         <div class="mobile-actions">
           @if (showNavigationButtons) {
             <div class="mobile-nav-buttons">
-              <p-button size="small" icon="pi pi-times" [outlined]="true" severity="danger" (onClick)="closeDialog()" pTooltip="Close" tooltipPosition="top"></p-button>
-              <p-button size="small" icon="pi pi-arrow-left" [disabled]="disablePrevious" [outlined]="true" severity="info" (onClick)="onPrevious()" pTooltip="Previous Book" tooltipPosition="top"></p-button>
-              <p-button size="small" icon="pi pi-arrow-right" [disabled]="disableNext" iconPos="right" [outlined]="true" severity="info" (onClick)="onNext()" pTooltip="Next Book" tooltipPosition="top"></p-button>
+              <p-button size="small" icon="pi pi-times" [outlined]="true" severity="danger" (onClick)="closeDialog()" [pTooltip]="'metadata.editor.tooltip.close' | translate" tooltipPosition="top"></p-button>
+              <p-button size="small" icon="pi pi-arrow-left" [disabled]="disablePrevious" [outlined]="true" severity="info" (onClick)="onPrevious()" [pTooltip]="'metadata.editor.tooltip.previousBook' | translate" tooltipPosition="top"></p-button>
+              <p-button size="small" icon="pi pi-arrow-right" [disabled]="disableNext" iconPos="right" [outlined]="true" severity="info" (onClick)="onNext()" [pTooltip]="'metadata.editor.tooltip.nextBook' | translate" tooltipPosition="top"></p-button>
             </div>
           }
 
@@ -675,7 +675,7 @@
                   rounded
                   outlined
                   severity="info"
-                  pTooltip="Go to previous book"
+                  [pTooltip]="'metadata.editor.tooltip.goToPreviousBook' | translate"
                   tooltipPosition="bottom">
                 </p-button>
                 <span class="navigation-position">
@@ -689,7 +689,7 @@
                   severity="info"
                   rounded
                   outlined
-                  pTooltip="Go to next book"
+                  [pTooltip]="'metadata.editor.tooltip.goToNextBook' | translate"
                   tooltipPosition="bottom">
                 </p-button>
               </div>
@@ -701,7 +701,7 @@
                 severity="info"
                 (onClick)="autoFetch(book.id)"
                 [disabled]="isAutoFetching"
-                pTooltip="Auto Fetch"
+                [pTooltip]="'metadata.editor.tooltip.autoFetch' | translate"
                 tooltipPosition="top">
               </p-button>
 
@@ -710,7 +710,7 @@
                 [outlined]="true"
                 severity="success"
                 (onClick)="unlockAll()"
-                pTooltip="Unlock All"
+                [pTooltip]="'metadata.editor.tooltip.unlockAll' | translate"
                 tooltipPosition="top">
               </p-button>
 
@@ -719,14 +719,14 @@
                 [outlined]="true"
                 severity="warn"
                 (onClick)="lockAll()"
-                pTooltip="Lock All"
+                [pTooltip]="'metadata.editor.tooltip.lockAll' | translate"
                 tooltipPosition="top">
               </p-button>
             </div>
 
             <div class="mobile-save-action">
               <p-button
-                label="Save"
+                [label]="'common.save' | translate"
                 icon="pi pi-check"
                 [loading]="isSaving"
                 [disabled]="isSaving"

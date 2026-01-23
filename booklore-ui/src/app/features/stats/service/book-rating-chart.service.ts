@@ -1,11 +1,13 @@
 import {inject, Injectable, OnDestroy} from '@angular/core';
-import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, EMPTY, Observable, Subject} from 'rxjs';
 import {map, takeUntil, catchError, filter, first, switchMap} from 'rxjs/operators';
 import {LibraryFilterService} from './library-filter.service';
 import {BookService} from '../../book/service/book.service';
 import {Book} from '../../book/model/book.model';
 import {BookState} from '../../book/model/state/book-state.model';
 import {ChartConfiguration, ChartData, ChartType} from 'chart.js';
+import {TranslateService} from '@ngx-translate/core';
+import {LanguageService} from '../../../core/i18n/language.service';
 
 interface RatingStats {
   ratingRange: string;
@@ -45,86 +47,18 @@ type RatingChartData = ChartData<'bar', number[], string>;
 export class BookRatingChartService implements OnDestroy {
   private readonly bookService = inject(BookService);
   private readonly libraryFilterService = inject(LibraryFilterService);
+  private readonly translateService = inject(TranslateService);
+  private readonly languageService = inject(LanguageService);
   private readonly destroy$ = new Subject<void>();
 
   public readonly ratingChartType: ChartType = 'bar';
 
-  public readonly ratingChartOptions: ChartConfiguration['options'] = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false,
-        labels: {
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11
-          }
-        }
-      },
-      tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        titleColor: '#ffffff',
-        bodyColor: '#ffffff',
-        borderColor: '#666666',
-        borderWidth: 1,
-        callbacks: {
-          title: (context) => `External Rating Range: ${context[0].label}`,
-          label: (context) => {
-            const value = context.parsed.y;
-            return `${value} book${value === 1 ? '' : 's'}`;
-          }
-        }
-      }
-    },
-    scales: {
-      x: {
-        ticks: {
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11
-          }
-        },
-        grid: {color: 'rgba(255, 255, 255, 0.1)'},
-        title: {
-          display: true,
-          text: 'External Rating Range',
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11.5
-          }
-        }
-      },
-      y: {
-        beginAtZero: true,
-        ticks: {
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11
-          },
-          stepSize: 1
-        },
-        grid: {color: 'rgba(255, 255, 255, 0.05)'},
-        title: {
-          display: true,
-          text: 'Number of Books',
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11.5
-          },
-        }
-      }
-    }
-  };
+  public ratingChartOptions: ChartConfiguration['options'] = this.buildOptions();
 
   private readonly ratingChartDataSubject = new BehaviorSubject<RatingChartData>({
     labels: [],
     datasets: [{
-      label: 'Books by External Rating',
+      label: this.translateService.instant('stats.library.chart.externalRating.datasetLabel'),
       data: [],
       backgroundColor: [...CHART_COLORS],
       ...CHART_DEFAULTS
@@ -140,9 +74,10 @@ export class BookRatingChartService implements OnDestroy {
         filter(state => state.loaded),
         first(),
         switchMap(() =>
-          this.libraryFilterService.selectedLibrary$.pipe(
-            takeUntil(this.destroy$)
-          )
+          combineLatest([
+            this.libraryFilterService.selectedLibrary$,
+            this.languageService.language$
+          ]).pipe(takeUntil(this.destroy$))
         ),
         catchError((error) => {
           console.error('Error processing rating stats:', error);
@@ -150,6 +85,7 @@ export class BookRatingChartService implements OnDestroy {
         })
       )
       .subscribe(() => {
+        this.ratingChartOptions = this.buildOptions();
         const stats = this.calculateRatingStats();
         this.updateChartData(stats);
       });
@@ -168,7 +104,7 @@ export class BookRatingChartService implements OnDestroy {
       this.ratingChartDataSubject.next({
         labels,
         datasets: [{
-          label: 'Books by External Rating',
+          label: this.translateService.instant('stats.library.chart.externalRating.datasetLabel'),
           data: dataValues,
           backgroundColor: [...CHART_COLORS],
           ...CHART_DEFAULTS
@@ -231,15 +167,94 @@ export class BookRatingChartService implements OnDestroy {
       }
     });
 
-    return RATING_RANGES.map(range => {
+    const displayRanges = RATING_RANGES.filter(range => range.range !== 'No Rating');
+    return displayRanges.map(range => {
       const data = rangeCounts.get(range.range)!;
       return {
         ratingRange: range.range,
         count: data.count,
         averageRating: data.count > 0 ? data.totalRating / data.count : 0
       };
-    }).filter(stat => stat.ratingRange !== 'No Rating');
+    });
   }
+
+  private buildOptions(): ChartConfiguration['options'] {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false,
+          labels: {
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11
+            }
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          titleColor: '#ffffff',
+          bodyColor: '#ffffff',
+          borderColor: '#666666',
+          borderWidth: 1,
+          callbacks: {
+            title: (context) => this.translateService.instant('stats.library.chart.externalRating.tooltipTitle', {range: context[0].label}),
+            label: (context) => {
+              const value = context.parsed.y;
+              return this.translateService.instant(
+                value === 1 ? 'stats.library.units.bookCountOne' : 'stats.library.units.bookCountMany',
+                {count: value}
+              );
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11
+            }
+          },
+          grid: {color: 'rgba(255, 255, 255, 0.1)'},
+          title: {
+            display: true,
+            text: this.translateService.instant('stats.library.chart.externalRating.axis.xTitle'),
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11.5
+            }
+          }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: {
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11
+            },
+            stepSize: 1
+          },
+          grid: {color: 'rgba(255, 255, 255, 0.05)'},
+          title: {
+            display: true,
+            text: this.translateService.instant('stats.library.chart.externalRating.axis.yTitle'),
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11.5
+            },
+          }
+        }
+      }
+    };
+  }
+
 
   private getBookRating(book: Book): number {
     const ratings = [];

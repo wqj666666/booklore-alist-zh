@@ -3,9 +3,9 @@
     <div class="chart-title">
       <h3>
         <i class="pi pi-calendar-plus favorite-days-icon"></i>
-        Favorite Reading Days
+        {{ 'stats.user.favoriteDays.title' | translate }}
       </h3>
-      <p class="chart-description">Reading sessions and duration by day of the week</p>
+      <p class="chart-description">{{ 'stats.user.favoriteDays.subtitle' | translate }}</p>
     </div>
     <div class="filter-controls">
       <p-select
@@ -14,7 +14,7 @@
         (onChange)="onFilterChange()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Select Year"
+        [placeholder]="'stats.user.favoriteDays.filters.selectYear' | translate"
         [style]="{'min-width': '90px'}">
       </p-select>
       <p-select
@@ -23,7 +23,7 @@
         (onChange)="onFilterChange()"
         optionLabel="label"
         optionValue="value"
-        placeholder="Select Month"
+        [placeholder]="'stats.user.favoriteDays.filters.selectMonth' | translate"
         [style]="{'min-width': '120px'}">
       </p-select>
     </div>

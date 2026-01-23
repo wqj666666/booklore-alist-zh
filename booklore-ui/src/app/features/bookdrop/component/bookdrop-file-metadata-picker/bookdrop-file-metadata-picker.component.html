@@ -4,14 +4,14 @@
       <div class="metaheader relative flex items-center">
         <label class="md:w-[8rem] text-sm"></label>
         <div class="flex w-full items-center">
-          <p class="w-1/2">File Data</p>
+          <p class="w-1/2">{{ 'bookdrop.metadataPicker.header.fileData' | translate }}</p>
           <div class="midbuttons">
             <p-button
               size="small"
               icon="pi pi-angle-left"
               class="mx-2"
               [outlined]="true"
-              pTooltip="Copy missing fields from fetched metadata"
+              [pTooltip]="'bookdrop.metadataPicker.tooltip.copyMissing' | translate"
               tooltipPosition="bottom"
               (onClick)="copyMissing()"
             ></p-button>
@@ -20,7 +20,7 @@
               icon="pi pi-angle-double-left"
               class="mx-2"
               [outlined]="true"
-              pTooltip="Overwrite all fields with fetched metadata"
+              [pTooltip]="'bookdrop.metadataPicker.tooltip.overwriteAll' | translate"
               tooltipPosition="bottom"
               (onClick)="copyAll()"
             ></p-button>
@@ -30,12 +30,12 @@
               icon="pi pi-refresh"
               class="mx-2"
               [outlined]="true"
-              pTooltip="Reset all fields to original values"
+              [pTooltip]="'bookdrop.metadataPicker.tooltip.resetOriginal' | translate"
               tooltipPosition="bottom"
               (onClick)="confirmReset()"
             ></p-button>
           </div>
-          <p class="w-1/2">Fetched Data</p>
+          <p class="w-1/2">{{ 'bookdrop.metadataPicker.header.fetchedData' | translate }}</p>
         </div>
       </div>
       <div class="metacontent">
@@ -47,7 +47,7 @@
                 <p-image
                   class="thumbnail"
                   [src]="metadataForm.get('thumbnailUrl')?.value"
-                  alt="Image"
+                  [alt]="'bookdrop.metadataPicker.a11y.imageAlt' | translate"
                   appendTo="body"
                   lazyLoad
                   [preview]="true"
@@ -57,7 +57,7 @@
                 ></p-image>
               }
               @else {
-                <div class="thumbnail text-sm">No cover image</div>
+                <div class="thumbnail text-sm">{{ 'bookdrop.metadataPicker.placeholder.noCoverImage' | translate }}</div>
               }
               <input type="hidden" id="thumbnailUrl" formControlName="thumbnailUrl"/>
             </div>
@@ -75,14 +75,14 @@
                 <p-image
                 class="thumbnail"
                 [src]="fetchedMetadata.thumbnailUrl!"
-                alt="Image"
+                [alt]="'bookdrop.metadataPicker.a11y.imageAlt' | translate"
                 appendTo="body"
                 lazyLoad
                 [preview]="true"
                 ></p-image>
               }
               @else {
-                <div class="thumbnail text-sm">Cover image not found</div>
+                <div class="thumbnail text-sm">{{ 'bookdrop.metadataPicker.placeholder.coverNotFound' | translate }}</div>
               }
               <input type="hidden" [value]="fetchedMetadata.thumbnailUrl" readonly/>
             </div>
@@ -90,7 +90,7 @@
         </div>
         @for (field of metadataFieldsTop; track field) {
           <div class="meta-row field-{{field.controlName}}">
-            <label for="{{field.controlName}}" class="md:w-[8rem] text-sm">{{ field.label }}</label>
+            <label for="{{field.controlName}}" class="md:w-[8rem] text-sm">{{ field.label | translate }}</label>
             <div class="meta-fields">
               <input
                 pSize="small"
@@ -132,7 +132,7 @@
         }
         @for (field of metadataPublishDate; track field) {
           <div class="meta-row field-{{field.controlName}}">
-            <label for="{{field.controlName}}" class="md:w-[8rem] text-sm">{{ field.label }}</label>
+            <label for="{{field.controlName}}" class="md:w-[8rem] text-sm">{{ field.label | translate }}</label>
             <div class="meta-fields">
               <p-datepicker
                 size="small"
@@ -179,7 +179,7 @@
         }
         @for (field of metadataChips; track field) {
           <div class="meta-row field-{{field.controlName}}">
-            <label for="{{field.controlName}}" class="md:w-[8rem] text-sm">{{ field.label }}</label>
+            <label for="{{field.controlName}}" class="md:w-[8rem] text-sm">{{ field.label | translate }}</label>
             <div class="meta-fields">
               <p-autoComplete
                 size="small"
@@ -227,7 +227,7 @@
         }
         @for (field of metadataDescription; track field) {
           <div class="meta-row field-{{field.controlName}}">
-            <label for="{{field.controlName}}" class="md:w-[8rem] text-sm">{{ field.label }}</label>
+            <label for="{{field.controlName}}" class="md:w-[8rem] text-sm">{{ field.label | translate }}</label>
             <div class="meta-fields">
               <textarea
                 pTextarea
@@ -270,7 +270,7 @@
         }
         @for (field of metadataFieldsBottom; track field) {
           <div class="meta-row field-{{field.controlName}}">
-            <label for="{{field.controlName}}" class="md:w-[8rem] text-sm">{{ field.label }}</label>
+            <label for="{{field.controlName}}" class="md:w-[8rem] text-sm">{{ field.label | translate }}</label>
             <div class="meta-fields">
               <input
                 pInputText
@@ -317,14 +317,14 @@
     <div class="flex-grow overflow-auto">
       <div class="metaheader relative flex items-center">
         <p class="text-sm missingmd">
-          Unable to fetch metadata for this file
+          {{ 'bookdrop.metadataPicker.error.unableToFetchMetadata' | translate }}
         </p>
         <p-button
           size="small"
           severity="warn"
           icon="pi pi-refresh"
           [outlined]="true"
-          pTooltip="Reset all fields to original values"
+          [pTooltip]="'bookdrop.metadataPicker.tooltip.resetOriginal' | translate"
           tooltipPosition="left"
           (onClick)="confirmReset()"
         ></p-button>
@@ -334,7 +334,7 @@
           <div class="w-full md:h-full field-thumbnail">
             <img 
               [src]="metadataForm.get('thumbnailUrl')?.value"
-              alt="Book Thumbnail"
+              [attr.alt]="'bookdrop.metadataPicker.a11y.bookThumbnailAlt' | translate"
               class="thumbnail w-full md:h-full object-contain"
             />
             <input type="hidden" id="thumbnailUrl" formControlName="thumbnailUrl"/>
@@ -343,7 +343,7 @@
         <div class="metacontent md:w-[80%]">
           @for (field of metadataFieldsTop; track field) {
             <div class="meta-row field-{{field.controlName}}">
-              <label for="{{field.controlName}}" class="w-[8rem] text-sm">{{ field.label }}</label>
+              <label for="{{field.controlName}}" class="w-[8rem] text-sm">{{ field.label | translate }}</label>
               <div class="flex w-full">
                 <input
                   pSize="small"
@@ -370,7 +370,7 @@
 
           @for (field of metadataPublishDate; track field) {
             <div class="meta-row field-{{field.controlName}}">
-              <label for="{{field.controlName}}" class="w-[8rem] text-sm">{{ field.label }}</label>
+              <label for="{{field.controlName}}" class="w-[8rem] text-sm">{{ field.label | translate }}</label>
               <div class="flex w-full">
                 <p-datepicker
                   size="small"
@@ -403,7 +403,7 @@
 
           @for (field of metadataChips; track field) {
             <div class="meta-row field-{{field.controlName}}">
-              <label for="{{field.controlName}}" class="w-[8rem] text-sm">{{ field.label }}</label>
+              <label for="{{field.controlName}}" class="w-[8rem] text-sm">{{ field.label | translate }}</label>
               <div class="flex w-full">
                 <p-autoComplete
                   size="small"
@@ -433,7 +433,7 @@
 
           @for (field of metadataDescription; track field) {
             <div class="meta-row field-{{field.controlName}}">
-              <label for="{{field.controlName}}" class="w-[8rem] text-sm">{{ field.label }}</label>
+              <label for="{{field.controlName}}" class="w-[8rem] text-sm">{{ field.label | translate }}</label>
               <div class="flex w-full">
                 <textarea
                   pTextarea
@@ -461,7 +461,7 @@
 
           @for (field of metadataFieldsBottom; track field) {
             <div class="meta-row field-{{field.controlName}}">
-              <label for="{{field.controlName}}" class="w-[8rem] text-sm">{{ field.label }}</label>
+              <label for="{{field.controlName}}" class="w-[8rem] text-sm">{{ field.label | translate }}</label>
               <div class="flex w-full">
                 <input
                   pSize="small"

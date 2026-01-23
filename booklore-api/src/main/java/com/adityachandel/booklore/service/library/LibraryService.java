@@ -96,6 +96,7 @@ public class LibraryService {
                 .filter(path -> !currentPaths.contains(path))
                 .collect(Collectors.toSet());
 
+        // 删除已移除的路径
         if (!deletedPaths.isEmpty()) {
             Set<LibraryPathEntity> pathsToRemove = library.getLibraryPaths().stream()
                     .filter(pathEntity -> deletedPaths.contains(pathEntity.getPath()))
@@ -112,14 +113,41 @@ public class LibraryService {
             libraryPathRepository.deleteAll(pathsToRemove);
         }
 
+        // 更新现有路径的 AList 配置
+        for (LibraryPathEntity existingPath : library.getLibraryPaths()) {
+            request.getPaths().stream()
+                    .filter(reqPath -> reqPath.getPath().equals(existingPath.getPath()))
+                    .findFirst()
+                    .ifPresent(reqPath -> {
+                        existingPath.setAlistEnabled(reqPath.getAlistEnabled() != null && reqPath.getAlistEnabled());
+                        existingPath.setAlistPath(reqPath.getAlistPath());
+                        log.info("Updated AList config for path '{}': enabled={}, alistPath={}",
+                                existingPath.getPath(), existingPath.isAlistEnabled(), existingPath.getAlistPath());
+                    });
+        }
+
+        // 添加新路径
         if (!newPaths.isEmpty()) {
-            Set<LibraryPathEntity> newPathEntities = newPaths.stream()
-                    .map(path -> LibraryPathEntity.builder().path(path).library(library).build())
+            Set<LibraryPathEntity> newPathEntities = request.getPaths().stream()
+                    .filter(libraryPath -> newPaths.contains(libraryPath.getPath()))
+                    .map(libraryPath -> {
+                        LibraryPathEntity entity = LibraryPathEntity.builder()
+                                .path(libraryPath.getPath())
+                                .alistEnabled(libraryPath.getAlistEnabled() != null && libraryPath.getAlistEnabled())
+                                .alistPath(libraryPath.getAlistPath())
+                                .library(library)
+                                .build();
+                        log.info("Creating new path '{}': enabled={}, alistPath={}",
+                                entity.getPath(), entity.isAlistEnabled(), entity.getAlistPath());
+                        return entity;
+                    })
                     .collect(Collectors.toSet());
 
             library.getLibraryPaths().addAll(newPathEntities);
-            libraryPathRepository.saveAll(library.getLibraryPaths());
         }
+
+        // 保存所有路径（包括更新的和新增的）
+        libraryPathRepository.saveAll(library.getLibraryPaths());
 
         LibraryEntity savedLibrary = libraryRepository.save(library);
 
@@ -153,7 +181,16 @@ public class LibraryService {
                         request.getPaths() == null || request.getPaths().isEmpty() ?
                                 Collections.emptyList() :
                                 request.getPaths().stream()
-                                        .map(path -> LibraryPathEntity.builder().path(path.getPath()).build())
+                                        .map(libraryPath -> {
+                                            LibraryPathEntity entity = LibraryPathEntity.builder()
+                                                    .path(libraryPath.getPath())
+                                                    .alistEnabled(libraryPath.getAlistEnabled() != null && libraryPath.getAlistEnabled())
+                                                    .alistPath(libraryPath.getAlistPath())
+                                                    .build();
+                                            log.info("Creating library path '{}': alistEnabled={}, alistPath={}",
+                                                    entity.getPath(), entity.isAlistEnabled(), entity.getAlistPath());
+                                            return entity;
+                                        })
                                         .collect(Collectors.toList())
                 )
                 .icon(request.getIcon())

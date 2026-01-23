@@ -17,11 +17,14 @@ import {DeviceSettingsComponent} from './device-settings/device-settings-compone
 import {LibraryMetadataSettingsComponent} from './library-metadata-settings/library-metadata-settings.component';
 import {PageTitleService} from "../../shared/service/page-title.service";
 import {EmailV2Component} from './email-v2/email-v2.component';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {StorageSettingsComponent} from './storage-settings/storage-settings.component';
 
 export enum SettingsTab {
   ReaderSettings = 'reader',
   ViewPreferences = 'view',
   DeviceSettings = 'device',
+  StorageSettings = 'storage',
   UserManagement = 'user',
   EmailSettingsV2 = 'email-v2',
   NamingPattern = 'naming-pattern',
@@ -42,6 +45,7 @@ export enum SettingsTab {
     TabPanels,
     TabPanel,
     AsyncPipe,
+    TranslateModule,
     GlobalPreferencesComponent,
     UserManagementComponent,
     AuthenticationSettingsComponent,
@@ -49,6 +53,7 @@ export enum SettingsTab {
     ReaderPreferences,
     MetadataSettingsComponent,
     DeviceSettingsComponent,
+    StorageSettingsComponent,
     FileNamingPatternComponent,
     OpdsSettings,
     LibraryMetadataSettingsComponent,
@@ -64,8 +69,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private pageTitle = inject(PageTitleService);
+  private translateService = inject(TranslateService);
 
   private routeSub!: Subscription;
+  private langSub!: Subscription;
 
   SettingsTab = SettingsTab;
 
@@ -87,7 +94,11 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.pageTitle.setPageTitle('Settings');
+    this.pageTitle.setPageTitle(this.translateService.instant('settings.pageTitle'));
+
+    this.langSub = this.translateService.onLangChange.subscribe(() => {
+      this.pageTitle.setPageTitle(this.translateService.instant('settings.pageTitle'));
+    });
 
     this.routeSub = this.route.queryParams.subscribe(params => {
       const tabParam = params['tab'];
@@ -107,5 +118,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.routeSub.unsubscribe();
+    this.langSub.unsubscribe();
   }
 }

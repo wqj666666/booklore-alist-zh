@@ -1,19 +1,54 @@
 <div class="directory-picker">
   <div class="panel-header">
     <div class="header-icon-wrapper">
-      <i class="pi pi-folder-open header-icon"></i>
+      <i class="pi" [ngClass]="storageType === 'alist' ? 'pi-cloud' : 'pi-folder-open'" class="header-icon"></i>
     </div>
     <div class="header-text">
-      <h2 class="panel-title">Select Directories</h2>
-      <p class="panel-description">Choose one or more directories from your file system</p>
+      <h2 class="panel-title">{{ 'shared.directoryPicker.header.title' | translate }}</h2>
+      <p class="panel-description">{{ 'shared.directoryPicker.header.description' | translate }}</p>
     </div>
   </div>
+
+  <!-- Storage Type Switcher -->
+  @if (alistEnabled) {
+    <div class="storage-type-switcher">
+      <div class="storage-type-label">
+        <i class="pi pi-database"></i>
+        <span>{{ 'shared.directoryPicker.storageType.label' | translate }}</span>
+      </div>
+      <div class="storage-type-options">
+        <button
+          type="button"
+          class="storage-type-btn"
+          [class.active]="storageType === 'local'"
+          (click)="switchStorageType('local')"
+        >
+          <i class="pi pi-folder"></i>
+          <span>{{ 'shared.directoryPicker.storageType.local' | translate }}</span>
+        </button>
+        <button
+          type="button"
+          class="storage-type-btn"
+          [class.active]="storageType === 'alist'"
+          (click)="switchStorageType('alist')"
+        >
+          <i class="pi pi-cloud"></i>
+          <span>{{ 'shared.directoryPicker.storageType.alist' | translate }}</span>
+        </button>
+      </div>
+    </div>
+  }
 
   <div class="picker-controls">
     <div class="current-path">
       <div class="path-label">
         <i class="pi pi-map-marker"></i>
-        <span>Current Path:</span>
+        <span>{{ 'shared.directoryPicker.currentPath.label' | translate }}</span>
+        @if (storageType === 'alist') {
+          <span class="storage-badge alist">AList</span>
+        } @else {
+          <span class="storage-badge local">{{ 'shared.directoryPicker.storageType.localShort' | translate }}</span>
+        }
       </div>
       <div class="path-value">
         {{ selectedProductName || '/' }}
@@ -29,7 +64,7 @@
           pInputText
           [(ngModel)]="searchQuery"
           (input)="onSearch()"
-          placeholder="Search folders..."
+          [placeholder]="'shared.directoryPicker.search.placeholder' | translate"
         />
         @if (searchQuery) {
           <i class="pi pi-times clear-icon" (click)="searchQuery = ''; onSearch()"></i>
@@ -39,7 +74,7 @@
         icon="pi pi-arrow-up"
         (click)="goUp()"
         [disabled]="selectedProductName === '/' || selectedProductName === ''"
-        pTooltip="Go up one level"
+        [pTooltip]="'shared.directoryPicker.tooltip.goUpOneLevel' | translate"
         tooltipPosition="bottom"
       />
     </div>
@@ -47,7 +82,9 @@
     @if (selectedFolders.length > 0) {
       <div class="selection-badge">
         <i class="pi pi-check-circle"></i>
-        <span>{{ selectedFolders.length }} {{ selectedFolders.length === 1 ? 'folder' : 'folders' }} selected</span>
+        <span>{{ selectedFolders.length === 1
+          ? ('shared.directoryPicker.selectionBadge.one' | translate:{count: selectedFolders.length})
+          : ('shared.directoryPicker.selectionBadge.other' | translate:{count: selectedFolders.length}) }}</span>
       </div>
     }
   </div>
@@ -60,7 +97,7 @@
           strokeWidth="4"
           animationDuration="1s"
         />
-        <p class="mt-3 text-secondary">Loading directories...</p>
+        <p class="mt-3 text-secondary">{{ 'shared.directoryPicker.loading' | translate }}</p>
       </div>
     } @else if (filteredPaths.length === 0) {
       <div class="empty-state">
@@ -69,16 +106,16 @@
         </div>
         <h3 class="empty-title">
           @if (searchQuery) {
-            No Matches Found
+            {{ 'shared.directoryPicker.empty.noMatches.title' | translate }}
           } @else {
-            Directory is Empty
+            {{ 'shared.directoryPicker.empty.directoryEmpty.title' | translate }}
           }
         </h3>
         <p class="empty-description">
           @if (searchQuery) {
-            No folders match your search criteria.<br/>Try adjusting your search terms.
+            {{ 'shared.directoryPicker.empty.noMatches.descriptionLine1' | translate }}<br/>{{ 'shared.directoryPicker.empty.noMatches.descriptionLine2' | translate }}
           } @else {
-            This directory doesn't contain any subfolders.
+            {{ 'shared.directoryPicker.empty.directoryEmpty.description' | translate }}
           }
         </p>
       </div>
@@ -87,7 +124,9 @@
         <div class="list-header">
           <span class="folder-count">
             <i class="pi pi-folder"></i>
-            {{ filteredPaths.length }} {{ filteredPaths.length === 1 ? 'folder' : 'folders' }} available
+            {{ filteredPaths.length === 1
+              ? ('shared.directoryPicker.listHeader.countAvailable.one' | translate:{count: filteredPaths.length})
+              : ('shared.directoryPicker.listHeader.countAvailable.other' | translate:{count: filteredPaths.length}) }}
           </span>
         </div>
 
@@ -128,19 +167,21 @@
       @if (selectedFolders.length > 0) {
         <span class="selection-info">
           <i class="pi pi-info-circle"></i>
-          {{ selectedFolders.length }} folder{{ selectedFolders.length !== 1 ? 's' : '' }} will be selected
+          {{ selectedFolders.length === 1
+            ? ('shared.directoryPicker.footer.selectionInfo.one' | translate:{count: selectedFolders.length})
+            : ('shared.directoryPicker.footer.selectionInfo.other' | translate:{count: selectedFolders.length}) }}
         </span>
       }
     </div>
     <div class="footer-actions">
       <p-button
-        label="Cancel"
+        [label]="'common.cancel' | translate"
         severity="secondary"
         [outlined]="true"
         (click)="onCancel()"
       />
       <p-button
-        label="Select Directories"
+        [label]="'shared.directoryPicker.actions.selectDirectories' | translate"
         icon="pi pi-check"
         severity="success"
         (click)="onSelect()"

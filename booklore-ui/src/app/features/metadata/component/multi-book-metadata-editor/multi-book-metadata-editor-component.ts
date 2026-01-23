@@ -8,6 +8,7 @@ import {UserService} from '../../../settings/user-management/user.service';
 import {distinctUntilChanged, filter, map, shareReplay, switchMap, takeUntil} from 'rxjs/operators';
 import {MetadataEditorComponent} from '../book-metadata-center/metadata-editor/metadata-editor.component';
 import {MetadataSearcherComponent} from '../book-metadata-center/metadata-searcher/metadata-searcher.component';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-multi-book-metadata-editor-component',
@@ -18,7 +19,8 @@ import {MetadataSearcherComponent} from '../book-metadata-center/metadata-search
     TabList,
     TabPanel,
     TabPanels,
-    Tabs
+    Tabs,
+    TranslateModule
   ],
   templateUrl: './multi-book-metadata-editor-component.html',
   standalone: true,

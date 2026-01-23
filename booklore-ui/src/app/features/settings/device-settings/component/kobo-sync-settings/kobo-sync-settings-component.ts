@@ -17,19 +17,21 @@ import {AppSettingKey, KoboSettings} from '../../../../../shared/model/app-setti
 import {ShelfService} from '../../../../book/service/shelf.service';
 import {ExternalDocLinkComponent} from '../../../../../shared/components/external-doc-link/external-doc-link.component';
 import {ToastModule} from 'primeng/toast';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-kobo-sync-setting-component',
   standalone: true,
   templateUrl: './kobo-sync-settings-component.html',
   styleUrl: './kobo-sync-settings-component.scss',
-  imports: [FormsModule, Button, InputText, ConfirmDialog, ToggleSwitch, Slider, Divider, ExternalDocLinkComponent, ToastModule],
+  imports: [FormsModule, Button, InputText, ConfirmDialog, ToggleSwitch, Slider, Divider, ExternalDocLinkComponent, ToastModule, TranslateModule],
   providers: [MessageService, ConfirmationService]
 })
 export class KoboSyncSettingsComponent implements OnInit, OnDestroy {
   private koboService = inject(KoboService);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
+  private translateService = inject(TranslateService);
   protected userService = inject(UserService);
   protected appSettingsService = inject(AppSettingsService);
   protected settingsHelperService = inject(SettingsHelperService);
@@ -78,7 +80,7 @@ export class KoboSyncSettingsComponent implements OnInit, OnDestroy {
       debounceTime(500),
       takeUntil(this.destroy$)
     ).subscribe(() => {
-      this.updateKoboSettings('Progress thresholds updated successfully');
+      this.updateKoboSettings('settings.device.kobo.toast.progressThresholdsUpdated.detail');
     });
   }
 
@@ -122,7 +124,7 @@ export class KoboSyncSettingsComponent implements OnInit, OnDestroy {
         this.credentialsSaved = !!settings.token;
       },
       error: () => {
-        this.messageService.add({severity: 'error', summary: 'Error', detail: 'Failed to load Kobo settings'});
+        this.showMessage('error', 'settings.device.kobo.toast.loadError.summary', 'settings.device.kobo.toast.loadError.detail');
       }
     });
   }
@@ -143,23 +145,16 @@ export class KoboSyncSettingsComponent implements OnInit, OnDestroy {
       });
   }
 
-  copyText(text: string, label: string = 'Text') {
+  copyText(text: string, labelKey: string = 'settings.device.clipboard.label.text') {
     if (!text) {
       return;
     }
+    const label = this.translateService.instant(labelKey);
     navigator.clipboard.writeText(text).then(() => {
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Copied',
-        detail: `${label} copied to clipboard`
-      });
+      this.showMessage('success', 'settings.device.clipboard.toast.copied.summary', 'settings.device.clipboard.toast.copied.detail', {label});
     }).catch(err => {
       console.error('Copy failed', err);
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Copy Failed',
-        detail: `Unable to copy ${label.toLowerCase()} to clipboard`
-      });
+      this.showMessage('error', 'settings.device.clipboard.toast.copyFailed.summary', 'settings.device.clipboard.toast.copyFailed.detail', {label: label.toLowerCase()});
     });
   }
 
@@ -170,8 +165,8 @@ export class KoboSyncSettingsComponent implements OnInit, OnDestroy {
 
   confirmRegenerateToken() {
     this.confirmationService.confirm({
-      message: 'This will generate a new token and invalidate the previous one. Continue?',
-      header: 'Confirm Regeneration',
+      message: this.translateService.instant('settings.device.kobo.confirm.regenerate.message'),
+      header: this.translateService.instant('settings.device.kobo.confirm.regenerate.header'),
       icon: 'pi pi-exclamation-triangle',
       accept: () => this.regenerateToken()
     });
@@ -182,10 +177,10 @@ export class KoboSyncSettingsComponent implements OnInit, OnDestroy {
       next: (settings) => {
         this.koboSyncSettings.token = settings.token;
         this.credentialsSaved = true;
-        this.messageService.add({severity: 'success', summary: 'Token regenerated', detail: 'New token generated successfully'});
+        this.showMessage('success', 'settings.device.kobo.toast.tokenRegenerated.summary', 'settings.device.kobo.toast.tokenRegenerated.detail');
       },
       error: () => {
-        this.messageService.add({severity: 'error', summary: 'Error', detail: 'Failed to regenerate token'});
+        this.showMessage('error', 'settings.device.kobo.toast.regenerateTokenFailed.summary', 'settings.device.kobo.toast.regenerateTokenFailed.detail');
       }
     });
   }
@@ -201,16 +196,16 @@ export class KoboSyncSettingsComponent implements OnInit, OnDestroy {
   onSyncToggle() {
     if (!this.koboSyncSettings.syncEnabled) {
       this.confirmationService.confirm({
-        message: 'Disabling Kobo sync will delete your Kobo shelf. Are you sure you want to proceed?',
-        header: 'Confirm Disable',
+        message: this.translateService.instant('settings.device.kobo.confirm.disable.message'),
+        header: this.translateService.instant('settings.device.kobo.confirm.disable.header'),
         icon: 'pi pi-exclamation-triangle',
-        accept: () => this.updateKoboSettings('Kobo sync disabled'),
+        accept: () => this.updateKoboSettings('settings.device.kobo.toast.syncDisabled.detail'),
         reject: () => {
           this.koboSyncSettings.syncEnabled = true;
         }
       });
     } else {
-      this.updateKoboSettings('Kobo sync enabled');
+      this.updateKoboSettings('settings.device.kobo.toast.syncEnabled.detail');
     }
   }
 
@@ -219,30 +214,23 @@ export class KoboSyncSettingsComponent implements OnInit, OnDestroy {
   }
 
   onAutoAddToggle() {
-    const message = this.koboSyncSettings.autoAddToShelf
-      ? 'New books will be automatically added to Kobo shelf'
-      : 'Auto-add to Kobo shelf disabled';
-    this.updateKoboSettings(message);
+    this.updateKoboSettings(
+      this.koboSyncSettings.autoAddToShelf
+        ? 'settings.device.kobo.toast.autoAddEnabled.detail'
+        : 'settings.device.kobo.toast.autoAddDisabled.detail'
+    );
   }
 
-  private updateKoboSettings(successMessage: string) {
+  private updateKoboSettings(successDetailKey: string) {
     this.koboService.updateSettings(this.koboSyncSettings).subscribe({
       next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Settings Updated',
-          detail: successMessage
-        });
+        this.showMessage('success', 'settings.device.kobo.toast.settingsUpdated.summary', successDetailKey);
         if (!this.koboSyncSettings.syncEnabled) {
           this.shelfService.reloadShelves();
         }
       },
       error: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to update Kobo settings'
-        });
+        this.showMessage('error', 'settings.device.kobo.toast.updateFailed.summary', 'settings.device.kobo.toast.updateFailed.detail');
       }
     });
   }
@@ -251,18 +239,10 @@ export class KoboSyncSettingsComponent implements OnInit, OnDestroy {
     this.settingsHelperService.saveSetting(AppSettingKey.KOBO_SETTINGS, this.koboSettings)
       .subscribe({
         next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Settings Saved',
-            detail: 'Kobo settings updated successfully'
-          });
+          this.showMessage('success', 'settings.device.kobo.toast.saved.summary', 'settings.device.kobo.toast.saved.detail');
         },
         error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Save Failed',
-            detail: 'Failed to save Kobo settings'
-          });
+          this.showMessage('error', 'settings.device.kobo.toast.saveFailed.summary', 'settings.device.kobo.toast.saveFailed.detail');
         }
       });
   }
@@ -270,5 +250,18 @@ export class KoboSyncSettingsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private showMessage(
+    severity: 'success' | 'info' | 'warn' | 'error',
+    summaryKey: string,
+    detailKey: string,
+    params?: Record<string, unknown>
+  ): void {
+    this.messageService.add({
+      severity,
+      summary: this.translateService.instant(summaryKey, params),
+      detail: this.translateService.instant(detailKey, params)
+    });
   }
 }

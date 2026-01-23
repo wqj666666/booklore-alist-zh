@@ -2,7 +2,7 @@
   <div class="setting-item">
     <div class="setting-info">
       <div class="setting-label-row">
-        <label class="setting-label">Page Spread</label>
+        <label class="setting-label">{{ 'settings.readerPreferences.cbx.field.pageSpread.label' | translate }}</label>
         <div class="button-group">
           @for (spread of cbxSpreads; track spread) {
             <button
@@ -11,13 +11,13 @@
               [class.selected]="selectedCbxSpread === spread.key"
               (click)="selectedCbxSpread = spread.key">
               <i [class]="spread.icon"></i>
-              <span class="option-text">{{ spread.name }}</span>
+              <span class="option-text">{{ spread.name | translate }}</span>
             </button>
           }
         </div>
       </div>
       <p class="setting-description">
-        Configure how comic book pages are displayed - single page or double page spread.
+        {{ 'settings.readerPreferences.cbx.field.pageSpread.description' | translate }}
       </p>
     </div>
   </div>
@@ -25,7 +25,7 @@
   <div class="setting-item">
     <div class="setting-info">
       <div class="setting-label-row">
-        <label class="setting-label">Page Layout</label>
+        <label class="setting-label">{{ 'settings.readerPreferences.cbx.field.pageLayout.label' | translate }}</label>
         <div class="button-group">
           @for (mode of cbxViewModes; track mode) {
             <button
@@ -34,13 +34,13 @@
               [class.selected]="selectedCbxViewMode === mode.key"
               (click)="selectedCbxViewMode = mode.key">
               <i [class]="mode.icon"></i>
-              <span class="option-text">{{ mode.name }}</span>
+              <span class="option-text">{{ mode.name | translate }}</span>
             </button>
           }
         </div>
       </div>
       <p class="setting-description">
-        Choose how comic pages are displayed while reading.
+        {{ 'settings.readerPreferences.cbx.field.pageLayout.description' | translate }}
       </p>
     </div>
   </div>
@@ -48,7 +48,7 @@
   <div class="setting-item">
     <div class="setting-info">
       <div class="setting-label-row">
-        <label class="setting-label">Fit Mode</label>
+        <label class="setting-label">{{ 'settings.readerPreferences.cbx.field.fitMode.label' | translate }}</label>
         <div class="button-group">
           @for (mode of cbxFitModes; track mode) {
             <button
@@ -56,16 +56,16 @@
               class="option-button"
               [class.selected]="selectedCbxFitMode === mode.key"
               (click)="selectedCbxFitMode = mode.key"
-              [pTooltip]="mode.name"
+              [pTooltip]="mode.name | translate"
               tooltipPosition="bottom">
               <i [class]="mode.icon"></i>
-              <span class="option-text">{{ mode.name }}</span>
+              <span class="option-text">{{ mode.name | translate }}</span>
             </button>
           }
         </div>
       </div>
       <p class="setting-description">
-        Select how images should be scaled to fit the reader window.
+        {{ 'settings.readerPreferences.cbx.field.fitMode.description' | translate }}
       </p>
     </div>
   </div>
@@ -73,7 +73,7 @@
   <div class="setting-item">
     <div class="setting-info">
       <div class="setting-label-row">
-        <label class="setting-label">Scroll Mode</label>
+        <label class="setting-label">{{ 'settings.readerPreferences.cbx.field.scrollMode.label' | translate }}</label>
         <div class="button-group">
           @for (mode of cbxScrollModes; track mode) {
             <button
@@ -82,13 +82,13 @@
               [class.selected]="selectedCbxScrollMode === mode.key"
               (click)="selectedCbxScrollMode = mode.key">
               <i [class]="mode.icon"></i>
-              <span class="option-text">{{ mode.name }}</span>
+              <span class="option-text">{{ mode.name | translate }}</span>
             </button>
           }
         </div>
       </div>
       <p class="setting-description">
-        Choose between paginated or infinite scroll reading experience.
+        {{ 'settings.readerPreferences.cbx.field.scrollMode.description' | translate }}
       </p>
     </div>
   </div>
@@ -96,7 +96,7 @@
   <div class="setting-item">
     <div class="setting-info">
       <div class="setting-label-row">
-        <label class="setting-label">Background Color</label>
+        <label class="setting-label">{{ 'settings.readerPreferences.cbx.field.backgroundColor.label' | translate }}</label>
         <div class="theme-selector">
           @for (color of cbxBackgroundColors; track color) {
             <button
@@ -105,8 +105,8 @@
               [class.selected]="selectedCbxBackgroundColor === color.key"
               [style.background-color]="color.color"
               (click)="selectedCbxBackgroundColor = color.key"
-              [attr.aria-label]="color.name"
-              [pTooltip]="color.name"
+              [attr.aria-label]="color.name | translate"
+              [pTooltip]="color.name | translate"
               tooltipPosition="bottom">
               @if (selectedCbxBackgroundColor === color.key) {
                 <i class="pi pi-check"></i>
@@ -116,7 +116,7 @@
         </div>
       </div>
       <p class="setting-description">
-        Set the background color for the comic reader.
+        {{ 'settings.readerPreferences.cbx.field.backgroundColor.description' | translate }}
       </p>
     </div>
   </div>

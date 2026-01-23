@@ -9,6 +9,7 @@ import {Button} from 'primeng/button';
 import {InputText} from 'primeng/inputtext';
 import {Tooltip} from 'primeng/tooltip';
 import {IconDisplayComponent} from '../../../../shared/components/icon-display/icon-display.component';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-shelf-creator',
@@ -19,7 +20,8 @@ import {IconDisplayComponent} from '../../../../shared/components/icon-display/i
     Button,
     InputText,
     Tooltip,
-    IconDisplayComponent
+    IconDisplayComponent,
+    TranslateModule
   ],
   styleUrl: './shelf-creator.component.scss',
 })

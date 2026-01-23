@@ -1,12 +1,14 @@
 import {inject, Injectable, OnDestroy} from '@angular/core';
-import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
-import {map, takeUntil, catchError, filter, first, switchMap} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, EMPTY, Observable, Subject} from 'rxjs';
+import {takeUntil, catchError, filter, first, switchMap} from 'rxjs/operators';
 import {ChartConfiguration, ChartData, TooltipItem} from 'chart.js';
 
 import {LibraryFilterService} from './library-filter.service';
 import {BookService} from '../../book/service/book.service';
 import {Book, ReadStatus} from '../../book/model/book.model';
 import {BookState} from '../../book/model/state/book-state.model';
+import {TranslateService} from '@ngx-translate/core';
+import {LanguageService} from '../../../core/i18n/language.service';
 
 interface VelocityTimelineData {
   month: string;
@@ -27,140 +29,21 @@ const CHART_COLORS = {
 
 type VelocityTimelineChartData = ChartData<'line', number[], string>;
 
+type VelocityMetric = 'booksCompleted' | 'avgPagesPerDay' | 'avgRatingScaled' | 'readingVelocity';
+
 @Injectable({
   providedIn: 'root'
 })
 export class ReadingVelocityTimelineChartService implements OnDestroy {
   private readonly bookService = inject(BookService);
   private readonly libraryFilterService = inject(LibraryFilterService);
+  private readonly translateService = inject(TranslateService);
+  private readonly languageService = inject(LanguageService);
   private readonly destroy$ = new Subject<void>();
 
   public readonly velocityTimelineChartType = 'line' as const;
 
-  public readonly velocityTimelineChartOptions: ChartConfiguration<'line'>['options'] = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      x: {
-        type: 'category',
-        ticks: {
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11
-          },
-          maxRotation: 45
-        },
-        grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
-        },
-        title: {
-          display: true,
-          text: 'Month',
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11.5
-          }
-        }
-      },
-      y: {
-        type: 'linear',
-        display: true,
-        position: 'left',
-        beginAtZero: true,
-        ticks: {
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11
-          }
-        },
-        grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
-        },
-        title: {
-          display: true,
-          text: 'Books Completed',
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11.5
-          }
-        }
-      },
-      y1: {
-        type: 'linear',
-        display: true,
-        position: 'right',
-        beginAtZero: true,
-        ticks: {
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11
-          }
-        },
-        grid: {
-          drawOnChartArea: false
-        },
-        title: {
-          display: true,
-          text: 'Pages per Day',
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11.5
-          }
-        }
-      }
-    },
-    plugins: {
-      legend: {
-        display: true,
-        position: 'top',
-        labels: {
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11.5
-          },
-          padding: 15,
-          usePointStyle: true
-        }
-      },
-      tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.9)',
-        titleColor: '#ffffff',
-        bodyColor: '#ffffff',
-        borderColor: '#ffffff',
-        borderWidth: 1,
-        cornerRadius: 6,
-        displayColors: true,
-        padding: 12,
-        titleFont: { size: 14, weight: 'bold' },
-        bodyFont: { size: 12 },
-        callbacks: {
-          title: (context) => context[0]?.label || '',
-          label: this.formatTooltipLabel.bind(this)
-        }
-      }
-    },
-    interaction: {
-      intersect: false,
-      mode: 'index'
-    },
-    elements: {
-      point: {
-        radius: 4,
-        hoverRadius: 6
-      },
-      line: {
-        tension: 0.2,
-        borderWidth: 2
-      }
-    }
-  };
+  public velocityTimelineChartOptions: ChartConfiguration<'line'>['options'] = this.buildOptions();
 
   private readonly velocityTimelineChartDataSubject = new BehaviorSubject<VelocityTimelineChartData>({
     labels: [],
@@ -175,9 +58,10 @@ export class ReadingVelocityTimelineChartService implements OnDestroy {
         filter(state => state.loaded),
         first(),
         switchMap(() =>
-          this.libraryFilterService.selectedLibrary$.pipe(
-            takeUntil(this.destroy$)
-          )
+          combineLatest([
+            this.libraryFilterService.selectedLibrary$,
+            this.languageService.language$
+          ]).pipe(takeUntil(this.destroy$))
         ),
         catchError((error) => {
           console.error('Error processing velocity timeline stats:', error);
@@ -185,6 +69,7 @@ export class ReadingVelocityTimelineChartService implements OnDestroy {
         })
       )
       .subscribe(() => {
+        this.velocityTimelineChartOptions = this.buildOptions();
         const stats = this.calculateVelocityTimelineStats();
         this.updateChartData(stats);
       });
@@ -202,7 +87,8 @@ export class ReadingVelocityTimelineChartService implements OnDestroy {
 
       const datasets = [
         {
-          label: 'Books Completed',
+          label: this.translateService.instant('stats.library.chart.readingVelocityTimeline.datasets.booksCompleted'),
+          metric: 'booksCompleted' as VelocityMetric,
           data: stats.map(s => s.booksCompleted),
           borderColor: CHART_COLORS.booksCompleted,
           backgroundColor: CHART_COLORS.booksCompleted + '20',
@@ -211,7 +97,8 @@ export class ReadingVelocityTimelineChartService implements OnDestroy {
           fill: false
         },
         {
-          label: 'Avg Pages/Day',
+          label: this.translateService.instant('stats.library.chart.readingVelocityTimeline.datasets.avgPagesPerDay'),
+          metric: 'avgPagesPerDay' as VelocityMetric,
           data: stats.map(s => s.avgPagesPerDay),
           borderColor: CHART_COLORS.avgPagesPerDay,
           backgroundColor: CHART_COLORS.avgPagesPerDay + '20',
@@ -220,7 +107,8 @@ export class ReadingVelocityTimelineChartService implements OnDestroy {
           fill: false
         },
         {
-          label: 'Avg Rating (×2)',
+          label: this.translateService.instant('stats.library.chart.readingVelocityTimeline.datasets.avgRatingScaled'),
+          metric: 'avgRatingScaled' as VelocityMetric,
           data: stats.map(s => s.averageRating * 2), // Scale for visibility
           borderColor: CHART_COLORS.averageRating,
           backgroundColor: CHART_COLORS.averageRating + '20',
@@ -230,7 +118,8 @@ export class ReadingVelocityTimelineChartService implements OnDestroy {
           borderDash: [5, 5]
         },
         {
-          label: 'Reading Velocity',
+          label: this.translateService.instant('stats.library.chart.readingVelocityTimeline.datasets.readingVelocity'),
+          metric: 'readingVelocity' as VelocityMetric,
           data: stats.map(s => s.readingVelocity),
           borderColor: CHART_COLORS.readingVelocity,
           backgroundColor: CHART_COLORS.readingVelocity + '20',
@@ -354,38 +243,62 @@ export class ReadingVelocityTimelineChartService implements OnDestroy {
   }
 
   private formatDisplayMonth(monthKey: string): string {
-    const [year, month] = monthKey.split('-');
-    const monthNames = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
-    return `${monthNames[parseInt(month) - 1]} ${year}`;
+    const [yearStr, monthStr] = monthKey.split('-');
+    const year = Number(yearStr);
+    const month = Number(monthStr);
+    if (!year || !month) return monthKey;
+
+    const locale = this.translateService.currentLang === 'zh-CN' ? 'zh-CN' : 'en-US';
+    const date = new Date(year, month - 1, 1);
+    return new Intl.DateTimeFormat(locale, {month: 'short', year: 'numeric'}).format(date);
   }
 
   private formatTooltipLabel(context: TooltipItem<'line'>): string {
-    const datasetLabel = context.dataset.label;
+    const metric = (context.dataset as any).metric as VelocityMetric | undefined;
     const value = context.parsed.y;
     const dataIndex = context.dataIndex;
     const stats = this.getLastCalculatedStats();
 
     if (!stats || dataIndex >= stats.length) {
-      return `${datasetLabel}: ${value}`;
+      return String(value ?? '');
     }
 
     const monthStats = stats[dataIndex];
+    const countLabel = this.translateService.instant(
+      monthStats.booksCompleted === 1 ? 'stats.library.units.bookCountOne' : 'stats.library.units.bookCountMany',
+      {count: monthStats.booksCompleted}
+    );
 
-    switch (datasetLabel) {
-      case 'Books Completed':
-        return `${value} books completed | ${monthStats.totalPages} total pages`;
-      case 'Avg Pages/Day':
-        return `${value} pages/day | ${monthStats.averagePages} avg pages/book`;
-      case 'Avg Rating (×2)':
+    switch (metric) {
+      case 'booksCompleted': {
+        return this.translateService.instant('stats.library.chart.readingVelocityTimeline.tooltips.booksCompleted', {
+          value,
+          totalPages: monthStats.totalPages,
+          countLabel
+        });
+      }
+      case 'avgPagesPerDay': {
+        return this.translateService.instant('stats.library.chart.readingVelocityTimeline.tooltips.avgPagesPerDay', {
+          value,
+          averagePages: monthStats.averagePages
+        });
+      }
+      case 'avgRatingScaled': {
         const actualRating = (value ?? 0) / 2;
-        return `${actualRating.toFixed(1)}/5 avg rating | ${monthStats.booksCompleted} books rated`;
-      case 'Reading Velocity':
-        return `${value} books/month | ${monthStats.avgPagesPerDay} pages/day velocity`;
-      default:
-        return `${datasetLabel}: ${value}`;
+        return this.translateService.instant('stats.library.chart.readingVelocityTimeline.tooltips.avgRating', {
+          rating: actualRating.toFixed(1),
+          countLabel
+        });
+      }
+      case 'readingVelocity': {
+        return this.translateService.instant('stats.library.chart.readingVelocityTimeline.tooltips.readingVelocity', {
+          value,
+          avgPagesPerDay: monthStats.avgPagesPerDay
+        });
+      }
+      default: {
+        return String(value ?? '');
+      }
     }
   }
 
@@ -393,5 +306,132 @@ export class ReadingVelocityTimelineChartService implements OnDestroy {
 
   private getLastCalculatedStats(): VelocityTimelineData[] {
     return this.lastCalculatedStats;
+  }
+
+  private buildOptions(): ChartConfiguration<'line'>['options'] {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          type: 'category',
+          ticks: {
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11
+            },
+            maxRotation: 45
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.1)'
+          },
+          title: {
+            display: true,
+            text: this.translateService.instant('stats.library.chart.readingVelocityTimeline.axis.xTitle'),
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11.5
+            }
+          }
+        },
+        y: {
+          type: 'linear',
+          display: true,
+          position: 'left',
+          beginAtZero: true,
+          ticks: {
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11
+            }
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.1)'
+          },
+          title: {
+            display: true,
+            text: this.translateService.instant('stats.library.chart.readingVelocityTimeline.axis.yTitle'),
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11.5
+            }
+          }
+        },
+        y1: {
+          type: 'linear',
+          display: true,
+          position: 'right',
+          beginAtZero: true,
+          ticks: {
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11
+            }
+          },
+          grid: {
+            drawOnChartArea: false
+          },
+          title: {
+            display: true,
+            text: this.translateService.instant('stats.library.chart.readingVelocityTimeline.axis.y1Title'),
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11.5
+            }
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          labels: {
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11.5
+            },
+            padding: 15,
+            usePointStyle: true
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.9)',
+          titleColor: '#ffffff',
+          bodyColor: '#ffffff',
+          borderColor: '#ffffff',
+          borderWidth: 1,
+          cornerRadius: 6,
+          displayColors: true,
+          padding: 12,
+          titleFont: {size: 14, weight: 'bold'},
+          bodyFont: {size: 12},
+          callbacks: {
+            title: (context) => String(context[0]?.label ?? ''),
+            label: this.formatTooltipLabel.bind(this)
+          }
+        }
+      },
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      },
+      elements: {
+        point: {
+          radius: 4,
+          hoverRadius: 6
+        },
+        line: {
+          tension: 0.2,
+          borderWidth: 2
+        }
+      }
+    };
   }
 }

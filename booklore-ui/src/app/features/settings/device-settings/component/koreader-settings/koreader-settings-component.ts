@@ -11,6 +11,7 @@ import {UserService} from '../../../user-management/user.service';
 import {filter, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {ExternalDocLinkComponent} from '../../../../../shared/components/external-doc-link/external-doc-link.component';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   standalone: true,
@@ -21,7 +22,8 @@ import {ExternalDocLinkComponent} from '../../../../../shared/components/externa
     ToggleSwitch,
     Button,
     ToastModule,
-    ExternalDocLinkComponent
+    ExternalDocLinkComponent,
+    TranslateModule
 ],
   providers: [MessageService],
   templateUrl: './koreader-settings-component.html',
@@ -39,6 +41,7 @@ export class KoreaderSettingsComponent implements OnInit, OnDestroy {
   private readonly messageService = inject(MessageService);
   private readonly koreaderService = inject(KoreaderService);
   private readonly userService = inject(UserService);
+  private readonly translateService = inject(TranslateService);
 
   private readonly destroy$ = new Subject<void>();
   hasPermission = false;
@@ -68,11 +71,7 @@ export class KoreaderSettingsComponent implements OnInit, OnDestroy {
       },
       error: err => {
         if (err.status !== 404) {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Load Error',
-            detail: 'Unable to retrieve KOReader account. Please try again.'
-          });
+          this.showMessage('error', 'settings.device.koreader.toast.loadError.summary', 'settings.device.koreader.toast.loadError.detail');
         }
       }
     });
@@ -96,10 +95,14 @@ export class KoreaderSettingsComponent implements OnInit, OnDestroy {
     this.koreaderService.toggleSync(enabled).subscribe({
       next: () => {
         this.koReaderSyncEnabled = enabled;
-        this.messageService.add({severity: 'success', summary: 'Sync Updated', detail: `KOReader sync has been ${enabled ? 'enabled' : 'disabled'}.`});
+        this.showMessage(
+          'success',
+          'settings.device.koreader.toast.syncUpdated.summary',
+          enabled ? 'settings.device.koreader.toast.syncEnabled.detail' : 'settings.device.koreader.toast.syncDisabled.detail'
+        );
       },
       error: () => {
-        this.messageService.add({severity: 'error', summary: 'Update Failed', detail: 'Unable to update KOReader sync setting. Please try again.'});
+        this.showMessage('error', 'settings.device.koreader.toast.updateFailed.summary', 'settings.device.koreader.toast.updateFailed.detail');
       }
     });
   }
@@ -114,30 +117,31 @@ export class KoreaderSettingsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.credentialsSaved = true;
-          this.messageService.add({severity: 'success', summary: 'Saved', detail: 'KOReader account saved successfully.'});
+          this.showMessage('success', 'settings.device.koreader.toast.saved.summary', 'settings.device.koreader.toast.saved.detail');
         },
         error: () =>
-          this.messageService.add({severity: 'error', summary: 'Error', detail: 'Failed to save KOReader credentials. Please try again.'})
+          this.showMessage('error', 'settings.device.koreader.toast.saveFailed.summary', 'settings.device.koreader.toast.saveFailed.detail')
       });
   }
 
 
-  copyText(text: string, label: string = 'Text') {
+  copyText(text: string, labelKey: string = 'settings.device.clipboard.label.text') {
     if (!text) {
       return;
     }
+    const label = this.translateService.instant(labelKey);
     navigator.clipboard.writeText(text).then(() => {
       this.messageService.add({
         severity: 'success',
-        summary: 'Copied',
-        detail: `${label} copied to clipboard`
+        summary: this.translateService.instant('settings.device.clipboard.toast.copied.summary'),
+        detail: this.translateService.instant('settings.device.clipboard.toast.copied.detail', {label})
       });
     }).catch(err => {
       console.error('Copy failed', err);
       this.messageService.add({
         severity: 'error',
-        summary: 'Copy Failed',
-        detail: `Unable to copy ${label.toLowerCase()} to clipboard`
+        summary: this.translateService.instant('settings.device.clipboard.toast.copyFailed.summary'),
+        detail: this.translateService.instant('settings.device.clipboard.toast.copyFailed.detail', {label: label.toLowerCase()})
       });
     });
   }
@@ -145,5 +149,13 @@ export class KoreaderSettingsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private showMessage(severity: 'success' | 'error', summaryKey: string, detailKey: string, params?: Record<string, unknown>): void {
+    this.messageService.add({
+      severity,
+      summary: this.translateService.instant(summaryKey, params),
+      detail: this.translateService.instant(detailKey, params)
+    });
   }
 }

@@ -10,6 +10,7 @@ import {IconCategoriesHelper} from '../../helpers/icon-categories.helper';
 import {Button} from 'primeng/button';
 import {TabsModule} from 'primeng/tabs';
 import {UserService} from '../../../features/settings/user-management/user.service';
+import {TranslateModule} from '@ngx-translate/core';
 
 interface SvgEntry {
   name: string;
@@ -36,7 +37,8 @@ interface SvgIconBatchResponse {
   imports: [
     FormsModule,
     Button,
-    TabsModule
+    TabsModule,
+    TranslateModule
   ],
   templateUrl: './icon-picker-component.html',
   styleUrl: './icon-picker-component.scss'

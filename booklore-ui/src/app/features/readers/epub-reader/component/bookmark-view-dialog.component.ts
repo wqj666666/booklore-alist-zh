@@ -4,6 +4,7 @@ import { Dialog } from 'primeng/dialog';
 import { Button } from 'primeng/button';
 import { BookMark } from '../../../../shared/service/book-mark.service';
 import { PrimeTemplate } from 'primeng/api';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bookmark-view-dialog',
@@ -12,7 +13,8 @@ import { PrimeTemplate } from 'primeng/api';
     CommonModule,
     Dialog,
     Button,
-    PrimeTemplate
+    PrimeTemplate,
+    TranslateModule
   ],
   template: `
     <p-dialog
@@ -24,7 +26,7 @@ import { PrimeTemplate } from 'primeng/api';
       [resizable]="false"
       [closeOnEscape]="true"
       [appendTo]="'body'"
-      header="View Bookmark"
+      [header]="'readers.epub.bookmarkViewDialog.title' | translate"
       (onHide)="onClose()">
 
       @if (bookmark) {
@@ -36,23 +38,23 @@ import { PrimeTemplate } from 'primeng/api';
 
           <div class="bookmark-view-details">
             <div class="bookmark-view-row">
-              <span class="bookmark-view-label">Created</span>
+              <span class="bookmark-view-label">{{ 'readers.epub.bookmarkViewDialog.fields.created' | translate }}</span>
               <span class="bookmark-view-value">{{ bookmark.createdAt | date:'MMM d, y, h:mm a' }}</span>
             </div>
             <div class="bookmark-view-row">
-              <span class="bookmark-view-label">Priority</span>
+              <span class="bookmark-view-label">{{ 'readers.epub.bookmarkViewDialog.fields.priority' | translate }}</span>
               <span class="bookmark-view-priority" [attr.data-priority]="bookmark.priority">
-                {{ getPriorityLabel(bookmark.priority) }}
+                {{ getPriorityLabelKey(bookmark.priority) | translate }}
               </span>
             </div>
           </div>
 
           <div class="bookmark-view-notes">
-            <span class="bookmark-view-label">Notes</span>
+            <span class="bookmark-view-label">{{ 'readers.epub.bookmarkViewDialog.fields.notes' | translate }}</span>
             @if (bookmark.notes) {
               <p class="bookmark-view-notes-content">{{ bookmark.notes }}</p>
             } @else {
-              <p class="bookmark-view-notes-empty">No notes added</p>
+              <p class="bookmark-view-notes-empty">{{ 'readers.epub.bookmarkViewDialog.noNotes' | translate }}</p>
             }
           </div>
         </div>
@@ -60,7 +62,7 @@ import { PrimeTemplate } from 'primeng/api';
 
       <ng-template pTemplate="footer">
         <p-button
-          label="Close"
+          [label]="'common.close' | translate"
           icon="pi pi-times"
           (click)="onClose()"
           [text]="true"
@@ -187,12 +189,12 @@ export class BookmarkViewDialogComponent {
     this.visibleChange.emit(false);
   }
 
-  getPriorityLabel(priority: number | undefined): string {
-    if (priority === undefined) return 'Normal';
-    if (priority <= 1) return 'Highest';
-    if (priority === 2) return 'High';
-    if (priority === 3) return 'Normal';
-    if (priority === 4) return 'Low';
-    return 'Lowest';
+  getPriorityLabelKey(priority: number | undefined): string {
+    if (priority === undefined) return 'readers.epub.bookmarkViewDialog.priority.normal';
+    if (priority <= 1) return 'readers.epub.bookmarkViewDialog.priority.highest';
+    if (priority === 2) return 'readers.epub.bookmarkViewDialog.priority.high';
+    if (priority === 3) return 'readers.epub.bookmarkViewDialog.priority.normal';
+    if (priority === 4) return 'readers.epub.bookmarkViewDialog.priority.low';
+    return 'readers.epub.bookmarkViewDialog.priority.lowest';
   }
 }

@@ -51,6 +51,7 @@ import {TaskHelperService} from '../../../settings/task-management/task-helper.s
 import {FilterLabelHelper} from './filter-label.helper';
 import {LoadingService} from '../../../../core/services/loading.service';
 import {BookNavigationService} from '../../service/book-navigation.service';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 export enum EntityType {
   LIBRARY = 'Library',
@@ -88,7 +89,7 @@ const SORT_DIRECTION = {
   imports: [
     Button, VirtualScrollerModule, BookCardComponent, AsyncPipe, ProgressSpinner, Menu, InputText, FormsModule,
     BookTableComponent, BookFilterComponent, Tooltip, NgClass, PrimeTemplate, NgStyle, Popover,
-    Checkbox, Slider, Divider, MultiSelect, TieredMenu
+    Checkbox, Slider, Divider, MultiSelect, TieredMenu, TranslateModule
   ],
   providers: [SeriesCollapseFilter],
   animations: [
@@ -105,6 +106,7 @@ export class BookBrowserComponent implements OnInit, AfterViewInit {
   protected coverScalePreferenceService = inject(CoverScalePreferenceService);
   protected columnPreferenceService = inject(TableColumnPreferenceService);
   protected sidebarFilterTogglePrefService = inject(SidebarFilterTogglePrefService);
+  private translateService = inject(TranslateService);
   private activatedRoute = inject(ActivatedRoute);
   private messageService = inject(MessageService);
   private libraryService = inject(LibraryService);
@@ -160,6 +162,14 @@ export class BookBrowserComponent implements OnInit, AfterViewInit {
     selectedSort => this.onManualSortChange(selectedSort)
   );
 
+  protected readonly entityTypeLabelKeyMap: Record<EntityType, string> = {
+    [EntityType.LIBRARY]: 'book.browser.entityType.library',
+    [EntityType.SHELF]: 'book.browser.entityType.shelf',
+    [EntityType.MAGIC_SHELF]: 'book.browser.entityType.magicShelf',
+    [EntityType.ALL_BOOKS]: 'menu.allBooks',
+    [EntityType.UNSHELVED]: 'book.browser.title.unshelvedBooks',
+  };
+
   @ViewChild(BookTableComponent)
   bookTableComponent!: BookTableComponent;
   @ViewChild(BookFilterComponent, {static: false})
@@ -185,17 +195,28 @@ export class BookBrowserComponent implements OnInit, AfterViewInit {
     const filters = this.selectedFilter.value;
 
     if (!filters || Object.keys(filters).length === 0) {
-      return 'All Books';
+      return this.translateService.instant('menu.allBooks');
     }
 
     const filterEntries = Object.entries(filters);
+    const getFilterName = (filterType: string): string => {
+      const key = FilterLabelHelper.getFilterTypeName(filterType);
+      return key ? this.translateService.instant(key) : filterType;
+    };
+    const getFilterValue = (filterType: string, value: string): string => {
+      const keyOrValue = FilterLabelHelper.getFilterDisplayValue(filterType, value);
+      if (keyOrValue.startsWith('book.') || keyOrValue.startsWith('common.') || keyOrValue.startsWith('menu.')) {
+        return this.translateService.instant(keyOrValue);
+      }
+      return keyOrValue;
+    };
 
     if (filterEntries.length === 1) {
       const [filterType, values] = filterEntries[0];
-      const filterName = FilterLabelHelper.getFilterTypeName(filterType);
+      const filterName = getFilterName(filterType);
 
       if (values.length === 1) {
-        const displayValue = FilterLabelHelper.getFilterDisplayValue(filterType, values[0]);
+        const displayValue = getFilterValue(filterType, values[0]);
         return `${filterName}: ${displayValue}`;
       }
 
@@ -203,18 +224,54 @@ export class BookBrowserComponent implements OnInit, AfterViewInit {
     }
 
     const filterSummary = filterEntries
-      .map(([type, values]) => `${FilterLabelHelper.getFilterTypeName(type)} (${values.length})`)
+      .map(([type, values]) => `${getFilterName(type)} (${values.length})`)
       .join(', ');
 
     return filterSummary.length > 50
-      ? `${filterEntries.length} Active Filters`
+      ? this.translateService.instant('book.browser.filters.activeCount', {count: filterEntries.length})
       : filterSummary;
+  }
+
+  getEntityDisplayName(entityType: EntityType, entity: Library | Shelf | MagicShelf | null | undefined): string {
+    if (!entity) return '';
+    if (entityType === EntityType.SHELF && entity.name === 'Favorites') {
+      return this.translateService.instant('menu.favorites');
+    }
+    return entity.name;
   }
 
 
   ngOnInit(): void {
     this.pageTitle.setPageTitle('')
     this.coverScalePreferenceService.scaleChange$.pipe(debounceTime(1000)).subscribe();
+
+    this.bookSorter.updateLabels(key => this.translateService.instant(key));
+    this.translateService.onLangChange.subscribe(() => {
+      this.bookSorter.updateLabels(key => this.translateService.instant(key));
+      this.visibleColumns = this.columnPreferenceService.visibleColumns;
+
+      if (this.entityType === EntityType.ALL_BOOKS) {
+        this.pageTitle.setPageTitle(this.translateService.instant('menu.allBooks'));
+        this.currentFilterLabel = (this.isFilterActive || this.hasSearchTerm)
+          ? this.computedFilterLabel
+          : this.translateService.instant('menu.allBooks');
+      }
+      if (this.entityType === EntityType.UNSHELVED) {
+        this.pageTitle.setPageTitle(this.translateService.instant('book.browser.title.unshelvedBooks'));
+      }
+      if (this.entityType === EntityType.LIBRARY || this.entityType === EntityType.SHELF || this.entityType === EntityType.MAGIC_SHELF) {
+        this.entityOptions = this.entity
+          ? this.isLibrary(this.entity)
+            ? this.libraryShelfMenuService.initializeLibraryMenuItems(this.entity)
+            : this.isMagicShelf(this.entity)
+              ? this.libraryShelfMenuService.initializeMagicShelfMenuItems(this.entity)
+              : this.libraryShelfMenuService.initializeShelfMenuItems(this.entity)
+          : [];
+        if (this.entity && this.entityType) {
+          this.pageTitle.setPageTitle(this.getEntityDisplayName(this.entityType, this.entity));
+        }
+      }
+    });
 
     const currentPath = this.activatedRoute.snapshot.routeConfig?.path;
     if (currentPath === 'all-books' || currentPath === 'unshelved-books') {
@@ -224,7 +281,11 @@ export class BookBrowserComponent implements OnInit, AfterViewInit {
       this.entity$ = of(null);
       this.seriesCollapseFilter.setContext(null, null);
 
-      this.pageTitle.setPageTitle(currentPath === 'all-books' ? 'All Books' : 'Unshelved Books');
+      this.pageTitle.setPageTitle(
+        currentPath === 'all-books'
+          ? this.translateService.instant('menu.allBooks')
+          : this.translateService.instant('book.browser.title.unshelvedBooks')
+      );
     } else {
       const routeEntityInfo$ = this.getEntityInfoFromRoute();
       this.entityType$ = routeEntityInfo$.pipe(map(info => info.entityType));
@@ -233,7 +294,7 @@ export class BookBrowserComponent implements OnInit, AfterViewInit {
       );
       this.entity$.subscribe(entity => {
         if (entity) {
-          this.pageTitle.setPageTitle(entity.name);
+          this.pageTitle.setPageTitle(this.getEntityDisplayName(this.entityType ?? EntityType.ALL_BOOKS, entity));
         }
         this.entity = entity ?? null;
         this.updateSeriesCollapseContext();
@@ -293,7 +354,7 @@ export class BookBrowserComponent implements OnInit, AfterViewInit {
 
       const parsedFilters: Record<string, string[]> = {};
 
-      this.currentFilterLabel = 'All Books';
+      this.currentFilterLabel = this.translateService.instant('menu.allBooks');
 
       if (filterParams) {
         this.settingFiltersFromUrl = true;
@@ -360,7 +421,7 @@ export class BookBrowserComponent implements OnInit, AfterViewInit {
         field: matchedSort.field,
         direction: effectiveSortDir
       } : {
-        label: 'Added On',
+        label: this.bookSorter.sortOptions.find(opt => opt.field === 'addedOn')?.label ?? '',
         field: 'addedOn',
         direction: SortDirection.DESCENDING
       };
@@ -421,7 +482,7 @@ export class BookBrowserComponent implements OnInit, AfterViewInit {
     this.rawFilterParamFromUrl = null;
 
     const hasSidebarFilters = !!filters && Object.keys(filters).length > 0;
-    this.currentFilterLabel = hasSidebarFilters ? this.computedFilterLabel : 'All Books';
+    this.currentFilterLabel = hasSidebarFilters ? this.computedFilterLabel : this.translateService.instant('menu.allBooks');
 
     const queryParam = hasSidebarFilters ? Object.entries(filters).map(([k, v]) => `${k}:${v.join('|')}`).join(',') : null;
     if (queryParam !== this.activatedRoute.snapshot.queryParamMap.get(QUERY_PARAMS.FILTER)) {

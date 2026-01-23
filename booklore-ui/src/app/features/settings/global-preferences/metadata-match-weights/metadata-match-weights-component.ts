@@ -9,6 +9,7 @@ import {Observable} from 'rxjs';
 import {AppSettingKey, AppSettings} from '../../../../shared/model/app-settings.model';
 import {AppSettingsService} from '../../../../shared/service/app-settings.service';
 import {InputNumber} from 'primeng/inputnumber';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 
 @Component({
@@ -17,7 +18,8 @@ import {InputNumber} from 'primeng/inputnumber';
     ReactiveFormsModule,
     Button,
     Tooltip,
-    InputNumber
+    InputNumber,
+    TranslateModule
   ],
   templateUrl: './metadata-match-weights-component.html',
   styleUrl: './metadata-match-weights-component.scss'
@@ -25,27 +27,27 @@ import {InputNumber} from 'primeng/inputnumber';
 export class MetadataMatchWeightsComponent implements OnInit {
 
   readonly labelMap: Record<string, string> = {
-    title: 'Title',
-    subtitle: 'Subtitle',
-    authors: 'Authors',
-    description: 'Description',
-    publisher: 'Publisher',
-    publishedDate: 'Published Date',
-    categories: 'Categories',
-    coverImage: 'Cover Image',
-    seriesName: 'Series Name',
-    seriesNumber: 'Series Number',
-    language: 'Language',
-    isbn13: 'ISBN-13',
-    isbn10: 'ISBN-10',
-    pageCount: 'Page Count',
-    amazonRating: 'Amazon Rating',
-    amazonReviewCount: 'Amazon Rating # ',
-    goodreadsRating: 'Goodreads Rating',
-    goodreadsReviewCount: 'Goodreads Rating #',
-    hardcoverRating: 'Hardcover Rating',
-    hardcoverReviewCount: 'Hardcover Rating #',
-    ranobedbRating: 'Ranobedb Rating',
+    title: 'settings.metadataMatchWeights.field.title',
+    subtitle: 'settings.metadataMatchWeights.field.subtitle',
+    authors: 'settings.metadataMatchWeights.field.authors',
+    description: 'settings.metadataMatchWeights.field.description',
+    publisher: 'settings.metadataMatchWeights.field.publisher',
+    publishedDate: 'settings.metadataMatchWeights.field.publishedDate',
+    categories: 'settings.metadataMatchWeights.field.categories',
+    coverImage: 'settings.metadataMatchWeights.field.coverImage',
+    seriesName: 'settings.metadataMatchWeights.field.seriesName',
+    seriesNumber: 'settings.metadataMatchWeights.field.seriesNumber',
+    language: 'settings.metadataMatchWeights.field.language',
+    isbn13: 'settings.metadataMatchWeights.field.isbn13',
+    isbn10: 'settings.metadataMatchWeights.field.isbn10',
+    pageCount: 'settings.metadataMatchWeights.field.pageCount',
+    amazonRating: 'settings.metadataMatchWeights.field.amazonRating',
+    amazonReviewCount: 'settings.metadataMatchWeights.field.amazonReviewCount',
+    goodreadsRating: 'settings.metadataMatchWeights.field.goodreadsRating',
+    goodreadsReviewCount: 'settings.metadataMatchWeights.field.goodreadsReviewCount',
+    hardcoverRating: 'settings.metadataMatchWeights.field.hardcoverRating',
+    hardcoverReviewCount: 'settings.metadataMatchWeights.field.hardcoverReviewCount',
+    ranobedbRating: 'settings.metadataMatchWeights.field.ranobedbRating',
   };
 
   form!: FormGroup;
@@ -56,6 +58,7 @@ export class MetadataMatchWeightsComponent implements OnInit {
   private appSettingsService = inject(AppSettingsService);
   private messageService = inject(MessageService);
   private fb = inject(FormBuilder);
+  private translateService = inject(TranslateService);
 
   appSettings$: Observable<AppSettings | null> = this.appSettingsService.appSettings$;
 
@@ -112,16 +115,16 @@ export class MetadataMatchWeightsComponent implements OnInit {
       next: () => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Saved',
-          detail: 'Weights saved successfully'
+          summary: this.translateService.instant('settings.metadataMatchWeights.toast.saveSuccess.summary'),
+          detail: this.translateService.instant('settings.metadataMatchWeights.toast.saveSuccess.detail')
         });
         this.isSaving = false;
       },
       error: () => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to save weights'
+          summary: this.translateService.instant('settings.metadataMatchWeights.toast.saveError.summary'),
+          detail: this.translateService.instant('settings.metadataMatchWeights.toast.saveError.detail')
         });
         this.isSaving = false;
       }
@@ -134,16 +137,16 @@ export class MetadataMatchWeightsComponent implements OnInit {
       next: () => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Recalculated',
-          detail: 'All book match scores were recalculated successfully.'
+          summary: this.translateService.instant('settings.metadataMatchWeights.toast.recalculateSuccess.summary'),
+          detail: this.translateService.instant('settings.metadataMatchWeights.toast.recalculateSuccess.detail')
         });
         this.isRecalculating = false;
       },
       error: () => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to recalculate match scores.'
+          summary: this.translateService.instant('settings.metadataMatchWeights.toast.recalculateError.summary'),
+          detail: this.translateService.instant('settings.metadataMatchWeights.toast.recalculateError.detail')
         });
         this.isRecalculating = false;
       }

@@ -4,20 +4,20 @@
       <div class="grid grid-cols-3 gap-6 mb-6">
         <div class="text-center p-4 bg-zinc-700/30 rounded-lg">
           <div class="text-3xl font-bold text-blue-400 mb-1">{{ result.totalFiles }}</div>
-          <div class="text-sm text-gray-400 font-medium">Total Files</div>
+          <div class="text-sm text-gray-400 font-medium">{{ 'bookdrop.finalizeResult.summary.totalFiles' | translate }}</div>
         </div>
         <div class="text-center p-4 bg-zinc-700/30 rounded-lg">
           <div class="text-3xl font-bold text-green-400 mb-1">{{ result.successfullyImported }}</div>
-          <div class="text-sm text-gray-400 font-medium">Successfully Imported</div>
+          <div class="text-sm text-gray-400 font-medium">{{ 'bookdrop.finalizeResult.summary.successfullyImported' | translate }}</div>
         </div>
         <div class="text-center p-4 bg-zinc-700/30 rounded-lg">
           <div class="text-3xl font-bold text-red-400 mb-1">{{ result.failed }}</div>
-          <div class="text-sm text-gray-400 font-medium">Failed</div>
+          <div class="text-sm text-gray-400 font-medium">{{ 'bookdrop.finalizeResult.summary.failed' | translate }}</div>
         </div>
       </div>
 
       <div class="text-center pt-4 border-t border-zinc-600">
-        <div class="text-sm text-gray-300 mb-1">Processed at</div>
+        <div class="text-sm text-gray-300 mb-1">{{ 'bookdrop.finalizeResult.summary.processedAt' | translate }}</div>
         <div class="text-base text-white font-mono">{{ result.processedAt | date:'medium' }}</div>
       </div>
     </div>

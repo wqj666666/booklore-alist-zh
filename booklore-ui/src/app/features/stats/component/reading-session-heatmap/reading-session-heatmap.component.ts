@@ -1,4 +1,4 @@
-import {Component, inject, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {BaseChartDirective} from 'ng2-charts';
 import {Chart, ChartConfiguration, ChartData, registerables} from 'chart.js';
@@ -6,9 +6,7 @@ import {MatrixController, MatrixElement} from 'chartjs-chart-matrix';
 import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
 import {catchError, takeUntil} from 'rxjs/operators';
 import {ReadingSessionHeatmapResponse, UserStatsService} from '../../../settings/user-management/user-stats.service';
-
-const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 interface MatrixDataPoint {
   x: number;
@@ -22,12 +20,13 @@ type SessionHeatmapChartData = ChartData<'matrix', MatrixDataPoint[], string>;
 @Component({
   selector: 'app-reading-session-heatmap',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective],
+  imports: [CommonModule, TranslateModule, BaseChartDirective],
   templateUrl: './reading-session-heatmap.component.html',
   styleUrls: ['./reading-session-heatmap.component.scss']
 })
 export class ReadingSessionHeatmapComponent implements OnInit, OnDestroy {
   @Input() initialYear: number = new Date().getFullYear();
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
   public currentYear: number = new Date().getFullYear();
   public readonly chartType = 'matrix' as const;
@@ -35,6 +34,7 @@ export class ReadingSessionHeatmapComponent implements OnInit, OnDestroy {
   public readonly chartOptions: ChartConfiguration['options'];
 
   private readonly userStatsService = inject(UserStatsService);
+  private readonly translate = inject(TranslateService);
   private readonly destroy$ = new Subject<void>();
   private readonly chartDataSubject: BehaviorSubject<SessionHeatmapChartData>;
   private maxSessionCount = 1;
@@ -42,7 +42,7 @@ export class ReadingSessionHeatmapComponent implements OnInit, OnDestroy {
   constructor() {
     this.chartDataSubject = new BehaviorSubject<SessionHeatmapChartData>({
       labels: [],
-      datasets: [{label: 'Reading Sessions', data: []}]
+      datasets: [{label: this.translate.instant('stats.user.heatmap.datasetLabel'), data: []}]
     });
     this.chartData$ = this.chartDataSubject.asObservable();
 
@@ -70,7 +70,7 @@ export class ReadingSessionHeatmapComponent implements OnInit, OnDestroy {
             title: (context) => {
               const point = context[0].raw as MatrixDataPoint;
               const date = new Date(point.date);
-              return date.toLocaleDateString('en-US', {
+              return date.toLocaleDateString(this.getLocale(), {
                 weekday: 'short',
                 year: 'numeric',
                 month: 'short',
@@ -79,7 +79,10 @@ export class ReadingSessionHeatmapComponent implements OnInit, OnDestroy {
             },
             label: (context) => {
               const point = context.raw as MatrixDataPoint;
-              return `${point.v} reading session${point.v === 1 ? '' : 's'}`;
+              if (point.v === 1) {
+                return this.translate.instant('stats.user.heatmap.tooltip.sessionCountOne');
+              }
+              return this.translate.instant('stats.user.heatmap.tooltip.sessionCountMany', {count: point.v});
             }
           }
         },
@@ -97,7 +100,7 @@ export class ReadingSessionHeatmapComponent implements OnInit, OnDestroy {
               const weekNum = value as number;
               if (weekNum % 4 === 0) {
                 const date = this.getDateFromWeek(this.currentYear, weekNum);
-                return MONTH_NAMES[date.getMonth()];
+                return date.toLocaleDateString(this.getLocale(), {month: 'short'});
               }
               return '';
             },
@@ -115,7 +118,7 @@ export class ReadingSessionHeatmapComponent implements OnInit, OnDestroy {
             stepSize: 1,
             callback: (value) => {
               const dayIndex = value as number;
-              return dayIndex >= 0 && dayIndex <= 6 ? DAY_NAMES[dayIndex] : '';
+              return dayIndex >= 0 && dayIndex <= 6 ? this.formatWeekdayShort(dayIndex) : '';
             },
             color: '#ffffff',
             font: {family: "'Inter', sans-serif", size: 11}
@@ -130,6 +133,18 @@ export class ReadingSessionHeatmapComponent implements OnInit, OnDestroy {
     Chart.register(...registerables, MatrixController, MatrixElement);
     this.currentYear = this.initialYear;
     this.loadYearData(this.currentYear);
+
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        const current = this.chartDataSubject.value;
+        const dataset = current.datasets?.[0];
+        this.chartDataSubject.next({
+          ...current,
+          datasets: dataset ? [{...dataset, label: this.translate.instant('stats.user.heatmap.datasetLabel')}] : []
+        });
+        this.chart?.chart?.update();
+      });
   }
 
   ngOnDestroy(): void {
@@ -204,7 +219,7 @@ export class ReadingSessionHeatmapComponent implements OnInit, OnDestroy {
     this.chartDataSubject.next({
       labels: [],
       datasets: [{
-        label: 'Reading Sessions',
+        label: this.translate.instant('stats.user.heatmap.datasetLabel'),
         data: heatmapData,
         backgroundColor: (context) => {
           const point = context.raw as MatrixDataPoint;
@@ -224,5 +239,16 @@ export class ReadingSessionHeatmapComponent implements OnInit, OnDestroy {
     const date = new Date(year, 0, 1);
     date.setDate(date.getDate() + (week * 7) - date.getDay());
     return date;
+  }
+
+  private formatWeekdayShort(dayIndex: number): string {
+    const baseMonday = new Date(2024, 0, 1);
+    const date = new Date(baseMonday);
+    date.setDate(baseMonday.getDate() + dayIndex);
+    return date.toLocaleDateString(this.getLocale(), {weekday: 'short'});
+  }
+
+  private getLocale(): string {
+    return this.translate.currentLang || this.translate.defaultLang || 'zh-CN';
   }
 }

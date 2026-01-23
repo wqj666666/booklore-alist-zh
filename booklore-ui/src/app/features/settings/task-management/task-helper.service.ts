@@ -4,6 +4,7 @@ import {MetadataRefreshRequest} from '../../metadata/model/request/metadata-refr
 import {catchError, map} from 'rxjs/operators';
 import {of} from 'rxjs';
 import {TaskCreateRequest, TaskService, TaskType} from './task.service';
+import {TranslateService} from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ import {TaskCreateRequest, TaskService, TaskType} from './task.service';
 export class TaskHelperService {
   private taskService = inject(TaskService);
   private messageService = inject(MessageService);
+  private translateService = inject(TranslateService);
 
   refreshMetadataTask(options: MetadataRefreshRequest) {
     const request: TaskCreateRequest = {
@@ -21,8 +23,8 @@ export class TaskHelperService {
       map(() => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Metadata Update Scheduled',
-          detail: 'The metadata update for the selected books has been successfully scheduled.'
+          summary: this.translateService.instant('settings.taskManagement.toast.metadataUpdateScheduled.summary'),
+          detail: this.translateService.instant('settings.taskManagement.toast.metadataUpdateScheduled.detail')
         });
         return {success: true};
       }),
@@ -30,16 +32,16 @@ export class TaskHelperService {
         if (e.status === 409) {
           this.messageService.add({
             severity: 'error',
-            summary: 'Task Already Running',
+            summary: this.translateService.instant('settings.taskManagement.toast.metadataUpdateAlreadyRunning.summary'),
             life: 5000,
-            detail: 'A metadata refresh task is already in progress. Please wait for it to complete before starting another one.'
+            detail: this.translateService.instant('settings.taskManagement.toast.metadataUpdateAlreadyRunning.detail')
           });
         } else {
           this.messageService.add({
             severity: 'error',
-            summary: 'Metadata Update Failed',
+            summary: this.translateService.instant('settings.taskManagement.toast.metadataUpdateFailed.summary'),
             life: 5000,
-            detail: 'An unexpected error occurred while scheduling the metadata update. Please try again later or contact support if the issue persists.'
+            detail: this.translateService.instant('settings.taskManagement.toast.metadataUpdateFailed.detail')
           });
         }
         return of({success: false});

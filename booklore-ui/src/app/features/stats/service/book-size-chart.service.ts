@@ -1,6 +1,6 @@
 import {inject, Injectable, OnDestroy} from '@angular/core';
-import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
-import {map, takeUntil, catchError, filter, first, switchMap} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, EMPTY, Observable, Subject} from 'rxjs';
+import {takeUntil, catchError, filter, first, switchMap} from 'rxjs/operators';
 import {ChartConfiguration, ChartData} from 'chart.js';
 import {TooltipItem} from 'chart.js';
 
@@ -8,6 +8,8 @@ import {LibraryFilterService} from './library-filter.service';
 import {BookService} from '../../book/service/book.service';
 import {Book} from '../../book/model/book.model';
 import {BookState} from '../../book/model/state/book-state.model';
+import {TranslateService} from '@ngx-translate/core';
+import {LanguageService} from '../../../core/i18n/language.service';
 
 interface BookSizeStats {
   title: string;
@@ -39,96 +41,13 @@ type BookSizeChartData = ChartData<'bar', number[], string>;
 export class BookSizeChartService implements OnDestroy {
   private readonly bookService = inject(BookService);
   private readonly libraryFilterService = inject(LibraryFilterService);
+  private readonly translateService = inject(TranslateService);
+  private readonly languageService = inject(LanguageService);
   private readonly destroy$ = new Subject<void>();
 
   public readonly bookSizeChartType = 'bar' as const;
 
-  public readonly bookSizeChartOptions: ChartConfiguration<'bar'>['options'] = {
-    responsive: true,
-    maintainAspectRatio: false,
-    indexAxis: 'y',
-    scales: {
-      x: {
-        beginAtZero: true,
-        ticks: {
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11.5
-          },
-          callback: function (value) {
-            return value + ' MB';
-          }
-        },
-        grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
-        },
-        title: {
-          display: true,
-          text: 'File Size (MB)',
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 12
-          }
-        }
-      },
-      y: {
-        ticks: {
-          color: '#ffffff',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 11.5
-          },
-          maxTicksLimit: 25
-        },
-        grid: {
-          color: 'rgba(255, 255, 255, 0.05)'
-        }
-      }
-    },
-    plugins: {
-      legend: {
-        display: false
-      },
-      datalabels: {
-        display: true,
-        color: '#ffffff',
-        font: {
-          size: 10,
-          family: "'Inter', sans-serif",
-          weight: 'bold'
-        },
-        align: 'center',
-        offset: 8,
-        formatter: (value: number) => `${Math.round(value)} MB`
-      },
-      tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.9)',
-        titleColor: '#ffffff',
-        bodyColor: '#ffffff',
-        borderColor: '#ffffff',
-        borderWidth: 1,
-        cornerRadius: 6,
-        displayColors: true,
-        padding: 12,
-        titleFont: {size: 14, weight: 'bold'},
-        bodyFont: {size: 12},
-        callbacks: {
-          title: (context) => {
-            const dataIndex = context[0].dataIndex;
-            const stats = this.getLastCalculatedStats();
-            return stats[dataIndex]?.title || 'Unknown';
-          },
-          label: this.formatTooltipLabel.bind(this)
-        }
-      }
-    },
-    interaction: {
-      intersect: false,
-      mode: 'point'
-    }
-  };
+  public bookSizeChartOptions: ChartConfiguration<'bar'>['options'] = this.buildOptions();
 
   private readonly bookSizeChartDataSubject = new BehaviorSubject<BookSizeChartData>({
     labels: [],
@@ -143,9 +62,10 @@ export class BookSizeChartService implements OnDestroy {
         filter(state => state.loaded),
         first(),
         switchMap(() =>
-          this.libraryFilterService.selectedLibrary$.pipe(
-            takeUntil(this.destroy$)
-          )
+          combineLatest([
+            this.libraryFilterService.selectedLibrary$,
+            this.languageService.language$
+          ]).pipe(takeUntil(this.destroy$))
         ),
         catchError((error) => {
           console.error('Error processing book size stats:', error);
@@ -153,6 +73,7 @@ export class BookSizeChartService implements OnDestroy {
         })
       )
       .subscribe(() => {
+        this.bookSizeChartOptions = this.buildOptions();
         const stats = this.calculateBookSizeStats();
         this.updateChartData(stats);
       });
@@ -173,7 +94,7 @@ export class BookSizeChartService implements OnDestroy {
       this.bookSizeChartDataSubject.next({
         labels,
         datasets: [{
-          label: 'File Size',
+          label: this.translateService.instant('stats.library.chart.topBooksBySize.datasetLabel'),
           data: dataValues,
           backgroundColor: colors,
           borderColor: colors,
@@ -223,7 +144,7 @@ export class BookSizeChartService implements OnDestroy {
     const booksWithSize = books
       .filter(book => book.fileSizeKb && book.fileSizeKb > 0)
       .map(book => ({
-        title: book.metadata?.title || book.fileName || 'Unknown Title',
+        title: book.metadata?.title || book.fileName || this.translateService.instant('stats.library.chart.common.unknownTitle'),
         sizeMB: Number((book.fileSizeKb! / 1024).toFixed(2)),
         bookType: book.bookType,
         pageCount: book.metadata?.pageCount || undefined
@@ -239,15 +160,25 @@ export class BookSizeChartService implements OnDestroy {
     const stats = this.getLastCalculatedStats();
 
     if (!stats || dataIndex >= stats.length) {
-      return `${context.parsed.x} MB`;
+      const mbUnit = this.translateService.instant('stats.library.chart.common.units.mb');
+      return `${context.parsed.x} ${mbUnit}`;
     }
 
     const book = stats[dataIndex];
-    const sizeInfo = `${book.sizeMB} MB`;
-    const typeInfo = `Format: ${book.bookType}`;
-    const pageInfo = book.pageCount ? `Pages: ${book.pageCount}` : 'Pages: Unknown';
+    const mbUnit = this.translateService.instant('stats.library.chart.common.units.mb');
+    const sizeInfo = `${book.sizeMB} ${mbUnit}`;
+    const formatLabel = this.translateService.instant('stats.library.chart.common.labels.format');
+    const pagesLabel = this.translateService.instant('stats.library.chart.common.labels.pages');
+    const unknownValue = this.translateService.instant('stats.library.chart.common.unknown');
+    const pageValue = book.pageCount ? String(book.pageCount) : unknownValue;
 
-    return `${sizeInfo} | ${typeInfo} | ${pageInfo}`;
+    return this.translateService.instant('stats.library.chart.topBooksBySize.tooltipLabel', {
+      sizeInfo,
+      formatLabel,
+      bookType: book.bookType,
+      pagesLabel,
+      pageValue
+    });
   }
 
   private lastCalculatedStats: BookSizeStats[] = [];
@@ -258,5 +189,93 @@ export class BookSizeChartService implements OnDestroy {
 
   private truncateTitle(title: string, maxLength: number): string {
     return title.length > maxLength ? title.substring(0, maxLength) + '...' : title;
+  }
+
+  private buildOptions(): ChartConfiguration<'bar'>['options'] {
+    const mbUnit = this.translateService.instant('stats.library.chart.common.units.mb');
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: 'y',
+      scales: {
+        x: {
+          beginAtZero: true,
+          ticks: {
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11.5
+            },
+            callback: (value) => `${value} ${mbUnit}`
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.1)'
+          },
+          title: {
+            display: true,
+            text: this.translateService.instant('stats.library.chart.topBooksBySize.axis.xTitle'),
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 12
+            }
+          }
+        },
+        y: {
+          ticks: {
+            color: '#ffffff',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 11.5
+            },
+            maxTicksLimit: 25
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.05)'
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
+        },
+        datalabels: {
+          display: true,
+          color: '#ffffff',
+          font: {
+            size: 10,
+            family: "'Inter', sans-serif",
+            weight: 'bold'
+          },
+          align: 'center',
+          offset: 8,
+          formatter: (value: number) => `${Math.round(value)} ${mbUnit}`
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.9)',
+          titleColor: '#ffffff',
+          bodyColor: '#ffffff',
+          borderColor: '#ffffff',
+          borderWidth: 1,
+          cornerRadius: 6,
+          displayColors: true,
+          padding: 12,
+          titleFont: {size: 14, weight: 'bold'},
+          bodyFont: {size: 12},
+          callbacks: {
+            title: (context) => {
+              const dataIndex = context[0].dataIndex;
+              const stats = this.getLastCalculatedStats();
+              return stats[dataIndex]?.title || this.translateService.instant('stats.library.chart.common.unknownTitle');
+            },
+            label: this.formatTooltipLabel.bind(this)
+          }
+        }
+      },
+      interaction: {
+        intersect: false,
+        mode: 'point'
+      }
+    };
   }
 }

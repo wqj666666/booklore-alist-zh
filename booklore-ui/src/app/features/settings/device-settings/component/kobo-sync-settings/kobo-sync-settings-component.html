@@ -5,11 +5,11 @@
   <div class="settings-header">
     <h2 class="settings-title">
       <i class="pi pi-tablet"></i>
-      Kobo Integration Configuration
+      {{ 'settings.device.kobo.title' | translate }}
       <app-external-doc-link docType="kobo"></app-external-doc-link>
     </h2>
     <p class="settings-description">
-      Configure Kobo device integration to sync your library books and reading progress with your Kobo e-reader.
+      {{ 'settings.device.kobo.description' | translate }}
     </p>
   </div>
 
@@ -19,10 +19,10 @@
         <div class="section-header">
           <h3 class="section-title">
             <i class="pi pi-sync"></i>
-            Sync Configuration
+            {{ 'settings.device.kobo.section.sync.title' | translate }}
           </h3>
           <p class="section-description">
-            Enable and configure synchronization between your Booklore library and Kobo device.
+            {{ 'settings.device.kobo.section.sync.description' | translate }}
           </p>
         </div>
 
@@ -30,7 +30,7 @@
           <div class="setting-item">
             <div class="setting-info">
               <div class="setting-label-row">
-                <label class="setting-label">Enable Kobo Sync</label>
+                <label class="setting-label">{{ 'settings.device.kobo.syncEnabled.label' | translate }}</label>
                 <p-toggle-switch
                   id="syncEnabled"
                   name="syncEnabled"
@@ -39,7 +39,7 @@
                 </p-toggle-switch>
               </div>
               <p class="setting-description">
-                Turn on synchronization to automatically sync your library books to your Kobo device.
+                {{ 'settings.device.kobo.syncEnabled.description' | translate }}
               </p>
             </div>
           </div>
@@ -48,7 +48,7 @@
             <div class="setting-item">
               <div class="setting-info">
                 <div class="setting-label-row">
-                  <label class="setting-label">Auto-Add New Books to Kobo Shelf</label>
+                  <label class="setting-label">{{ 'settings.device.kobo.autoAddToShelf.label' | translate }}</label>
                   <p-toggle-switch
                     id="autoAddToShelf"
                     name="autoAddToShelf"
@@ -57,8 +57,8 @@
                   </p-toggle-switch>
                 </div>
                 <p class="setting-description">
-                  When enabled, newly added books will be automatically added to your Kobo shelf for syncing.
-                  This eliminates the need to manually add each book to the shelf.
+                  {{ 'settings.device.kobo.autoAddToShelf.description.line1' | translate }}
+                  {{ 'settings.device.kobo.autoAddToShelf.description.line2' | translate }}
                 </p>
               </div>
             </div>
@@ -68,7 +68,7 @@
             <div class="setting-item">
               <div class="setting-info">
                 <div class="setting-label-row">
-                  <label class="setting-label">Kobo Sync Token</label>
+                  <label class="setting-label">{{ 'settings.device.kobo.token.label' | translate }}</label>
                   <div class="token-input-group">
                     <input
                       pInputText
@@ -84,7 +84,7 @@
                       outlined="true"
                       severity="info"
                       size="small"
-                      (onClick)="copyText(koboSyncSettings.token, 'Token')"
+                      (onClick)="copyText(koboSyncSettings.token, 'settings.device.clipboard.label.token')"
                       [disabled]="!koboSyncSettings.token">
                     </p-button>
                     <p-button
@@ -98,7 +98,7 @@
                   </div>
                 </div>
                 <p class="setting-description">
-                  Your unique sync token for authenticating with your Kobo device. Keep this secure.
+                  {{ 'settings.device.kobo.token.description' | translate }}
                 </p>
               </div>
             </div>
@@ -106,19 +106,19 @@
             <div class="setting-item">
               <div class="setting-info">
                 <div class="setting-label-row">
-                  <label class="setting-label">Token Management</label>
+                  <label class="setting-label">{{ 'settings.device.kobo.tokenManagement.label' | translate }}</label>
                   <p-button
                     icon="pi pi-refresh"
                     outlined="true"
                     severity="warn"
                     size="small"
-                    label="Regenerate Token"
+                    [label]="'settings.device.kobo.tokenManagement.action.regenerate' | translate"
                     (onClick)="confirmRegenerateToken()"
                     [disabled]="!credentialsSaved">
                   </p-button>
                 </div>
                 <p class="setting-description">
-                  Regenerate your sync token if needed. This will invalidate the current token.
+                  {{ 'settings.device.kobo.tokenManagement.description' | translate }}
                 </p>
               </div>
             </div>
@@ -126,7 +126,7 @@
             <div class="setting-item">
               <div class="setting-info">
                 <div class="setting-label-row">
-                  <label class="setting-label">Mark as Reading at: {{ koboSyncSettings.progressMarkAsReadingThreshold?.toFixed(0) }}%</label>
+                  <label class="setting-label">{{ 'settings.device.kobo.progressReading.label' | translate:{percent: (koboSyncSettings.progressMarkAsReadingThreshold?.toFixed(0) ?? '0')} }}</label>
                   <div class="slider-container">
                     <p-slider
                       id="markAsReadingThreshold"
@@ -140,9 +140,10 @@
                   </div>
                 </div>
                 <p class="setting-description">
-                  Books are marked as "Reading" when progress exceeds this percentage. This helps automatically track which books you've started.
+                  {{ 'settings.device.kobo.progressReading.description.line1' | translate }}
                   <br>
-                  <strong>Recommended:</strong> 1% (default) - marks as reading after the first page or two.
+                  <strong>{{ 'settings.device.kobo.recommended.label' | translate }}</strong>
+                  {{ 'settings.device.kobo.progressReading.recommended' | translate }}
                 </p>
               </div>
             </div>
@@ -150,7 +151,7 @@
             <div class="setting-item">
               <div class="setting-info">
                 <div class="setting-label-row">
-                  <label class="setting-label">Mark as Finished at: {{ koboSyncSettings.progressMarkAsFinishedThreshold?.toFixed(0) }}%</label>
+                  <label class="setting-label">{{ 'settings.device.kobo.progressFinished.label' | translate:{percent: (koboSyncSettings.progressMarkAsFinishedThreshold?.toFixed(0) ?? '0')} }}</label>
                   <div class="slider-container">
                     <p-slider
                       id="markAsFinishedThreshold"
@@ -164,9 +165,10 @@
                   </div>
                 </div>
                 <p class="setting-description">
-                  Books are marked as "Finished" when progress reaches this percentage. Accounts for books where the last few pages are acknowledgments or index.
+                  {{ 'settings.device.kobo.progressFinished.description.line1' | translate }}
                   <br>
-                  <strong>Recommended:</strong> 99% (default) - marks as finished when nearly complete.
+                  <strong>{{ 'settings.device.kobo.recommended.label' | translate }}</strong>
+                  {{ 'settings.device.kobo.progressFinished.recommended' | translate }}
                 </p>
               </div>
             </div>
@@ -179,10 +181,10 @@
           <div class="section-header">
             <h3 class="section-title">
               <i class="pi pi-cog"></i>
-              Administrator Settings
+              {{ 'settings.device.kobo.section.admin.title' | translate }}
             </h3>
             <p class="section-description">
-              Configure advanced Kobo sync settings that affect all users on this server.
+              {{ 'settings.device.kobo.section.admin.description' | translate }}
             </p>
           </div>
 
@@ -190,7 +192,7 @@
             <div class="setting-item">
               <div class="setting-info">
                 <div class="setting-label-row">
-                  <label class="setting-label">Convert to KEPUB</label>
+                  <label class="setting-label">{{ 'settings.device.kobo.convertToKepub.label' | translate }}</label>
                   <p-toggle-switch
                     id="convertToKepub"
                     [(ngModel)]="koboSettings.convertToKepub"
@@ -198,10 +200,12 @@
                   </p-toggle-switch>
                 </div>
                 <p class="setting-description">
-                  <strong>Pros:</strong> KEPUB format enables enhanced Kobo features like better typography, reading stats, and faster page turns.
+                  <strong>{{ 'settings.device.kobo.convertToKepub.prosLabel' | translate }}</strong>
+                  {{ 'settings.device.kobo.convertToKepub.pros' | translate }}
                   <br>
-                  <strong>Cons:</strong> Conversion takes extra processing time and may occasionally fail for complex layouts.
-                  Books over the size limit below will skip conversion automatically.
+                  <strong>{{ 'settings.device.kobo.convertToKepub.consLabel' | translate }}</strong>
+                  {{ 'settings.device.kobo.convertToKepub.cons' | translate }}
+                  {{ 'settings.device.kobo.convertToKepub.note' | translate }}
                 </p>
               </div>
             </div>
@@ -209,7 +213,7 @@
             <div class="setting-item">
               <div class="setting-info">
                 <div class="setting-label-row">
-                  <label class="setting-label">Conversion Size Limit: {{ koboSettings.conversionLimitInMb }} MB</label>
+                  <label class="setting-label">{{ 'settings.device.kobo.conversionLimit.label' | translate:{size: koboSettings.conversionLimitInMb} }}</label>
                   <div class="slider-container">
                     <p-slider
                       id="conversionLimit"
@@ -222,9 +226,10 @@
                   </div>
                 </div>
                 <p class="setting-description">
-                  Large files (100MB+) can cause conversion timeouts and server strain. Lower limits ensure faster syncing but may skip conversion of larger books.
+                  {{ 'settings.device.kobo.conversionLimit.description.line1' | translate }}
                   <br>
-                  <strong>Recommended:</strong> 50-100MB for most libraries. Very large books will sync as regular EPUB regardless of this setting.
+                  <strong>{{ 'settings.device.kobo.recommended.label' | translate }}</strong>
+                  {{ 'settings.device.kobo.conversionLimit.recommended' | translate }}
                 </p>
               </div>
             </div>
@@ -232,7 +237,7 @@
             <div class="setting-item">
               <div class="setting-info">
                 <div class="setting-label-row">
-                  <label class="setting-label">Force Enable Hyphenation</label>
+                  <label class="setting-label">{{ 'settings.device.kobo.forceHyphenation.label' | translate }}</label>
                   <p-toggle-switch
                     id="forceEnableHyphenation"
                     [(ngModel)]="koboSettings.forceEnableHyphenation"
@@ -240,8 +245,9 @@
                   </p-toggle-switch>
                 </div>
                 <p class="setting-description">
-                  Force enable hyphenation. Otherwise, hyphenation is only enabled when text alignment on the Kobo
-                  device is explicitly set to <i>justified</i>.
+                  {{ 'settings.device.kobo.forceHyphenation.description.line1' | translate }}
+                  {{ 'settings.device.kobo.forceHyphenation.description.line2' | translate }}
+                  <i>{{ 'settings.device.kobo.forceHyphenation.description.justified' | translate }}</i>.
                 </p>
               </div>
             </div>
@@ -251,7 +257,7 @@
             <div class="setting-item">
               <div class="setting-info">
                 <div class="setting-label-row">
-                  <label class="setting-label">Convert CBX to EPUB</label>
+                  <label class="setting-label">{{ 'settings.device.kobo.convertCbx.label' | translate }}</label>
                   <p-toggle-switch
                     id="convertCbxToEpub"
                     [(ngModel)]="koboSettings.convertCbxToEpub"
@@ -259,14 +265,14 @@
                   </p-toggle-switch>
                 </div>
                 <p class="setting-description">
-                  Converts CBX files to EPUB during Kobo sync, allowing CBX files to be downloaded and read on Kobo devices.
+                  {{ 'settings.device.kobo.convertCbx.description' | translate }}
                 </p>
               </div>
             </div>
             <div class="setting-item">
               <div class="setting-info">
             <div class="setting-label-row">
-              <label class="setting-label">Conversion image compression: {{ koboSettings.conversionImageCompressionPercentage }}%</label>
+              <label class="setting-label">{{ 'settings.device.kobo.imageCompression.label' | translate:{percent: koboSettings.conversionImageCompressionPercentage} }}</label>
               <div class="slider-container">
                 <p-slider
                   id="conversionLimit"
@@ -279,14 +285,14 @@
               </div>
             </div>
                 <p class="setting-description">
-                  Comic book conversions can sometimes result in very large files. This setting allows you to compress the images during conversion to prevent size from shooting up.
+                  {{ 'settings.device.kobo.imageCompression.description' | translate }}
                 </p>
               </div>
             </div>
             <div class="setting-item">
               <div class="setting-info">
                 <div class="setting-label-row">
-                  <label class="setting-label">CBX Conversion Size Limit: {{ koboSettings.conversionLimitInMbForCbx }} MB</label>
+                  <label class="setting-label">{{ 'settings.device.kobo.cbxConversionLimit.label' | translate:{size: koboSettings.conversionLimitInMbForCbx} }}</label>
                   <div class="slider-container">
                     <p-slider
                       id="conversionLimitForCbx"
@@ -299,9 +305,10 @@
                   </div>
                 </div>
                 <p class="setting-description">
-                  Comic book archives can be very large due to high-resolution images. Set a reasonable limit to prevent server overload during conversion.
+                  {{ 'settings.device.kobo.cbxConversionLimit.description.line1' | translate }}
                   <br>
-                  <strong>Recommended:</strong> 100-200MB for most comic libraries. CBX files over this limit will not be converted or synced to the device.
+                  <strong>{{ 'settings.device.kobo.recommended.label' | translate }}</strong>
+                  {{ 'settings.device.kobo.cbxConversionLimit.recommended' | translate }}
                 </p>
               </div>
             </div>
@@ -314,11 +321,11 @@
       <div class="access-denied-card">
         <i class="pi pi-lock"></i>
         <div class="access-denied-content">
-          <h3>Access Restricted</h3>
+          <h3>{{ 'settings.device.kobo.accessDenied.title' | translate }}</h3>
           <p>
-            Access to Kobo sync is restricted.
+            {{ 'settings.device.kobo.accessDenied.line1' | translate }}
             <br>
-            Please contact your administrator to request permission.
+            {{ 'settings.device.kobo.accessDenied.line2' | translate }}
           </p>
         </div>
       </div>

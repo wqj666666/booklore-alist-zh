@@ -11,12 +11,13 @@ import {LibraryService} from '../../book/service/library.service';
 import {InputText} from 'primeng/inputtext';
 import {Divider} from 'primeng/divider';
 import {ExternalDocLinkComponent} from '../../../shared/components/external-doc-link/external-doc-link.component';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-file-naming-pattern',
   templateUrl: './file-naming-pattern.component.html',
   standalone: true,
-  imports: [FormsModule, Button, InputText, Divider, ExternalDocLinkComponent],
+  imports: [FormsModule, Button, InputText, Divider, ExternalDocLinkComponent, TranslateModule],
   styleUrls: ['./file-naming-pattern.component.scss'],
 })
 export class FileNamingPatternComponent implements OnInit {
@@ -34,11 +35,12 @@ export class FileNamingPatternComponent implements OnInit {
 
   defaultPattern = '';
   libraries: Library[] = [];
-  defaultErrorMessage = '';
+  defaultErrorKey = '';
 
   private appSettingsService = inject(AppSettingsService);
   private messageService = inject(MessageService);
   private libraryService = inject(LibraryService);
+  private translateService = inject(TranslateService);
 
   appSettings$: Observable<AppSettings | null> = this.appSettingsService.appSettings$;
 
@@ -95,17 +97,13 @@ export class FileNamingPatternComponent implements OnInit {
   }
 
   validatePattern(pattern: string): boolean {
-    const validPatternRegex = /^[\w\s\-{}\[\]\/().<>.,:'"#]*$/;
+    const validPatternRegex = /^[\w\s\-{}()[\].<>.,:'"#/]*$/;
     return validPatternRegex.test(pattern);
   }
 
   onDefaultPatternChange(pattern: string): void {
     this.defaultPattern = pattern;
-    this.defaultErrorMessage = this.validatePattern(pattern) ? '' : 'Pattern contains invalid characters.';
-  }
-
-  onLibraryPatternChange(library: Library): void {
-    // Optionally add per-library validation here
+    this.defaultErrorKey = this.validatePattern(pattern) ? '' : 'settings.fileNamingPattern.validation.invalidCharacters';
   }
 
   clearLibraryPattern(library: Library): void {
@@ -113,8 +111,12 @@ export class FileNamingPatternComponent implements OnInit {
   }
 
   savePatterns(): void {
-    if (this.defaultErrorMessage) {
-      this.showMessage('error', 'Invalid Pattern', 'Please fix errors before saving.');
+    if (this.defaultErrorKey) {
+      this.showMessage(
+        'error',
+        'settings.fileNamingPattern.toast.invalidPattern.summary',
+        'settings.fileNamingPattern.toast.invalidPattern.detail'
+      );
       return;
     }
     this.appSettingsService
@@ -122,8 +124,8 @@ export class FileNamingPatternComponent implements OnInit {
         { key: AppSettingKey.UPLOAD_FILE_PATTERN, newValue: this.defaultPattern },
       ])
       .subscribe({
-        next: () => this.showMessage('success', 'Settings Saved', 'The default pattern was successfully saved!'),
-        error: () => this.showMessage('error', 'Error', 'There was an error saving the settings.'),
+        next: () => this.showMessage('success', 'settings.toast.saved.summary', 'settings.toast.saved.detail'),
+        error: () => this.showMessage('error', 'settings.toast.saveError.summary', 'settings.toast.saveError.detail'),
       });
   }
 
@@ -136,14 +138,32 @@ export class FileNamingPatternComponent implements OnInit {
     forkJoin(patchRequests).subscribe(results => {
       const failures = results.filter(result => result === null);
       if (failures.length === 0) {
-        this.showMessage('success', 'Library Patterns Saved', 'Library-specific patterns were successfully saved!');
+        this.showMessage(
+          'success',
+          'settings.fileNamingPattern.toast.librarySaved.summary',
+          'settings.fileNamingPattern.toast.librarySaved.detail'
+        );
       } else {
-        this.showMessage('error', 'Error', `Failed to save ${failures.length} library pattern(s).`);
+        this.showMessage(
+          'error',
+          'settings.fileNamingPattern.toast.librarySaveError.summary',
+          'settings.fileNamingPattern.toast.librarySaveError.detail',
+          { count: failures.length }
+        );
       }
     });
   }
 
-  private showMessage(severity: 'success' | 'error', summary: string, detail: string): void {
-    this.messageService.add({ severity, summary, detail });
+  private showMessage(
+    severity: 'success' | 'error',
+    summaryKey: string,
+    detailKey: string,
+    params?: Record<string, unknown>
+  ): void {
+    this.messageService.add({
+      severity,
+      summary: this.translateService.instant(summaryKey, params),
+      detail: this.translateService.instant(detailKey, params),
+    });
   }
 }

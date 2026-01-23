@@ -1,22 +1,24 @@
-import {Component, inject, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {BaseChartDirective} from 'ng2-charts';
 import {ChartConfiguration, ChartData} from 'chart.js';
 import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
 import {catchError, takeUntil} from 'rxjs/operators';
 import {CompletionTimelineResponse, UserStatsService} from '../../../settings/user-management/user-stats.service';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 type CompletionChartData = ChartData<'bar', number[], string>;
 
 @Component({
   selector: 'app-completion-timeline-chart',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective],
+  imports: [CommonModule, TranslateModule, BaseChartDirective],
   templateUrl: './completion-timeline-chart.component.html',
   styleUrls: ['./completion-timeline-chart.component.scss']
 })
 export class CompletionTimelineChartComponent implements OnInit, OnDestroy {
   @Input() initialYear: number = new Date().getFullYear();
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
   public currentYear: number = new Date().getFullYear();
   public readonly chartType = 'bar' as const;
@@ -24,10 +26,10 @@ export class CompletionTimelineChartComponent implements OnInit, OnDestroy {
   public readonly chartOptions: ChartConfiguration['options'];
 
   private readonly userStatsService = inject(UserStatsService);
+  private readonly translate = inject(TranslateService);
   private readonly destroy$ = new Subject<void>();
   private readonly chartDataSubject: BehaviorSubject<CompletionChartData>;
-
-  private readonly monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  private lastTimeline: CompletionTimelineResponse[] = [];
 
   constructor() {
     this.chartDataSubject = new BehaviorSubject<CompletionChartData>({
@@ -69,7 +71,10 @@ export class CompletionTimelineChartComponent implements OnInit, OnDestroy {
             label: (context) => {
               const label = context.dataset.label || '';
               const value = context.parsed.y;
-              return `${label}: ${value} book${value !== 1 ? 's' : ''}`;
+              const count = value === 1
+                ? this.translate.instant('stats.user.units.bookCountOne', {count: value})
+                : this.translate.instant('stats.user.units.bookCountMany', {count: value});
+              return this.translate.instant('stats.user.completionTimeline.tooltip.label', {series: label, count});
             }
           }
         },
@@ -79,7 +84,7 @@ export class CompletionTimelineChartComponent implements OnInit, OnDestroy {
         x: {
           title: {
             display: true,
-            text: 'Month',
+            text: this.translate.instant('stats.user.completionTimeline.axis.month'),
             color: '#ffffff',
             font: {
               family: "'Inter', sans-serif",
@@ -97,7 +102,7 @@ export class CompletionTimelineChartComponent implements OnInit, OnDestroy {
         y: {
           title: {
             display: true,
-            text: 'Number of Books',
+            text: this.translate.instant('stats.user.completionTimeline.axis.books'),
             color: '#ffffff',
             font: {
               family: "'Inter', sans-serif",
@@ -123,6 +128,21 @@ export class CompletionTimelineChartComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.currentYear = this.initialYear;
     this.loadCompletionTimeline(this.currentYear);
+
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        const scales = this.chartOptions?.scales;
+        if (scales?.['x'] && 'title' in scales['x']) {
+          (scales['x'] as any).title.text = this.translate.instant('stats.user.completionTimeline.axis.month');
+        }
+        if (scales?.['y'] && 'title' in scales['y']) {
+          (scales['y'] as any).title.text = this.translate.instant('stats.user.completionTimeline.axis.books');
+        }
+
+        this.updateChartData(this.lastTimeline);
+        this.chart?.chart?.update();
+      });
   }
 
   ngOnDestroy(): void {
@@ -145,6 +165,7 @@ export class CompletionTimelineChartComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe((data) => {
+        this.lastTimeline = data;
         this.updateChartData(data);
       });
   }
@@ -155,9 +176,9 @@ export class CompletionTimelineChartComponent implements OnInit, OnDestroy {
       monthlyData.set(item.month, item);
     });
 
-    const labels = this.monthNames;
+    const labels = this.buildMonthLabels();
 
-    const completedBooks = this.monthNames.map((_, index) => {
+    const completedBooks = labels.map((_, index) => {
       const monthData = monthlyData.get(index + 1);
       if (!monthData) return 0;
       const read = monthData.statusBreakdown['READ'] || 0;
@@ -165,7 +186,7 @@ export class CompletionTimelineChartComponent implements OnInit, OnDestroy {
       return read + partiallyRead;
     });
 
-    const activeReading = this.monthNames.map((_, index) => {
+    const activeReading = labels.map((_, index) => {
       const monthData = monthlyData.get(index + 1);
       if (!monthData) return 0;
       const reading = monthData.statusBreakdown['READING'] || 0;
@@ -173,12 +194,12 @@ export class CompletionTimelineChartComponent implements OnInit, OnDestroy {
       return reading + reReading;
     });
 
-    const pausedBooks = this.monthNames.map((_, index) => {
+    const pausedBooks = labels.map((_, index) => {
       const monthData = monthlyData.get(index + 1);
       return monthData?.statusBreakdown['PAUSED'] || 0;
     });
 
-    const discontinuedBooks = this.monthNames.map((_, index) => {
+    const discontinuedBooks = labels.map((_, index) => {
       const monthData = monthlyData.get(index + 1);
       if (!monthData) return 0;
       const abandoned = monthData.statusBreakdown['ABANDONED'] || 0;
@@ -190,7 +211,7 @@ export class CompletionTimelineChartComponent implements OnInit, OnDestroy {
       labels,
       datasets: [
         {
-          label: 'Completed',
+          label: this.translate.instant('stats.user.completionTimeline.series.completed'),
           data: completedBooks,
           backgroundColor: 'rgba(106, 176, 76, 0.8)',
           borderColor: 'rgba(106, 176, 76, 1)',
@@ -200,7 +221,7 @@ export class CompletionTimelineChartComponent implements OnInit, OnDestroy {
           categoryPercentage: 0.6
         },
         {
-          label: 'Active Reading',
+          label: this.translate.instant('stats.user.completionTimeline.series.activeReading'),
           data: activeReading,
           backgroundColor: 'rgba(59, 130, 246, 0.8)',
           borderColor: 'rgba(59, 130, 246, 1)',
@@ -210,7 +231,7 @@ export class CompletionTimelineChartComponent implements OnInit, OnDestroy {
           categoryPercentage: 0.6
         },
         {
-          label: 'Paused',
+          label: this.translate.instant('stats.user.completionTimeline.series.paused'),
           data: pausedBooks,
           backgroundColor: 'rgba(255, 193, 7, 0.8)',
           borderColor: 'rgba(255, 193, 7, 1)',
@@ -220,7 +241,7 @@ export class CompletionTimelineChartComponent implements OnInit, OnDestroy {
           categoryPercentage: 0.6
         },
         {
-          label: 'Discontinued',
+          label: this.translate.instant('stats.user.completionTimeline.series.discontinued'),
           data: discontinuedBooks,
           backgroundColor: 'rgba(239, 68, 68, 0.8)',
           borderColor: 'rgba(239, 68, 68, 1)',
@@ -230,6 +251,14 @@ export class CompletionTimelineChartComponent implements OnInit, OnDestroy {
           categoryPercentage: 0.6
         }
       ]
+    });
+  }
+
+  private buildMonthLabels(): string[] {
+    const locale = this.translate.currentLang || this.translate.defaultLang || 'zh-CN';
+    return Array.from({length: 12}, (_, i) => {
+      const date = new Date(2024, i, 1);
+      return date.toLocaleDateString(locale, {month: 'short'});
     });
   }
 }

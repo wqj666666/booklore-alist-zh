@@ -9,6 +9,7 @@ import {CustomFont} from '../../../../shared/model/custom-font.model';
 import {skip, Subject, takeUntil} from 'rxjs';
 import {addCustomFontsToDropdown} from '../../../../shared/util/custom-font.util';
 import {Skeleton} from 'primeng/skeleton';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-epub-reader-preferences-component',
@@ -16,7 +17,8 @@ import {Skeleton} from 'primeng/skeleton';
     Button,
     FormsModule,
     Tooltip,
-    Skeleton
+    Skeleton,
+    TranslateModule
   ],
   templateUrl: './epub-reader-preferences-component.html',
   styleUrl: './epub-reader-preferences-component.scss'
@@ -32,40 +34,40 @@ export class EpubReaderPreferencesComponent implements OnInit, OnDestroy {
   customFonts: CustomFont[] = [];
 
   fonts = [
-    {name: 'Book Default', displayName: 'Default', key: null},
-    {name: 'Serif', displayName: 'Serif', key: 'serif'},
-    {name: 'Sans Serif', displayName: 'Sans Serif', key: 'sans-serif'},
-    {name: 'Roboto', displayName: 'Roboto', key: 'roboto'},
-    {name: 'Cursive', displayName: 'Cursive', key: 'cursive'},
-    {name: 'Monospace', displayName: 'Monospace', key: 'monospace'}
+    {name: 'settings.readerPreferences.epub.font.bookDefault.tooltip', displayName: 'settings.readerPreferences.epub.font.bookDefault.label', key: null},
+    {name: 'settings.readerPreferences.epub.font.serif', displayName: 'settings.readerPreferences.epub.font.serif', key: 'serif'},
+    {name: 'settings.readerPreferences.epub.font.sansSerif', displayName: 'settings.readerPreferences.epub.font.sansSerif', key: 'sans-serif'},
+    {name: 'settings.readerPreferences.epub.font.roboto', displayName: 'settings.readerPreferences.epub.font.roboto', key: 'roboto'},
+    {name: 'settings.readerPreferences.epub.font.cursive', displayName: 'settings.readerPreferences.epub.font.cursive', key: 'cursive'},
+    {name: 'settings.readerPreferences.epub.font.monospace', displayName: 'settings.readerPreferences.epub.font.monospace', key: 'monospace'}
   ];
 
   readonly flowOptions = [
-    {name: 'Paginated', key: 'paginated', icon: 'pi pi-book'},
-    {name: 'Scrolled', key: 'scrolled', icon: 'pi pi-sort-alt'}
+    {name: 'settings.readerPreferences.options.flow.paginated', key: 'paginated', icon: 'pi pi-book'},
+    {name: 'settings.readerPreferences.options.flow.scrolled', key: 'scrolled', icon: 'pi pi-sort-alt'}
   ];
 
   readonly spreadOptions = [
-    {name: 'Single', key: 'single', icon: 'pi pi-file'},
-    {name: 'Double', key: 'double', icon: 'pi pi-copy'}
+    {name: 'settings.readerPreferences.options.pageSpread.single', key: 'single', icon: 'pi pi-file'},
+    {name: 'settings.readerPreferences.options.pageSpread.double', key: 'double', icon: 'pi pi-copy'}
   ];
 
   readonly themes = [
-    {name: 'White', key: 'white', color: '#FFFFFF'},
-    {name: 'Black', key: 'black', color: '#1A1A1A'},
-    {name: 'Grey', key: 'grey', color: '#4B5563'},
-    {name: 'Sepia', key: 'sepia', color: '#F4ECD8'},
-    {name: 'Green', key: 'green', color: '#D1FAE5'},
-    {name: 'Lavender', key: 'lavender', color: '#E9D5FF'},
-    {name: 'Cream', key: 'cream', color: '#FEF3C7'},
-    {name: 'Light Blue', key: 'light-blue', color: '#DBEAFE'},
-    {name: 'Peach', key: 'peach', color: '#FECACA'},
-    {name: 'Mint', key: 'mint', color: '#A7F3D0'},
-    {name: 'Dark Slate', key: 'dark-slate', color: '#1E293B'},
-    {name: 'Dark Olive', key: 'dark-olive', color: '#3F3F2C'},
-    {name: 'Dark Purple', key: 'dark-purple', color: '#3B2F4A'},
-    {name: 'Dark Teal', key: 'dark-teal', color: '#0F3D3E'},
-    {name: 'Dark Brown', key: 'dark-brown', color: '#3E2723'}
+    {name: 'settings.readerPreferences.epub.theme.white', key: 'white', color: '#FFFFFF'},
+    {name: 'settings.readerPreferences.epub.theme.black', key: 'black', color: '#1A1A1A'},
+    {name: 'settings.readerPreferences.epub.theme.grey', key: 'grey', color: '#4B5563'},
+    {name: 'settings.readerPreferences.epub.theme.sepia', key: 'sepia', color: '#F4ECD8'},
+    {name: 'settings.readerPreferences.epub.theme.green', key: 'green', color: '#D1FAE5'},
+    {name: 'settings.readerPreferences.epub.theme.lavender', key: 'lavender', color: '#E9D5FF'},
+    {name: 'settings.readerPreferences.epub.theme.cream', key: 'cream', color: '#FEF3C7'},
+    {name: 'settings.readerPreferences.epub.theme.lightBlue', key: 'light-blue', color: '#DBEAFE'},
+    {name: 'settings.readerPreferences.epub.theme.peach', key: 'peach', color: '#FECACA'},
+    {name: 'settings.readerPreferences.epub.theme.mint', key: 'mint', color: '#A7F3D0'},
+    {name: 'settings.readerPreferences.epub.theme.darkSlate', key: 'dark-slate', color: '#1E293B'},
+    {name: 'settings.readerPreferences.epub.theme.darkOlive', key: 'dark-olive', color: '#3F3F2C'},
+    {name: 'settings.readerPreferences.epub.theme.darkPurple', key: 'dark-purple', color: '#3B2F4A'},
+    {name: 'settings.readerPreferences.epub.theme.darkTeal', key: 'dark-teal', color: '#0F3D3E'},
+    {name: 'settings.readerPreferences.epub.theme.darkBrown', key: 'dark-brown', color: '#3E2723'}
   ];
 
   customFontsReady = false;

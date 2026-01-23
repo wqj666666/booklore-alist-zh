@@ -42,7 +42,8 @@
             [icon]="isMetadataFullyLocked(metadata) ? 'pi pi-lock' : 'pi pi-lock-open'"
             [severity]="isMetadataFullyLocked(metadata) ? 'danger' : 'success'"
             [text]="true"
-            [title]="isMetadataFullyLocked(metadata) ? 'Locked' : 'Unlocked'"
+            [title]="isMetadataFullyLocked(metadata) ? ('book.table.title.locked' | translate) : ('book.table.title.unlocked' | translate)"
+            [ariaLabel]="isMetadataFullyLocked(metadata) ? ('book.table.title.locked' | translate) : ('book.table.title.unlocked' | translate)"
             size="small"
             [style]="{ width: '1.5rem', height: '1.5rem', padding: '0', fontSize: '0.75rem' }"
             (click)="toggleMetadataLock(metadata)">
@@ -52,7 +53,7 @@
           <a [routerLink]="urlHelper.getBookUrl(book)">
             <img
               [attr.src]="urlHelper.getThumbnailUrl(metadata.bookId, metadata.coverUpdatedOn)"
-              alt="Book Cover"
+              [attr.alt]="'book.table.a11y.bookCoverAlt' | translate"
               class="size-7"
               tooltipPosition="left"
               [pTooltip]="tooltipContent"
@@ -63,7 +64,7 @@
             <div class="flex flex-col items-center gap-2">
               <img
                 [attr.src]="urlHelper.getThumbnailUrl(metadata.bookId, metadata.coverUpdatedOn)"
-                alt="Book Cover"
+                [attr.alt]="'book.table.a11y.bookCoverAlt' | translate"
                 class="w-[40rem] h-auto"
               />
               <em class="text-sm text-balance text-center">{{ metadata.title }}</em>
@@ -77,7 +78,7 @@
               @if (shouldShowStatusIcon(book.readStatus)) {
                 <div class="read-status-indicator"
                      [ngClass]="getReadStatusClass(book.readStatus)"
-                     [pTooltip]="'Status: ' + getReadStatusTooltip(book.readStatus)"
+                     [pTooltip]="'book.table.tooltip.status' | translate:{ status: (getReadStatusLabelKey(book.readStatus) | translate) }"
                      tooltipPosition="top">
                   <i [class]="getReadStatusIcon(book.readStatus)"></i>
                 </div>

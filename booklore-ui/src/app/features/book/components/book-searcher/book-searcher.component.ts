@@ -13,6 +13,7 @@ import {Router} from '@angular/router';
 import {IconField} from 'primeng/iconfield';
 import {InputIcon} from 'primeng/inputicon';
 import {HeaderFilter} from '../book-browser/filters/HeaderFilter';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-book-searcher',
@@ -24,7 +25,8 @@ import {HeaderFilter} from '../book-browser/filters/HeaderFilter';
     SlicePipe,
     Divider,
     IconField,
-    InputIcon
+    InputIcon,
+    TranslateModule
   ],
   styleUrls: ['./book-searcher.component.scss'],
   standalone: true

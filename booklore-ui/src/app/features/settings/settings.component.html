@@ -4,52 +4,55 @@
       <p-tabs [(value)]="activeTab" lazy scrollable>
         <p-tablist>
           <p-tab [value]="SettingsTab.ReaderSettings">
-            <i class="pi pi-book"></i> Reader
+            <i class="pi pi-book"></i> {{ 'settings.tabs.reader' | translate }}
           </p-tab>
           <p-tab [value]="SettingsTab.ViewPreferences">
-            <i class="pi pi-desktop"></i> View
+            <i class="pi pi-desktop"></i> {{ 'settings.tabs.view' | translate }}
           </p-tab>
           @if (userState.user.permissions.admin || userState.user.permissions.canManageMetadataConfig) {
             <p-tab [value]="SettingsTab.MetadataSettings">
-              <i class="pi pi-sliders-h"></i> Metadata 1
+              <i class="pi pi-sliders-h"></i> {{ 'settings.tabs.metadata1' | translate }}
             </p-tab>
             <p-tab [value]="SettingsTab.LibraryMetadataSettings">
-              <i class="pi pi-database"></i> Metadata 2
+              <i class="pi pi-database"></i> {{ 'settings.tabs.metadata2' | translate }}
             </p-tab>
           }
           @if (userState.user.permissions.admin || userState.user.permissions.canManageGlobalPreferences) {
             <p-tab [value]="SettingsTab.ApplicationSettings">
-              <i class="pi pi-cog"></i> Application
+              <i class="pi pi-cog"></i> {{ 'settings.tabs.application' | translate }}
             </p-tab>
           }
           @if (userState.user.permissions.admin) {
             <p-tab [value]="SettingsTab.UserManagement">
-              <i class="pi pi-users"></i> Users
+              <i class="pi pi-users"></i> {{ 'settings.tabs.users' | translate }}
             </p-tab>
           }
           <p-tab [value]="SettingsTab.EmailSettingsV2">
-            <i class="pi pi-envelope"></i> Email
+            <i class="pi pi-envelope"></i> {{ 'settings.tabs.email' | translate }}
           </p-tab>
           @if (userState.user.permissions.admin || userState.user.permissions.canManageMetadataConfig) {
             <p-tab [value]="SettingsTab.NamingPattern">
-              <i class="pi pi-sitemap"></i> Patterns
+              <i class="pi pi-sitemap"></i> {{ 'settings.tabs.patterns' | translate }}
             </p-tab>
           }
           @if (userState.user.permissions.admin) {
             <p-tab [value]="SettingsTab.AuthenticationSettings">
-              <i class="pi pi-lock"></i> Authentication
+              <i class="pi pi-lock"></i> {{ 'settings.tabs.authentication' | translate }}
             </p-tab>
           }
           @if (userState.user.permissions.admin || userState.user.permissions.canAccessTaskManager) {
             <p-tab [value]="SettingsTab.Tasks">
-              <i class="pi pi-list-check"></i> Tasks
+              <i class="pi pi-list-check"></i> {{ 'settings.tabs.tasks' | translate }}
             </p-tab>
           }
           <p-tab [value]="SettingsTab.OpdsV2">
-            <i class="pi pi-globe"></i> OPDS
+            <i class="pi pi-globe"></i> {{ 'settings.tabs.opds' | translate }}
           </p-tab>
           <p-tab [value]="SettingsTab.DeviceSettings">
-            <i class="pi pi-mobile"></i> Devices
+            <i class="pi pi-mobile"></i> {{ 'settings.tabs.devices' | translate }}
+          </p-tab>
+          <p-tab [value]="SettingsTab.StorageSettings">
+            <i class="pi pi-cloud"></i> {{ 'settings.tabs.storage' | translate }}
           </p-tab>
         </p-tablist>
         <p-tabpanels>
@@ -123,6 +126,11 @@
           <p-tabpanel [value]="SettingsTab.DeviceSettings">
             <ng-template #content>
               <app-device-settings-component></app-device-settings-component>
+            </ng-template>
+          </p-tabpanel>
+          <p-tabpanel [value]="SettingsTab.StorageSettings">
+            <ng-template #content>
+              <app-storage-settings></app-storage-settings>
             </ng-template>
           </p-tabpanel>
         </p-tabpanels>

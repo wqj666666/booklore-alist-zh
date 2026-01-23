@@ -1,10 +1,11 @@
-import {Component} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {SetupService} from './setup.service';
 import {InputText} from 'primeng/inputtext';
 import {Button} from 'primeng/button';
 import {Message} from 'primeng/message';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-setup',
@@ -15,27 +16,25 @@ import {Message} from 'primeng/message';
     ReactiveFormsModule,
     InputText,
     Button,
-    Message
+    Message,
+    TranslateModule,
   ]
 })
 export class SetupComponent {
-  setupForm: FormGroup;
+  private fb = inject(FormBuilder);
+  private setupService = inject(SetupService);
+  private translateService = inject(TranslateService);
+  private router = inject(Router);
+
+  setupForm: FormGroup = this.fb.group({
+    name: ['', [Validators.required]],
+    username: ['', [Validators.required]],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+  });
   loading = false;
   error: string | null = null;
   success = false;
-
-  constructor(
-    private fb: FormBuilder,
-    private setupService: SetupService,
-    private router: Router
-  ) {
-    this.setupForm = this.fb.group({
-      name: ['', [Validators.required]],
-      username: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-    });
-  }
 
   onSubmit(): void {
     if (this.setupForm.invalid) return;
@@ -51,7 +50,7 @@ export class SetupComponent {
       error: (err) => {
         this.loading = false;
         this.error =
-          err?.error?.message || 'Failed to create admin user. Try again.';
+          err?.error?.message || this.translateService.instant('auth.setup.errors.createAdminFailed');
       },
     });
   }

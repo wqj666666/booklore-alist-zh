@@ -15,6 +15,7 @@ import {filter, Subject} from 'rxjs';
 import {UserService} from '../../../../settings/user-management/user.service';
 import {take, takeUntil} from 'rxjs/operators';
 import {ReadStatusHelper} from '../../../helpers/read-status.helper';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-book-table',
@@ -27,7 +28,8 @@ import {ReadStatusHelper} from '../../../helpers/read-status.helper';
     Button,
     TooltipModule,
     NgClass,
-    RouterLink
+    RouterLink,
+    TranslateModule
   ],
   styleUrls: ['./book-table.component.scss'],
   providers: [DatePipe]
@@ -193,6 +195,10 @@ export class BookTableComponent implements OnInit, OnDestroy, OnChanges {
 
   getReadStatusTooltip(readStatus: ReadStatus | undefined): string {
     return this.readStatusHelper.getReadStatusTooltip(readStatus);
+  }
+
+  getReadStatusLabelKey(readStatus: ReadStatus | undefined): string {
+    return this.readStatusHelper.getReadStatusLabelKey(readStatus);
   }
 
   shouldShowStatusIcon(readStatus: ReadStatus | undefined): boolean {

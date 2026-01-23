@@ -15,14 +15,14 @@
           <div class="empty-icon-wrapper">
             <i class="pi pi-palette empty-icon"></i>
           </div>
-          <h3 class="empty-title">No Custom Fonts Yet</h3>
+          <h3 class="empty-title">{{ 'settings.customFonts.empty.title' | translate }}</h3>
           <p class="empty-description">
-            Upload your favorite fonts to personalize your reading experience.<br>
-            Click the "Add New Font" button above to get started.
+            {{ 'settings.customFonts.empty.description.line1' | translate }}<br>
+            {{ 'settings.customFonts.empty.description.line2' | translate }}
           </p>
           <p class="empty-hint">
             <i class="pi pi-info-circle"></i>
-            Supported formats: <strong>TTF</strong>, <strong>OTF</strong>, <strong>WOFF</strong>, <strong>WOFF2</strong>
+            {{ 'settings.customFonts.supportedFormats.label' | translate }} <strong>TTF</strong>, <strong>OTF</strong>, <strong>WOFF</strong>, <strong>WOFF2</strong>
           </p>
         </div>
       </div>
@@ -31,7 +31,7 @@
         <div class="section-header">
           <div>
             <h3 class="section-title">
-              Your Font Library
+              {{ 'settings.customFonts.library.title' | translate }}
               <span class="font-count">({{ customFonts.length }})</span>
             </h3>
           </div>
@@ -52,7 +52,7 @@
                   [rounded]="true"
                   size="small"
                   (click)="deleteFont(font)"
-                  pTooltip="Delete font"
+                  [pTooltip]="'settings.customFonts.tooltip.deleteFont' | translate"
                   tooltipPosition="left"
                 ></p-button>
               </div>
@@ -60,7 +60,7 @@
               <div class="font-preview-area">
                 <label class="preview-label">
                   <i class="pi pi-eye"></i>
-                  Preview
+                  {{ 'settings.customFonts.preview.label' | translate }}
                 </label>
                 @if (!fontsLoadedInBrowser) {
                   <div class="font-preview-skeleton">
@@ -88,15 +88,15 @@
 
               <div class="font-metadata">
                 <div class="metadata-row">
-                  <span class="meta-label"><i class="pi pi-file"></i>File</span>
+                  <span class="meta-label"><i class="pi pi-file"></i>{{ 'settings.customFonts.metadata.file' | translate }}</span>
                   <span class="meta-value">{{ font.originalFileName }}</span>
                 </div>
                 <div class="metadata-row">
-                  <span class="meta-label"><i class="pi pi-database"></i>Size</span>
+                  <span class="meta-label"><i class="pi pi-database"></i>{{ 'settings.customFonts.metadata.size' | translate }}</span>
                   <span class="meta-value">{{ formatFileSize(font.fileSize) }}</span>
                 </div>
                 <div class="metadata-row">
-                  <span class="meta-label"><i class="pi pi-calendar"></i>Uploaded</span>
+                  <span class="meta-label"><i class="pi pi-calendar"></i>{{ 'settings.customFonts.metadata.uploaded' | translate }}</span>
                   <span class="meta-value">{{ font.uploadedAt | date: 'mediumDate' }}</span>
                 </div>
               </div>

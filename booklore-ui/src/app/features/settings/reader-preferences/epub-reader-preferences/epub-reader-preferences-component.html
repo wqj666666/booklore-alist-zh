@@ -2,7 +2,7 @@
   <div class="setting-item">
     <div class="setting-info">
       <div class="setting-label-row">
-        <label class="setting-label">Theme</label>
+        <label class="setting-label">{{ 'settings.readerPreferences.epub.field.theme.label' | translate }}</label>
         <div class="theme-selector">
           @for (theme of themes; track theme) {
             <button
@@ -11,8 +11,8 @@
               [class.selected]="selectedTheme === theme.key"
               [style.background-color]="theme.color"
               (click)="selectedTheme = theme.key"
-              [attr.aria-label]="theme.name"
-              [pTooltip]="theme.name"
+              [attr.aria-label]="theme.name | translate"
+              [pTooltip]="theme.name | translate"
               tooltipPosition="bottom">
               @if (selectedTheme === theme.key) {
                 <i class="pi pi-check"></i>
@@ -22,7 +22,7 @@
         </div>
       </div>
       <p class="setting-description">
-        Choose the visual theme for EPUB reading experience.
+        {{ 'settings.readerPreferences.epub.field.theme.description' | translate }}
       </p>
     </div>
   </div>
@@ -30,7 +30,7 @@
   <div class="setting-item">
     <div class="setting-info">
       <div class="setting-label-row">
-        <label class="setting-label">Font</label>
+        <label class="setting-label">{{ 'settings.readerPreferences.epub.field.font.label' | translate }}</label>
         <div class="button-group">
           @for (font of fonts; track font) {
             <button
@@ -41,11 +41,11 @@
               [attr.data-font]="font.key"
               [disabled]="font.key === 'separator'"
               (click)="selectedFont = font.key"
-              [pTooltip]="font.name"
+              [pTooltip]="font.name | translate"
               tooltipPosition="bottom">
               <span class="option-text"
                     [style.font-family]="font.key && font.key.startsWith('custom:') ? getCustomFontName(font.key) : null">
-                {{ font.displayName }}
+                {{ font.displayName | translate }}
               </span>
             </button>
           }
@@ -56,7 +56,7 @@
         </div>
       </div>
       <p class="setting-description">
-        Select the font family for text display.
+        {{ 'settings.readerPreferences.epub.field.font.description' | translate }}
       </p>
     </div>
   </div>
@@ -64,7 +64,7 @@
   <div class="setting-item">
     <div class="setting-info">
       <div class="setting-label-row">
-        <label class="setting-label">Flow</label>
+        <label class="setting-label">{{ 'settings.readerPreferences.epub.field.flow.label' | translate }}</label>
         <div class="button-group">
           @for (flow of flowOptions; track flow) {
             <button
@@ -73,13 +73,13 @@
               [class.selected]="selectedFlow === flow.key"
               (click)="selectedFlow = flow.key">
               <i [class]="flow.icon"></i>
-              <span class="option-text">{{ flow.name }}</span>
+              <span class="option-text">{{ flow.name | translate }}</span>
             </button>
           }
         </div>
       </div>
       <p class="setting-description">
-        Configure text flow and reading direction.
+        {{ 'settings.readerPreferences.epub.field.flow.description' | translate }}
       </p>
     </div>
   </div>
@@ -87,7 +87,7 @@
   <div class="setting-item">
     <div class="setting-info">
       <div class="setting-label-row">
-        <label class="setting-label">Page Spread</label>
+        <label class="setting-label">{{ 'settings.readerPreferences.epub.field.pageSpread.label' | translate }}</label>
         <div class="button-group">
           @for (spread of spreadOptions; track spread) {
             <button
@@ -96,13 +96,13 @@
               [class.selected]="selectedSpread === spread.key"
               (click)="selectedSpread = spread.key">
               <i [class]="spread.icon"></i>
-              <span class="option-text">{{ spread.name }}</span>
+              <span class="option-text">{{ spread.name | translate }}</span>
             </button>
           }
         </div>
       </div>
       <p class="setting-description">
-        Choose between single page or double page spread view.
+        {{ 'settings.readerPreferences.epub.field.pageSpread.description' | translate }}
       </p>
     </div>
   </div>
@@ -110,7 +110,7 @@
   <div class="setting-item">
     <div class="setting-info">
       <div class="setting-label-row">
-        <label class="setting-label">Font Size</label>
+        <label class="setting-label">{{ 'settings.readerPreferences.epub.field.fontSize.label' | translate }}</label>
         <div class="font-size-controls">
           <p-button icon="pi pi-minus" size="small" rounded (click)="decreaseFontSize()"></p-button>
           <span class="font-size-value">{{ fontSize }}%</span>
@@ -118,7 +118,7 @@
         </div>
       </div>
       <p class="setting-description">
-        Adjust the text size for comfortable reading.
+        {{ 'settings.readerPreferences.epub.field.fontSize.description' | translate }}
       </p>
     </div>
   </div>

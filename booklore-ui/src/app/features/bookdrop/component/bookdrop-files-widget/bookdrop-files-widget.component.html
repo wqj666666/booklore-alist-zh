@@ -2,11 +2,11 @@
   <div class="flex justify-between items-center">
 
     <div class="flex flex-col justify-center">
-      <p class="text font-bold text-zinc-300">Pending Bookdrop Files</p>
+      <p class="text font-bold text-zinc-300">{{ 'bookdrop.widget.pendingTitle' | translate }}</p>
       <p class="text-lg font-bold text-primary">{{ pendingCount }}</p>
       @if (lastUpdatedAt) {
         <p class="text-xs text-zinc-400 mt-1">
-          Last updated: {{ lastUpdatedAt | date: 'short' }}
+          {{ 'bookdrop.widget.lastUpdatedAt' | translate:{ date: (lastUpdatedAt | date: 'short') } }}
         </p>
       }
     </div>
@@ -17,7 +17,7 @@
         outlined
         severity="info"
         (click)="openReviewDialog()">
-        Review
+        {{ 'bookdrop.widget.reviewButton' | translate }}
       </p-button>
     </div>
   </div>

@@ -12,6 +12,7 @@ import {Image} from 'primeng/image';
 import {LazyLoadImageModule} from 'ng-lazyload-image';
 import {ConfirmationService} from 'primeng/api';
 import {DatePicker} from 'primeng/datepicker';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bookdrop-file-metadata-picker-component',
@@ -27,6 +28,7 @@ import {DatePicker} from 'primeng/datepicker';
     Image,
     LazyLoadImageModule,
     DatePicker,
+    TranslateModule,
   ],
   templateUrl: './bookdrop-file-metadata-picker.component.html',
   styleUrl: './bookdrop-file-metadata-picker.component.scss'
@@ -34,6 +36,7 @@ import {DatePicker} from 'primeng/datepicker';
 export class BookdropFileMetadataPickerComponent {
 
   private readonly confirmationService = inject(ConfirmationService);
+  private readonly translateService = inject(TranslateService);
 
   @Input() fetchedMetadata!: BookMetadata;
   @Input() originalMetadata?: BookMetadata;
@@ -46,48 +49,48 @@ export class BookdropFileMetadataPickerComponent {
 
 
   metadataFieldsTop = [
-    {label: 'Title', controlName: 'title', fetchedKey: 'title'},
-    {label: 'Subtitle', controlName: 'subtitle', fetchedKey: 'subtitle'},
-    {label: 'Publisher', controlName: 'publisher', fetchedKey: 'publisher'},
+    {label: 'bookdrop.metadataPicker.field.title', controlName: 'title', fetchedKey: 'title'},
+    {label: 'bookdrop.metadataPicker.field.subtitle', controlName: 'subtitle', fetchedKey: 'subtitle'},
+    {label: 'bookdrop.metadataPicker.field.publisher', controlName: 'publisher', fetchedKey: 'publisher'},
   ];
 
   metadataPublishDate = [
-    {label: 'Publish Date', controlName: 'publishedDate', fetchedKey: 'publishedDate'}
+    {label: 'bookdrop.metadataPicker.field.publishedDate', controlName: 'publishedDate', fetchedKey: 'publishedDate'}
   ];
 
   metadataChips = [
-    {label: 'Authors', controlName: 'authors', lockedKey: 'authorsLocked', fetchedKey: 'authors'},
-    {label: 'Genres', controlName: 'categories', lockedKey: 'categoriesLocked', fetchedKey: 'categories'},
-    {label: 'Moods', controlName: 'moods', lockedKey: 'moodsLocked', fetchedKey: 'moods'},
-    {label: 'Tags', controlName: 'tags', lockedKey: 'tagsLocked', fetchedKey: 'tags'},
+    {label: 'bookdrop.metadataPicker.field.authors', controlName: 'authors', lockedKey: 'authorsLocked', fetchedKey: 'authors'},
+    {label: 'bookdrop.metadataPicker.field.genres', controlName: 'categories', lockedKey: 'categoriesLocked', fetchedKey: 'categories'},
+    {label: 'bookdrop.metadataPicker.field.moods', controlName: 'moods', lockedKey: 'moodsLocked', fetchedKey: 'moods'},
+    {label: 'bookdrop.metadataPicker.field.tags', controlName: 'tags', lockedKey: 'tagsLocked', fetchedKey: 'tags'},
   ];
 
   metadataDescription = [
-    {label: 'Description', controlName: 'description', lockedKey: 'descriptionLocked', fetchedKey: 'description'},
+    {label: 'bookdrop.metadataPicker.field.description', controlName: 'description', lockedKey: 'descriptionLocked', fetchedKey: 'description'},
   ];
 
   metadataFieldsBottom = [
-    {label: 'Series Name', controlName: 'seriesName', lockedKey: 'seriesNameLocked', fetchedKey: 'seriesName'},
-    {label: 'Series #', controlName: 'seriesNumber', lockedKey: 'seriesNumberLocked', fetchedKey: 'seriesNumber'},
-    {label: 'Series Total', controlName: 'seriesTotal', lockedKey: 'seriesTotalLocked', fetchedKey: 'seriesTotal'},
-    {label: 'Language', controlName: 'language', lockedKey: 'languageLocked', fetchedKey: 'language'},
-    {label: 'ISBN-10', controlName: 'isbn10', lockedKey: 'isbn10Locked', fetchedKey: 'isbn10'},
-    {label: 'ISBN-13', controlName: 'isbn13', lockedKey: 'isbn13Locked', fetchedKey: 'isbn13'},
-    {label: 'Amazon ASIN', controlName: 'asin', lockedKey: 'asinLocked', fetchedKey: 'asin'},
-    {label: 'Amazon #', controlName: 'amazonReviewCount', lockedKey: 'amazonReviewCountLocked', fetchedKey: 'amazonReviewCount'},
-    {label: 'Amazon ★', controlName: 'amazonRating', lockedKey: 'amazonRatingLocked', fetchedKey: 'amazonRating'},
-    {label: 'Goodreads ID', controlName: 'goodreadsId', lockedKey: 'goodreadsIdLocked', fetchedKey: 'goodreadsId'},
-    {label: 'Goodreads #', controlName: 'goodreadsReviewCount', lockedKey: 'goodreadsReviewCountLocked', fetchedKey: 'goodreadsReviewCount'},
-    {label: 'Goodreads ★', controlName: 'goodreadsRating', lockedKey: 'goodreadsRatingLocked', fetchedKey: 'goodreadsRating'},
-    {label: 'Hardcover ID', controlName: 'hardcoverId', lockedKey: 'hardcoverIdLocked', fetchedKey: 'hardcoverId'},
-    {label: 'Hardcover Book ID', controlName: 'hardcoverBookId', lockedKey: 'hardcoverBookIdLocked', fetchedKey: 'hardcoverBookId'},
-    {label: 'Hardcover #', controlName: 'hardcoverReviewCount', lockedKey: 'hardcoverReviewCountLocked', fetchedKey: 'hardcoverReviewCount'},
-    {label: 'Hardcover ★', controlName: 'hardcoverRating', lockedKey: 'hardcoverRatingLocked', fetchedKey: 'hardcoverRating'},
-    {label: 'Google ID', controlName: 'googleId', lockedKey: 'googleIdLocked', fetchedKey: 'googleId'},
-    {label: 'Comicvine ID', controlName: 'comicvineId', lockedKey: 'comicvineIdLocked', fetchedKey: 'comicvineId'},
-    {label: 'Ranobedb ID', controlName: 'ranobedbId', lockedKey: 'ranobedbIdLocked', fetchedKey: 'ranobedbId'},
-    {label: 'Ranobedb ★', controlName: 'ranobedbRating', lockedKey: 'ranobedbRatingLocked', fetchedKey: 'ranobedbRating'},
-    {label: 'Pages', controlName: 'pageCount', lockedKey: 'pageCountLocked', fetchedKey: 'pageCount'}
+    {label: 'bookdrop.metadataPicker.field.seriesName', controlName: 'seriesName', lockedKey: 'seriesNameLocked', fetchedKey: 'seriesName'},
+    {label: 'bookdrop.metadataPicker.field.seriesNumber', controlName: 'seriesNumber', lockedKey: 'seriesNumberLocked', fetchedKey: 'seriesNumber'},
+    {label: 'bookdrop.metadataPicker.field.seriesTotal', controlName: 'seriesTotal', lockedKey: 'seriesTotalLocked', fetchedKey: 'seriesTotal'},
+    {label: 'bookdrop.metadataPicker.field.language', controlName: 'language', lockedKey: 'languageLocked', fetchedKey: 'language'},
+    {label: 'bookdrop.metadataPicker.field.isbn10', controlName: 'isbn10', lockedKey: 'isbn10Locked', fetchedKey: 'isbn10'},
+    {label: 'bookdrop.metadataPicker.field.isbn13', controlName: 'isbn13', lockedKey: 'isbn13Locked', fetchedKey: 'isbn13'},
+    {label: 'bookdrop.metadataPicker.field.asin', controlName: 'asin', lockedKey: 'asinLocked', fetchedKey: 'asin'},
+    {label: 'bookdrop.metadataPicker.field.amazonReviewCount', controlName: 'amazonReviewCount', lockedKey: 'amazonReviewCountLocked', fetchedKey: 'amazonReviewCount'},
+    {label: 'bookdrop.metadataPicker.field.amazonRating', controlName: 'amazonRating', lockedKey: 'amazonRatingLocked', fetchedKey: 'amazonRating'},
+    {label: 'bookdrop.metadataPicker.field.goodreadsId', controlName: 'goodreadsId', lockedKey: 'goodreadsIdLocked', fetchedKey: 'goodreadsId'},
+    {label: 'bookdrop.metadataPicker.field.goodreadsReviewCount', controlName: 'goodreadsReviewCount', lockedKey: 'goodreadsReviewCountLocked', fetchedKey: 'goodreadsReviewCount'},
+    {label: 'bookdrop.metadataPicker.field.goodreadsRating', controlName: 'goodreadsRating', lockedKey: 'goodreadsRatingLocked', fetchedKey: 'goodreadsRating'},
+    {label: 'bookdrop.metadataPicker.field.hardcoverId', controlName: 'hardcoverId', lockedKey: 'hardcoverIdLocked', fetchedKey: 'hardcoverId'},
+    {label: 'bookdrop.metadataPicker.field.hardcoverBookId', controlName: 'hardcoverBookId', lockedKey: 'hardcoverBookIdLocked', fetchedKey: 'hardcoverBookId'},
+    {label: 'bookdrop.metadataPicker.field.hardcoverReviewCount', controlName: 'hardcoverReviewCount', lockedKey: 'hardcoverReviewCountLocked', fetchedKey: 'hardcoverReviewCount'},
+    {label: 'bookdrop.metadataPicker.field.hardcoverRating', controlName: 'hardcoverRating', lockedKey: 'hardcoverRatingLocked', fetchedKey: 'hardcoverRating'},
+    {label: 'bookdrop.metadataPicker.field.googleId', controlName: 'googleId', lockedKey: 'googleIdLocked', fetchedKey: 'googleId'},
+    {label: 'bookdrop.metadataPicker.field.comicvineId', controlName: 'comicvineId', lockedKey: 'comicvineIdLocked', fetchedKey: 'comicvineId'},
+    {label: 'bookdrop.metadataPicker.field.ranobedbId', controlName: 'ranobedbId', lockedKey: 'ranobedbIdLocked', fetchedKey: 'ranobedbId'},
+    {label: 'bookdrop.metadataPicker.field.ranobedbRating', controlName: 'ranobedbRating', lockedKey: 'ranobedbRatingLocked', fetchedKey: 'ranobedbRating'},
+    {label: 'bookdrop.metadataPicker.field.pageCount', controlName: 'pageCount', lockedKey: 'pageCountLocked', fetchedKey: 'pageCount'}
   ];
 
   protected urlHelper = inject(UrlHelperService);
@@ -182,8 +185,8 @@ export class BookdropFileMetadataPickerComponent {
 
   confirmReset(): void {
     this.confirmationService.confirm({
-      message: 'Are you sure you want to reset all metadata changes made to this file?',
-      header: 'Reset Metadata Changes?',
+      message: this.translateService.instant('bookdrop.metadataPicker.confirmReset.message'),
+      header: this.translateService.instant('bookdrop.metadataPicker.confirmReset.header'),
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => this.resetAll()

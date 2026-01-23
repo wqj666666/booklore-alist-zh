@@ -1,4 +1,4 @@
-import {Component, inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {BaseChartDirective} from 'ng2-charts';
 import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
@@ -7,6 +7,7 @@ import {ChartConfiguration, ChartData, Chart, TooltipItem} from 'chart.js';
 import {BookService} from '../../../book/service/book.service';
 import {Book, ReadStatus} from '../../../book/model/book.model';
 import {BookState} from '../../../book/model/state/book-state.model';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 interface ReadingStatusStats {
   status: string;
@@ -15,15 +16,15 @@ interface ReadingStatusStats {
 }
 
 const STATUS_COLOR_MAP: Record<string, string> = {
-  'Unread': '#6c757d',           // Gray
-  'Currently Reading': '#17a2b8', // Cyan
-  'Re-reading': '#6f42c1',        // Purple
-  'Read': '#28a745',              // Green
-  'Partially Read': '#ffc107',    // Yellow
-  'Paused': '#fd7e14',            // Orange
-  "Won't Read": '#dc3545',        // Red
-  'Abandoned': '#e74c3c',         // Light Red
-  'No Status': '#343a40'          // Dark Gray
+  'stats.user.readStatus.status.unread': '#6c757d',
+  'stats.user.readStatus.status.currentlyReading': '#17a2b8',
+  'stats.user.readStatus.status.rereading': '#6f42c1',
+  'stats.user.readStatus.status.read': '#28a745',
+  'stats.user.readStatus.status.partiallyRead': '#ffc107',
+  'stats.user.readStatus.status.paused': '#fd7e14',
+  'stats.user.readStatus.status.wontRead': '#dc3545',
+  'stats.user.readStatus.status.abandoned': '#e74c3c',
+  'stats.user.readStatus.status.noStatus': '#343a40'
 } as const;
 
 const CHART_DEFAULTS = {
@@ -38,13 +39,15 @@ type StatusChartData = ChartData<'doughnut', number[], string>;
 @Component({
   selector: 'app-read-status-chart',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective],
+  imports: [CommonModule, TranslateModule, BaseChartDirective],
   templateUrl: './read-status-chart.component.html',
   styleUrls: ['./read-status-chart.component.scss']
 })
 export class ReadStatusChartComponent implements OnInit, OnDestroy {
   private readonly bookService = inject(BookService);
+  private readonly translate = inject(TranslateService);
   private readonly destroy$ = new Subject<void>();
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
   public readonly chartType = 'doughnut' as const;
 
@@ -82,8 +85,8 @@ export class ReadStatusChartComponent implements OnInit, OnDestroy {
         titleFont: {size: 14, weight: 'bold'},
         bodyFont: {size: 13},
         callbacks: {
-          title: (context) => context[0]?.label || '',
-          label: this.formatTooltipLabel
+          title: (context) => this.translate.instant(String(context[0]?.label || 'stats.user.readStatus.status.unknown')),
+          label: this.formatTooltipLabel.bind(this)
         }
       }
     },
@@ -118,6 +121,12 @@ export class ReadStatusChartComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         const stats = this.calculateReadingStatusStats();
         this.updateChartData(stats);
+      });
+
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.chart?.chart?.update();
       });
   }
 
@@ -203,19 +212,19 @@ export class ReadStatusChartComponent implements OnInit, OnDestroy {
 
   private formatReadStatus(status: ReadStatus | null | undefined): string {
     const STATUS_MAPPING: Record<string, string> = {
-      [ReadStatus.UNREAD]: 'Unread',
-      [ReadStatus.READING]: 'Currently Reading',
-      [ReadStatus.RE_READING]: 'Re-reading',
-      [ReadStatus.READ]: 'Read',
-      [ReadStatus.PARTIALLY_READ]: 'Partially Read',
-      [ReadStatus.PAUSED]: 'Paused',
-      [ReadStatus.WONT_READ]: "Won't Read",
-      [ReadStatus.ABANDONED]: 'Abandoned',
-      [ReadStatus.UNSET]: 'No Status'
+      [ReadStatus.UNREAD]: 'stats.user.readStatus.status.unread',
+      [ReadStatus.READING]: 'stats.user.readStatus.status.currentlyReading',
+      [ReadStatus.RE_READING]: 'stats.user.readStatus.status.rereading',
+      [ReadStatus.READ]: 'stats.user.readStatus.status.read',
+      [ReadStatus.PARTIALLY_READ]: 'stats.user.readStatus.status.partiallyRead',
+      [ReadStatus.PAUSED]: 'stats.user.readStatus.status.paused',
+      [ReadStatus.WONT_READ]: 'stats.user.readStatus.status.wontRead',
+      [ReadStatus.ABANDONED]: 'stats.user.readStatus.status.abandoned',
+      [ReadStatus.UNSET]: 'stats.user.readStatus.status.noStatus'
     };
 
-    if (!status) return 'No Status';
-    return STATUS_MAPPING[status] ?? 'No Status';
+    if (!status) return 'stats.user.readStatus.status.noStatus';
+    return STATUS_MAPPING[status] ?? 'stats.user.readStatus.status.noStatus';
   }
 
   private generateLegendLabels(chart: Chart) {
@@ -232,8 +241,11 @@ export class ReadStatusChartComponent implements OnInit, OnDestroy {
         ? chart.getDataVisibility(index)
         : !((chart.getDatasetMeta && (chart.getDatasetMeta(0)?.data?.[index] as any)?.hidden) || false);
 
+      const labelKey = String(label);
+      const labelText = this.translate.instant(labelKey);
+
       return {
-        text: `${String(label)} (${dataValues[index]})`,
+        text: `${labelText} (${dataValues[index]})`,
         fillStyle: (dataset.backgroundColor as string[])[index],
         strokeStyle: '#ffffff',
         lineWidth: 1,
@@ -248,9 +260,13 @@ export class ReadStatusChartComponent implements OnInit, OnDestroy {
     const dataIndex = context.dataIndex;
     const dataset = context.dataset;
     const value = dataset.data[dataIndex] as number;
-    const label = context.chart.data.labels?.[dataIndex] || 'Unknown';
+    const labelKey = String(context.chart.data.labels?.[dataIndex] || 'stats.user.readStatus.status.unknown');
+    const label = this.translate.instant(labelKey);
     const total = (dataset.data as number[]).reduce((a: number, b: number) => a + b, 0);
     const percentage = ((value / total) * 100).toFixed(1);
-    return `${label}: ${value} books (${percentage}%)`;
+    const count = value === 1
+      ? this.translate.instant('stats.user.units.bookCountOne', {count: value})
+      : this.translate.instant('stats.user.units.bookCountMany', {count: value});
+    return this.translate.instant('stats.user.readStatus.tooltip.label', {status: label, count, percentage});
   }
 }

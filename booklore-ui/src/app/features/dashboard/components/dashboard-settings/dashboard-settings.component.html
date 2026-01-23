@@ -4,8 +4,8 @@
       <i class="pi pi-sliders-h header-icon"></i>
     </div>
     <div class="header-text">
-      <h2 class="panel-title">Dashboard Configuration</h2>
-      <p class="panel-description">Add up to 5 scrollers from different book collections and customize their behavior</p>
+      <h2 class="panel-title">{{ 'dashboard.settings.title' | translate }}</h2>
+      <p class="panel-description">{{ 'dashboard.settings.description' | translate }}</p>
     </div>
     <p-button
       icon="pi pi-times"
@@ -27,47 +27,47 @@
 
           <div class="scroller-fields">
             <div class="scroller-field" [class.expanded]="scroller.type !== 'magicShelf'">
-              <label>Type</label>
+              <label>{{ 'dashboard.settings.fields.type' | translate }}</label>
               <p-select
                 fluid
                 [options]="availableScrollerTypes"
                 [(ngModel)]="scroller.type"
                 (onChange)="onScrollerTypeChange(scroller)"
-                placeholder="Select type"
+                [placeholder]="'dashboard.settings.placeholders.selectType' | translate"
                 appendTo="body">
               </p-select>
             </div>
 
             @if (scroller.type === 'magicShelf') {
               <div class="scroller-field">
-                <label>Magic Shelf</label>
+                <label>{{ 'dashboard.settings.fields.magicShelf' | translate }}</label>
                 <p-select
                   fluid
                   [options]="(magicShelves$ | async)!"
                   [(ngModel)]="scroller.magicShelfId"
-                  placeholder="Select magic shelf"
+                  [placeholder]="'dashboard.settings.placeholders.selectMagicShelf' | translate"
                   appendTo="body">
                 </p-select>
               </div>
 
               <div class="scroller-field">
-                <label>Sort Field</label>
+                <label>{{ 'dashboard.settings.fields.sortField' | translate }}</label>
                 <p-select
                   fluid
                   [options]="sortFieldOptions"
                   [(ngModel)]="scroller.sortField"
-                  placeholder="Select field"
+                  [placeholder]="'dashboard.settings.placeholders.selectSortField' | translate"
                   appendTo="body">
                 </p-select>
               </div>
 
               <div class="scroller-field">
-                <label>Direction</label>
+                <label>{{ 'dashboard.settings.fields.direction' | translate }}</label>
                 <p-select
                   fluid
                   [options]="sortDirectionOptions"
                   [(ngModel)]="scroller.sortDirection"
-                  placeholder="Select direction"
+                  [placeholder]="'dashboard.settings.placeholders.selectDirection' | translate"
                   appendTo="body">
                 </p-select>
               </div>
@@ -75,7 +75,7 @@
           </div>
 
           <div class="scroller-field max-items-field">
-            <label>Max Items</label>
+            <label>{{ 'dashboard.settings.fields.maxItems' | translate }}</label>
             <p-inputNumber
               fluid
               [(ngModel)]="scroller.maxItems"
@@ -122,14 +122,14 @@
   <div class="dialog-footer">
     <div class="footer-left">
       <p-button
-        label="Add Scroller"
+        [label]="'dashboard.settings.actions.addScroller' | translate"
         icon="pi pi-plus"
         severity="primary"
         (click)="addScroller()"
         [disabled]="config.scrollers.length >= 5">
       </p-button>
       <p-button
-        label="Reset to Default"
+        [label]="'dashboard.settings.actions.resetToDefault' | translate"
         icon="pi pi-refresh"
         severity="secondary"
         text
@@ -138,13 +138,13 @@
     </div>
     <div class="footer-actions">
       <p-button
-        label="Cancel"
+        [label]="'common.cancel' | translate"
         [outlined]="true"
         severity="secondary"
         (click)="cancel()">
       </p-button>
       <p-button
-        label="Save"
+        [label]="'common.save' | translate"
         icon="pi pi-check"
         severity="success"
         (click)="save()">

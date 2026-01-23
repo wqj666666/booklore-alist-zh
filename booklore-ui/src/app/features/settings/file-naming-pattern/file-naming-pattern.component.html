@@ -2,11 +2,14 @@
   <div class="settings-header">
     <h2 class="settings-title">
       <i class="pi pi-file"></i>
-      File Naming Patterns
-      <app-external-doc-link docType="fileNamePatterns"></app-external-doc-link>
+      {{ 'settings.fileNamingPattern.title' | translate }}
+      <app-external-doc-link
+        docType="fileNamePatterns"
+        [tooltip]="'shared.externalDocLink.tooltip.viewDocumentation' | translate">
+      </app-external-doc-link>
     </h2>
     <p class="settings-description">
-      Configure automatic file organization using metadata placeholders. Patterns are applied when uploading files, moving files within your library, and after metadata updates.
+      {{ 'settings.fileNamingPattern.description' | translate }}
     </p>
   </div>
 
@@ -15,10 +18,10 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-cog"></i>
-          Default File Naming Pattern
+          {{ 'settings.fileNamingPattern.default.title' | translate }}
         </h3>
         <p class="section-description">
-          This pattern serves as the fallback when no library-specific override is configured.
+          {{ 'settings.fileNamingPattern.default.description' | translate }}
         </p>
       </div>
 
@@ -26,33 +29,33 @@
         <div class="form-field">
           <div class="library-header pb-2">
             <i [class]="'pi pi-bolt'"></i>
-            <span class="library-name">Default Pattern</span>
+            <span class="library-name">{{ 'settings.fileNamingPattern.default.patternLabel' | translate }}</span>
           </div>
           <div class="pattern-input-group">
             <input
               pInputText
               id="defaultPattern"
               [(ngModel)]="defaultPattern"
-              placeholder="e.g., {title} - {authors}"
+              [placeholder]="'settings.fileNamingPattern.default.placeholder' | translate"
               (input)="onDefaultPatternChange(defaultPattern)"
               class="w-full"/>
             <p-button
-              label="Save"
+              [label]="'common.save' | translate"
               icon="pi pi-save"
               (onClick)="savePatterns()"
               severity="success"
               [outlined]="true"
-              [disabled]="!!defaultErrorMessage">
+              [disabled]="!!defaultErrorKey">
             </p-button>
           </div>
-          @if (defaultErrorMessage) {
-            <div class="error-message">{{ defaultErrorMessage }}</div>
+          @if (defaultErrorKey) {
+            <div class="error-message">{{ defaultErrorKey | translate }}</div>
           }
         </div>
 
         <div class="preview-section">
           <div class="preview-item">
-            <span class="preview-label">Preview:</span>
+            <span class="preview-label">{{ 'settings.fileNamingPattern.preview.label' | translate }}</span>
             <span class="preview-value">{{ generateDefaultPreview() }}</span>
           </div>
         </div>
@@ -63,10 +66,10 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-folder"></i>
-          Library-Specific Overrides
+          {{ 'settings.fileNamingPattern.libraryOverrides.title' | translate }}
         </h3>
         <p class="section-description">
-          Define custom naming patterns for specific libraries. Leave empty to use the default pattern.
+          {{ 'settings.fileNamingPattern.libraryOverrides.description' | translate }}
         </p>
       </div>
 
@@ -82,11 +85,10 @@
                 <input
                   pInputText
                   [(ngModel)]="library.fileNamingPattern"
-                  placeholder="Leave empty to use default pattern"
-                  (input)="onLibraryPatternChange(library)"
+                  [placeholder]="'settings.fileNamingPattern.libraryOverrides.placeholder' | translate"
                   class="w-full"/>
                 <p-button
-                  label="Clear"
+                  [label]="'settings.fileNamingPattern.action.clear' | translate"
                   (onClick)="clearLibraryPattern(library)"
                   severity="secondary"
                   [outlined]="true"
@@ -94,7 +96,7 @@
                 </p-button>
               </div>
               <div class="preview-section">
-                <span class="preview-label">Preview:</span>
+                <span class="preview-label">{{ 'settings.fileNamingPattern.preview.label' | translate }}</span>
                 <span class="preview-value">{{ generateLibraryPreview(library) }}</span>
               </div>
             </div>
@@ -103,7 +105,7 @@
 
         <div class="form-actions">
           <p-button
-            label="Save All Library Patterns"
+            [label]="'settings.fileNamingPattern.action.saveAllLibraryPatterns' | translate"
             (onClick)="saveLibraryPatterns()"
             severity="success"
             icon="pi pi-save"
@@ -117,10 +119,10 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-info-circle"></i>
-          Available Placeholders
+          {{ 'settings.fileNamingPattern.placeholders.title' | translate }}
         </h3>
         <p class="section-description">
-          Use placeholders to dynamically insert book metadata into file names and folder paths. These will be replaced with actual values when uploading or moving files.
+          {{ 'settings.fileNamingPattern.placeholders.description' | translate }}
         </p>
       </div>
 
@@ -128,35 +130,35 @@
         <div class="placeholders-info">
           <div class="placeholders-grid">
             <div class="placeholders-list">
-              <h4 class="subsection-title">Available Placeholders</h4>
+              <h4 class="subsection-title">{{ 'settings.fileNamingPattern.placeholders.listTitle' | translate }}</h4>
               <ul>
-                <li><code class="placeholder-code">{{ '{title}' }}</code> – Book title</li>
-                <li><code class="placeholder-code">{{ '{subtitle}' }}</code> – Book subtitle</li>
-                <li><code class="placeholder-code">{{ '{authors}' }}</code> – Author(s)</li>
-                <li><code class="placeholder-code">{{ '{year}' }}</code> – Full year (e.g. 2025)</li>
-                <li><code class="placeholder-code">{{ '{series}' }}</code> – Series name</li>
-                <li><code class="placeholder-code">{{ '{seriesIndex}' }}</code> – Series index (e.g. 01)</li>
-                <li><code class="placeholder-code">{{ '{language}' }}</code> – Language code (e.g. en)</li>
-                <li><code class="placeholder-code">{{ '{publisher}' }}</code> – Publisher name</li>
-                <li><code class="placeholder-code">{{ '{isbn}' }}</code> – ISBN number</li>
-                <li><code class="placeholder-code">{{ '{currentFilename}' }}</code> Original file name (with extension)</li>
+                <li><code class="placeholder-code">{{ '{title}' }}</code> – {{ 'settings.fileNamingPattern.placeholders.items.title' | translate }}</li>
+                <li><code class="placeholder-code">{{ '{subtitle}' }}</code> – {{ 'settings.fileNamingPattern.placeholders.items.subtitle' | translate }}</li>
+                <li><code class="placeholder-code">{{ '{authors}' }}</code> – {{ 'settings.fileNamingPattern.placeholders.items.authors' | translate }}</li>
+                <li><code class="placeholder-code">{{ '{year}' }}</code> – {{ 'settings.fileNamingPattern.placeholders.items.year' | translate }}</li>
+                <li><code class="placeholder-code">{{ '{series}' }}</code> – {{ 'settings.fileNamingPattern.placeholders.items.series' | translate }}</li>
+                <li><code class="placeholder-code">{{ '{seriesIndex}' }}</code> – {{ 'settings.fileNamingPattern.placeholders.items.seriesIndex' | translate }}</li>
+                <li><code class="placeholder-code">{{ '{language}' }}</code> – {{ 'settings.fileNamingPattern.placeholders.items.language' | translate }}</li>
+                <li><code class="placeholder-code">{{ '{publisher}' }}</code> – {{ 'settings.fileNamingPattern.placeholders.items.publisher' | translate }}</li>
+                <li><code class="placeholder-code">{{ '{isbn}' }}</code> – {{ 'settings.fileNamingPattern.placeholders.items.isbn' | translate }}</li>
+                <li><code class="placeholder-code">{{ '{currentFilename}' }}</code> – {{ 'settings.fileNamingPattern.placeholders.items.currentFilename' | translate }}</li>
               </ul>
             </div>
 
             <div class="optional-blocks-info">
-              <h4 class="subsection-title">Optional blocks</h4>
+              <h4 class="subsection-title">{{ 'settings.fileNamingPattern.optionalBlocks.title' | translate }}</h4>
               <p>
-                Surround parts of your pattern with angle brackets
+                {{ 'settings.fileNamingPattern.optionalBlocks.line1' | translate }}
                 <code class="placeholder-code">{{ '{<...>}' }}</code>
                 <br>
-                to make them optional. If any placeholder inside the block has no value, the whole block is excluded.
+                {{ 'settings.fileNamingPattern.optionalBlocks.line2' | translate }}
               </p>
               <div class="example-section">
-                <p class="example-label">Example:</p>
+                <p class="example-label">{{ 'settings.fileNamingPattern.optionalBlocks.exampleLabel' | translate }}</p>
                 <p><code class="placeholder-code">{{ '{<{seriesIndex} - >{title}' }}</code></p>
                 <ul class="example-list">
-                  <li><code>01 - Dune</code> (if <code class="placeholder-code">{{ '{seriesIndex}' }}</code> exists)</li>
-                  <li><code>Dune</code> (if <code class="placeholder-code">{{ '{seriesIndex}' }}</code> is missing)</li>
+                  <li><code>01 - Dune</code> ({{ 'settings.fileNamingPattern.optionalBlocks.exampleHasValue' | translate }} <code class="placeholder-code">{{ '{seriesIndex}' }}</code>)</li>
+                  <li><code>Dune</code> ({{ 'settings.fileNamingPattern.optionalBlocks.exampleMissingValue' | translate }} <code class="placeholder-code">{{ '{seriesIndex}' }}</code>)</li>
                 </ul>
               </div>
             </div>
@@ -169,61 +171,61 @@
       <div class="section-header">
         <h3 class="section-title">
           <i class="pi pi-eye"></i>
-          Example Patterns & Output
+          {{ 'settings.fileNamingPattern.examples.title' | translate }}
         </h3>
         <p class="section-description">
-          See how different patterns work with sample book metadata and learn best practices for organizing your library.
+          {{ 'settings.fileNamingPattern.examples.description' | translate }}
         </p>
       </div>
 
       <div class="settings-card">
         <div class="examples-section">
           <div class="example-category">
-            <h4 class="subsection-title">Examples with Full Metadata</h4>
+            <h4 class="subsection-title">{{ 'settings.fileNamingPattern.examples.fullMetadata.title' | translate }}</h4>
             <div class="metadata-sample">
-              <span>title: <code>The Name of the Wind</code></span>
-              <span>subtitle: <code>Special Edition</code></span>
-              <span>authors: <code>Patrick Rothfuss</code></span>
-              <span>series: <code>The Kingkiller Chronicle</code></span>
-              <span>seriesIndex: <code>01</code></span>
-              <span>year: <code>2007</code></span>
-              <span>currentFilename: <code>name_of_the_wind_original.epub</code></span>
+              <span>{{ 'settings.fileNamingPattern.examples.sampleFields.title' | translate }}: <code>The Name of the Wind</code></span>
+              <span>{{ 'settings.fileNamingPattern.examples.sampleFields.subtitle' | translate }}: <code>Special Edition</code></span>
+              <span>{{ 'settings.fileNamingPattern.examples.sampleFields.authors' | translate }}: <code>Patrick Rothfuss</code></span>
+              <span>{{ 'settings.fileNamingPattern.examples.sampleFields.series' | translate }}: <code>The Kingkiller Chronicle</code></span>
+              <span>{{ 'settings.fileNamingPattern.examples.sampleFields.seriesIndex' | translate }}: <code>01</code></span>
+              <span>{{ 'settings.fileNamingPattern.examples.sampleFields.year' | translate }}: <code>2007</code></span>
+              <span>{{ 'settings.fileNamingPattern.examples.sampleFields.currentFilename' | translate }}: <code>name_of_the_wind_original.epub</code></span>
             </div>
 
             <div class="example-list">
               <div class="example-item">
-                <p class="example-pattern"><strong>Basic pattern:</strong> <code>{{ '{authors} - {title}' }}</code></p>
-                <p class="example-output"><strong>Output:</strong> <code>Patrick Rothfuss - The Name of the Wind.epub</code></p>
+                <p class="example-pattern"><strong>{{ 'settings.fileNamingPattern.examples.labels.basicPattern' | translate }}</strong> <code>{{ '{authors} - {title}' }}</code></p>
+                <p class="example-output"><strong>{{ 'settings.fileNamingPattern.examples.labels.output' | translate }}</strong> <code>Patrick Rothfuss - The Name of the Wind.epub</code></p>
               </div>
 
               <div class="example-item">
-                <p class="example-pattern"><strong>Pattern with punctuation:</strong> <code>{{ '{title}: {series}' }}</code></p>
-                <p class="example-output"><strong>Output:</strong> <code>The Name of the Wind: The Kingkiller Chronicle.epub</code></p>
+                <p class="example-pattern"><strong>{{ 'settings.fileNamingPattern.examples.labels.patternWithPunctuation' | translate }}</strong> <code>{{ '{title}: {series}' }}</code></p>
+                <p class="example-output"><strong>{{ 'settings.fileNamingPattern.examples.labels.output' | translate }}</strong> <code>The Name of the Wind: The Kingkiller Chronicle.epub</code></p>
               </div>
 
               <div class="example-item">
-                <p class="example-pattern"><strong>Series in folder path:</strong> <code>{{ '{authors}/{series}/{seriesIndex} - {title}' }}</code></p>
-                <p class="example-output"><strong>Output:</strong> <code>Patrick Rothfuss/The Kingkiller Chronicle/01 - The Name of the Wind.epub</code></p>
+                <p class="example-pattern"><strong>{{ 'settings.fileNamingPattern.examples.labels.seriesInFolder' | translate }}</strong> <code>{{ '{authors}/{series}/{seriesIndex} - {title}' }}</code></p>
+                <p class="example-output"><strong>{{ 'settings.fileNamingPattern.examples.labels.output' | translate }}</strong> <code>Patrick Rothfuss/The Kingkiller Chronicle/01 - The Name of the Wind.epub</code></p>
               </div>
 
               <div class="example-item">
-                <p class="example-pattern"><strong>Folder only:</strong> <code>{{ '{title}/' }}</code></p>
-                <p class="example-output"><strong>Output:</strong> <code>/The Name of the Wind/name_of_the_wind_original.epub</code></p>
+                <p class="example-pattern"><strong>{{ 'settings.fileNamingPattern.examples.labels.folderOnly' | translate }}</strong> <code>{{ '{title}/' }}</code></p>
+                <p class="example-output"><strong>{{ 'settings.fileNamingPattern.examples.labels.output' | translate }}</strong> <code>/The Name of the Wind/name_of_the_wind_original.epub</code></p>
               </div>
 
               <div class="example-item">
-                <p class="example-pattern"><strong>Absolute path:</strong> <code>{{ '/{authors}/{title}' }}</code></p>
-                <p class="example-output"><strong>Output:</strong> <code>/Patrick Rothfuss/The Name of the Wind.epub</code></p>
+                <p class="example-pattern"><strong>{{ 'settings.fileNamingPattern.examples.labels.absolutePath' | translate }}</strong> <code>{{ '/{authors}/{title}' }}</code></p>
+                <p class="example-output"><strong>{{ 'settings.fileNamingPattern.examples.labels.output' | translate }}</strong> <code>/Patrick Rothfuss/The Name of the Wind.epub</code></p>
               </div>
 
               <div class="example-item">
-                <p class="example-pattern"><strong>Reuse original filename in path:</strong> <code>{{ '{authors}/{series}/{currentFilename}' }}</code></p>
-                <p class="example-output"><strong>Output:</strong> <code>Patrick Rothfuss/The Kingkiller Chronicle/name_of_the_wind_original.epub</code></p>
+                <p class="example-pattern"><strong>{{ 'settings.fileNamingPattern.examples.labels.reuseOriginalFilename' | translate }}</strong> <code>{{ '{authors}/{series}/{currentFilename}' }}</code></p>
+                <p class="example-output"><strong>{{ 'settings.fileNamingPattern.examples.labels.output' | translate }}</strong> <code>Patrick Rothfuss/The Kingkiller Chronicle/name_of_the_wind_original.epub</code></p>
               </div>
 
               <div class="example-item">
-                <p class="example-pattern"><strong>Title + Subtitle:</strong> <code>{{ '{title}: {subtitle}' }}</code></p>
-                <p class="example-output"><strong>Output:</strong> <code>The Name of the Wind: The Kingkiller Chronicle: Day One.epub</code></p>
+                <p class="example-pattern"><strong>{{ 'settings.fileNamingPattern.examples.labels.titlePlusSubtitle' | translate }}</strong> <code>{{ '{title}: {subtitle}' }}</code></p>
+                <p class="example-output"><strong>{{ 'settings.fileNamingPattern.examples.labels.output' | translate }}</strong> <code>The Name of the Wind: The Kingkiller Chronicle: Day One.epub</code></p>
               </div>
             </div>
           </div>
@@ -231,48 +233,48 @@
           <p-divider></p-divider>
 
           <div class="example-category">
-            <h4 class="subsection-title">Examples with Missing Optional Fields</h4>
+            <h4 class="subsection-title">{{ 'settings.fileNamingPattern.examples.missingFields.title' | translate }}</h4>
             <div class="metadata-sample">
-              <span>title: <code>Project Hail Mary</code></span>
-              <span>subtitle: <code>(not provided)</code></span>
-              <span>authors: <code>Andy Weir</code></span>
-              <span>year: <code>2021</code></span>
-              <span>series: <code>(not provided)</code></span>
-              <span>seriesIndex: <code>(not provided)</code></span>
-              <span>currentFilename: <code>project_hail_mary_final.epub</code></span>
+              <span>{{ 'settings.fileNamingPattern.examples.sampleFields.title' | translate }}: <code>Project Hail Mary</code></span>
+              <span>{{ 'settings.fileNamingPattern.examples.sampleFields.subtitle' | translate }}: <code>({{ 'settings.fileNamingPattern.examples.notProvided' | translate }})</code></span>
+              <span>{{ 'settings.fileNamingPattern.examples.sampleFields.authors' | translate }}: <code>Andy Weir</code></span>
+              <span>{{ 'settings.fileNamingPattern.examples.sampleFields.year' | translate }}: <code>2021</code></span>
+              <span>{{ 'settings.fileNamingPattern.examples.sampleFields.series' | translate }}: <code>({{ 'settings.fileNamingPattern.examples.notProvided' | translate }})</code></span>
+              <span>{{ 'settings.fileNamingPattern.examples.sampleFields.seriesIndex' | translate }}: <code>({{ 'settings.fileNamingPattern.examples.notProvided' | translate }})</code></span>
+              <span>{{ 'settings.fileNamingPattern.examples.sampleFields.currentFilename' | translate }}: <code>project_hail_mary_final.epub</code></span>
             </div>
 
             <div class="example-list">
               <div class="example-item">
-                <p class="example-pattern"><strong>Pattern with optional blocks:</strong> <code>{{ '{authors}/<{series}/><{seriesIndex}. >{title}< ({year})>' }}</code></p>
-                <p class="example-output"><strong>Output:</strong> <code>Andy Weir/Project Hail Mary (2021).epub</code></p>
+                <p class="example-pattern"><strong>{{ 'settings.fileNamingPattern.examples.labels.patternWithOptionalBlocks' | translate }}</strong> <code>{{ '{authors}/<{series}/><{seriesIndex}. >{title}< ({year})>' }}</code></p>
+                <p class="example-output"><strong>{{ 'settings.fileNamingPattern.examples.labels.output' | translate }}</strong> <code>Andy Weir/Project Hail Mary (2021).epub</code></p>
               </div>
 
               <div class="example-item">
-                <p class="example-pattern"><strong>Fallback with seriesIndex and dash:</strong> <code>{{ '<{seriesIndex}. >{title}< - {authors}>' }}</code></p>
-                <p class="example-output"><strong>Output:</strong> <code>Project Hail Mary - Andy Weir.epub</code></p>
+                <p class="example-pattern"><strong>{{ 'settings.fileNamingPattern.examples.labels.fallbackWithSeriesIndex' | translate }}</strong> <code>{{ '<{seriesIndex}. >{title}< - {authors}>' }}</code></p>
+                <p class="example-output"><strong>{{ 'settings.fileNamingPattern.examples.labels.output' | translate }}</strong> <code>Project Hail Mary - Andy Weir.epub</code></p>
               </div>
 
               <div class="example-item">
-                <p class="example-pattern"><strong>Brackets & punctuation fallback:</strong> <code>{{ '<[{series}] >{title} - {authors}' }}</code></p>
-                <p class="example-output"><strong>Output:</strong> <code>Project Hail Mary - Andy Weir.epub</code></p>
+                <p class="example-pattern"><strong>{{ 'settings.fileNamingPattern.examples.labels.bracketsFallback' | translate }}</strong> <code>{{ '<[{series}] >{title} - {authors}' }}</code></p>
+                <p class="example-output"><strong>{{ 'settings.fileNamingPattern.examples.labels.output' | translate }}</strong> <code>Project Hail Mary - Andy Weir.epub</code></p>
               </div>
 
               <div class="example-item">
-                <p class="example-pattern"><strong>Series + punctuation fallback:</strong> <code>{{ '<{series}: >{title} by {authors}' }}</code></p>
-                <p class="example-output"><strong>Output:</strong> <code>Project Hail Mary by Andy Weir.epub</code></p>
+                <p class="example-pattern"><strong>{{ 'settings.fileNamingPattern.examples.labels.seriesPunctuationFallback' | translate }}</strong> <code>{{ '<{series}: >{title} by {authors}' }}</code></p>
+                <p class="example-output"><strong>{{ 'settings.fileNamingPattern.examples.labels.output' | translate }}</strong> <code>Project Hail Mary by Andy Weir.epub</code></p>
               </div>
 
               <div class="example-item">
-                <p class="example-pattern"><strong>Use original filename with year suffix:</strong> <code>{{ '{authors}/{year}__{currentFilename}' }}</code></p>
-                <p class="example-output"><strong>Output:</strong> <code>Andy Weir/2021__project_hail_mary_final.epub</code></p>
+                <p class="example-pattern"><strong>{{ 'settings.fileNamingPattern.examples.labels.originalFilenameWithYear' | translate }}</strong> <code>{{ '{authors}/{year}__{currentFilename}' }}</code></p>
+                <p class="example-output"><strong>{{ 'settings.fileNamingPattern.examples.labels.output' | translate }}</strong> <code>Andy Weir/2021__project_hail_mary_final.epub</code></p>
               </div>
 
               <div class="example-item">
-                <p class="example-pattern"><strong>Title + Subtitle fallback:</strong> <code>{{ '{title}
+                <p class="example-pattern"><strong>{{ 'settings.fileNamingPattern.examples.labels.titlePlusSubtitleFallback' | translate }}</strong> <code>{{ '{title}
                   <: {subtitle}>' }}
                 </code></p>
-                <p class="example-output"><strong>Output:</strong> <code>Project Hail Mary.epub</code></p>
+                <p class="example-output"><strong>{{ 'settings.fileNamingPattern.examples.labels.output' | translate }}</strong> <code>Project Hail Mary.epub</code></p>
               </div>
             </div>
           </div>

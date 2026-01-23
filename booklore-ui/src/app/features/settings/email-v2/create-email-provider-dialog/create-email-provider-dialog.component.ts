@@ -7,6 +7,8 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {MessageService} from 'primeng/api';
 import {DynamicDialogRef} from 'primeng/dynamicdialog';
 import {EmailV2ProviderService} from '../email-v2-provider/email-v2-provider.service';
+import {Tooltip} from 'primeng/tooltip';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-create-email-provider-dialog',
@@ -14,7 +16,9 @@ import {EmailV2ProviderService} from '../email-v2-provider/email-v2-provider.ser
     Button,
     Checkbox,
     InputText,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    Tooltip,
+    TranslateModule
   ],
   templateUrl: './create-email-provider-dialog.component.html',
   styleUrl: './create-email-provider-dialog.component.scss'
@@ -26,6 +30,7 @@ export class CreateEmailProviderDialogComponent implements OnInit {
   private emailProviderService = inject(EmailV2ProviderService);
   private messageService = inject(MessageService);
   private ref = inject(DynamicDialogRef);
+  private translateService = inject(TranslateService);
 
   ngOnInit() {
     this.emailProviderForm = this.fb.group({
@@ -44,8 +49,8 @@ export class CreateEmailProviderDialogComponent implements OnInit {
     if (this.emailProviderForm.invalid) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Validation Error',
-        detail: 'Please correct errors before submitting.'
+        summary: this.translateService.instant('settings.emailV2.createProviderDialog.toast.validationError.summary'),
+        detail: this.translateService.instant('settings.emailV2.createProviderDialog.toast.validationError.detail')
       });
       return;
     }
@@ -56,18 +61,19 @@ export class CreateEmailProviderDialogComponent implements OnInit {
       next: () => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Email Provider Created',
-          detail: 'The email provider has been successfully created.'
+          summary: this.translateService.instant('settings.emailV2.createProviderDialog.toast.createSuccess.summary'),
+          detail: this.translateService.instant('settings.emailV2.createProviderDialog.toast.createSuccess.detail')
         });
         this.ref.close(true);
       },
       error: (err) => {
+        const serverMessage = err?.error?.message;
         this.messageService.add({
           severity: 'error',
-          summary: 'Email Provider Creation Failed',
-          detail: err?.error?.message
-            ? `Unable to create email provider: ${err.error.message}`
-            : 'An unexpected error occurred while creating the email provider. Please try again later.'
+          summary: this.translateService.instant('settings.emailV2.createProviderDialog.toast.createError.summary'),
+          detail: serverMessage
+            ? this.translateService.instant('settings.emailV2.createProviderDialog.toast.createErrorWithMessage.detail', {message: serverMessage})
+            : this.translateService.instant('settings.emailV2.createProviderDialog.toast.createError.detail')
         });
       }
     });

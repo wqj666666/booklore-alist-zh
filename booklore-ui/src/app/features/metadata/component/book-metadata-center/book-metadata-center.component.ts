@@ -12,6 +12,7 @@ import {BookMetadataHostService} from '../../../../shared/service/book-metadata-
 import {MetadataViewerComponent} from './metadata-viewer/metadata-viewer.component';
 import {MetadataEditorComponent} from './metadata-editor/metadata-editor.component';
 import {MetadataSearcherComponent} from './metadata-searcher/metadata-searcher.component';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-book-metadata-center',
@@ -25,7 +26,8 @@ import {MetadataSearcherComponent} from './metadata-searcher/metadata-searcher.c
     TabPanel,
     MetadataViewerComponent,
     MetadataEditorComponent,
-    MetadataSearcherComponent
+    MetadataSearcherComponent,
+    TranslateModule
   ],
   styleUrls: ['./book-metadata-center.component.scss'],
 })

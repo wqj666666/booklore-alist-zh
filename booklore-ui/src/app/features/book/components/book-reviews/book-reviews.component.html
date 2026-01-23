@@ -15,7 +15,8 @@
               icon="pi pi-download"
               severity="primary"
               (click)="fetchNewReviews()"
-              pTooltip="Fetch Reviews"
+              [ariaLabel]="'book.reviews.a11y.fetchReviews' | translate"
+              [pTooltip]="'book.reviews.tooltip.fetchReviews' | translate"
               tooltipPosition="top"
               class="action-btn floating-btn">
             </p-button>
@@ -89,7 +90,7 @@
                       @if (reviewsLocked) {
                         <div class="flex items-center justify-center w-8 h-8">
                           <i class="pi pi-lock text-amber-500 text-sm"
-                             pTooltip="Reviews are locked"
+                             [pTooltip]="'book.reviews.tooltip.reviewsLocked' | translate"
                              tooltipPosition="top"></i>
                         </div>
                       } @else {
@@ -99,7 +100,8 @@
                           severity="danger"
                           text
                           (onClick)="deleteReview(review)"
-                          pTooltip="Delete Review"
+                          [ariaLabel]="'book.reviews.a11y.deleteReview' | translate"
+                          [pTooltip]="'book.reviews.tooltip.deleteReview' | translate"
                           tooltipPosition="top"
                           class="action-btn-hover"/>
                       }
@@ -157,7 +159,8 @@
           [severity]="reviewsLocked ? 'danger' : 'success'"
           [disabled]="!reviewDownloadEnabled || loading"
           (click)="toggleReviewsLock()"
-          [pTooltip]="loading ? 'Please wait while reviews are being fetched' : (!reviewDownloadEnabled ? 'Enable review downloads in settings to use this feature' : (reviewsLocked ? 'Unlock Reviews' : 'Lock Reviews'))"
+          [ariaLabel]="'book.reviews.a11y.toggleReviewsLock' | translate"
+          [pTooltip]="(loading ? 'book.reviews.tooltip.loading' : (!reviewDownloadEnabled ? 'book.reviews.tooltip.enableReviewDownloads' : (reviewsLocked ? 'book.reviews.tooltip.unlockReviews' : 'book.reviews.tooltip.lockReviews'))) | translate"
           tooltipPosition="left"
           class="action-btn"/>
 
@@ -169,7 +172,8 @@
           [loading]="loading"
           [disabled]="reviewsLocked || !reviewDownloadEnabled || loading"
           (click)="fetchNewReviews()"
-          [pTooltip]="loading ? 'Please wait while reviews are being fetched' : (!reviewDownloadEnabled ? 'Enable review downloads in settings to use this feature' : (reviewsLocked ? 'Reviews are locked' : 'Fetch New Reviews'))"
+          [ariaLabel]="'book.reviews.a11y.fetchNewReviews' | translate"
+          [pTooltip]="(loading ? 'book.reviews.tooltip.loading' : (!reviewDownloadEnabled ? 'book.reviews.tooltip.enableReviewDownloads' : (reviewsLocked ? 'book.reviews.tooltip.reviewsLocked' : 'book.reviews.tooltip.fetchNewReviews'))) | translate"
           tooltipPosition="left"
           class="action-btn"/>
       }
@@ -182,7 +186,8 @@
           severity="danger"
           [disabled]="reviewsLocked || loading"
           (click)="deleteAllReviews()"
-          [pTooltip]="loading ? 'Please wait while reviews are being fetched' : (reviewsLocked ? 'Reviews are locked' : 'Delete All Reviews')"
+          [ariaLabel]="'book.reviews.a11y.deleteAllReviews' | translate"
+          [pTooltip]="(loading ? 'book.reviews.tooltip.loading' : (reviewsLocked ? 'book.reviews.tooltip.reviewsLocked' : 'book.reviews.tooltip.deleteAllReviews')) | translate"
           tooltipPosition="left"
           class="action-btn"/>
       }
@@ -195,7 +200,8 @@
           [severity]="allSpoilersRevealed ? 'warn' : 'info'"
           [disabled]="loading"
           (click)="toggleSpoilerVisibility()"
-          [pTooltip]="loading ? 'Please wait while reviews are being fetched' : (allSpoilersRevealed ? 'Hide All Spoilers' : 'Reveal All Spoilers')"
+          [ariaLabel]="'book.reviews.a11y.toggleAllSpoilers' | translate"
+          [pTooltip]="(loading ? 'book.reviews.tooltip.loading' : (allSpoilersRevealed ? 'book.reviews.tooltip.hideAllSpoilers' : 'book.reviews.tooltip.revealAllSpoilers')) | translate"
           tooltipPosition="left"
           class="action-btn"/>
 
@@ -206,7 +212,8 @@
           severity="contrast"
           [disabled]="loading"
           (click)="toggleSortOrder()"
-          [pTooltip]="loading ? 'Please wait while reviews are being fetched' : (sortAscending ? 'Sort by Newest First' : 'Sort by Oldest First')"
+          [ariaLabel]="'book.reviews.a11y.toggleSortOrder' | translate"
+          [pTooltip]="(loading ? 'book.reviews.tooltip.loading' : (sortAscending ? 'book.reviews.tooltip.sortNewestFirst' : 'book.reviews.tooltip.sortOldestFirst')) | translate"
           tooltipPosition="left"
           class="action-btn"/>
       }
