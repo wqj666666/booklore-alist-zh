@@ -59,6 +59,30 @@
 
 ---
 
+## 📸 效果预览
+
+<div align="center">
+
+### 主界面展示
+
+<img src="docs/1.png" alt="主界面" width="800"/>
+
+### 统计界面
+
+<img src="docs/2.png" alt="统计界面" width="800"/>
+
+### alist管理
+
+<img src="docs/3.png" alt="书库管理" width="800"/>
+
+### 设置界面
+
+<img src="docs/4.png" alt="设置界面" width="800"/>
+
+</div>
+
+---
+
 ## 🚀 快速开始
 
 ### 使用 Docker（推荐）
