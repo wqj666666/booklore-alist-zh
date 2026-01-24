@@ -130,13 +130,35 @@ public class StorageBackendSelector {
 
     /**
      * 获取书籍文件的相对路径（用于存储后端操作）
-     * 
+     *
      * @param bookFile 书籍文件实体
      * @return 相对路径（fileSubPath + fileName）
      */
     public String getRelativePath(BookFileEntity bookFile) {
         String subPath = bookFile.getFileSubPath();
         String fileName = bookFile.getFileName();
+        
+        if (subPath == null || subPath.isBlank()) {
+            return fileName;
+        }
+        
+        // 确保路径分隔符统一
+        if (subPath.endsWith("/") || subPath.endsWith("\\")) {
+            return subPath + fileName;
+        }
+        
+        return subPath + "/" + fileName;
+    }
+
+    /**
+     * 获取 LibraryFile 的相对路径（用于存储后端操作）
+     *
+     * @param libraryFile 库文件
+     * @return 相对路径（fileSubPath + fileName）
+     */
+    public String getRelativePath(com.adityachandel.booklore.model.dto.settings.LibraryFile libraryFile) {
+        String subPath = libraryFile.getFileSubPath();
+        String fileName = libraryFile.getFileName();
         
         if (subPath == null || subPath.isBlank()) {
             return fileName;

@@ -104,4 +104,30 @@ public class FileUtils {
         }
         return false;
     }
+
+    /**
+     * 检查文件名是否应该被忽略（用于 AList 等非 Path 场景）
+     *
+     * @param fileName 文件名
+     * @return 是否应该忽略
+     */
+    public static boolean shouldIgnoreFileName(String fileName) {
+        if (fileName == null || fileName.isEmpty()) {
+            return true;
+        }
+        
+        // 忽略隐藏文件（以 . 开头）
+        if (fileName.charAt(0) == '.') {
+            return true;
+        }
+        
+        // 检查是否是系统目录
+        List<String> systemDirs = Arrays.asList(
+            "#recycle",
+            "@eaDir",
+            ".caltrash"
+        );
+        
+        return systemDirs.contains(fileName);
+    }
 }

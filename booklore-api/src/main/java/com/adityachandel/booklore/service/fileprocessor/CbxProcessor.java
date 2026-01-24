@@ -51,26 +51,58 @@ public class CbxProcessor extends AbstractFileProcessor implements BookFileProce
                         BookMapper bookMapper,
                         FileService fileService,
                         MetadataMatchService metadataMatchService,
+                        com.adityachandel.booklore.service.storage.StorageBackendSelector storageBackendSelector,
                         CbxMetadataExtractor cbxMetadataExtractor) {
-        super(bookRepository, bookAdditionalFileRepository, bookCreatorService, bookMapper, fileService, metadataMatchService);
+        super(bookRepository, bookAdditionalFileRepository, bookCreatorService, bookMapper, fileService, metadataMatchService, storageBackendSelector);
         this.cbxMetadataExtractor = cbxMetadataExtractor;
     }
 
     @Override
     public BookEntity processNewFile(LibraryFile libraryFile) {
         BookEntity bookEntity = bookCreatorService.createShellBook(libraryFile, BookFileType.CBX);
-        bookEntity.getPrimaryBookFile().setArchiveType(ArchiveUtils.detectArchiveType(new File(FileUtils.getBookFullPath(bookEntity))));
-        if (generateCover(bookEntity)) {
-            FileService.setBookCoverPath(bookEntity.getMetadata());
-            bookEntity.setBookCoverHash(BookCoverUtils.generateCoverHash());
+        
+        // 获取文件用于处理（本地文件或从 AList 下载的临时文件）
+        FileAccessResult fileAccess = getBookFileForProcessing(bookEntity);
+        if (fileAccess == null) {
+            log.error("Failed to access CBX file for processing: {}", libraryFile.getFileName());
+            return bookEntity;
         }
-        extractAndSetMetadata(bookEntity);
+        
+        try {
+            bookEntity.getPrimaryBookFile().setArchiveType(ArchiveUtils.detectArchiveType(fileAccess.file()));
+            if (generateCover(bookEntity, fileAccess.file())) {
+                FileService.setBookCoverPath(bookEntity.getMetadata());
+                bookEntity.setBookCoverHash(BookCoverUtils.generateCoverHash());
+            }
+            extractAndSetMetadata(bookEntity, fileAccess.file());
+        } finally {
+            // 清理临时文件
+            cleanupTempFile(fileAccess);
+        }
+        
         return bookEntity;
     }
 
     @Override
     public boolean generateCover(BookEntity bookEntity) {
-        File file = new File(FileUtils.getBookFullPath(bookEntity));
+        // 获取文件用于处理
+        FileAccessResult fileAccess = getBookFileForProcessing(bookEntity);
+        if (fileAccess == null) {
+            log.error("Failed to access CBX file for cover generation: {}", bookEntity.getPrimaryBookFile().getFileName());
+            return false;
+        }
+        
+        try {
+            return generateCover(bookEntity, fileAccess.file());
+        } finally {
+            cleanupTempFile(fileAccess);
+        }
+    }
+    
+    /**
+     * 使用指定的文件生成封面
+     */
+    private boolean generateCover(BookEntity bookEntity, File file) {
         try {
             Optional<BufferedImage> imageOptional = extractImagesFromArchive(file);
             if (imageOptional.isPresent()) {
@@ -205,9 +237,9 @@ public class CbxProcessor extends AbstractFileProcessor implements BookFileProce
         return Optional.empty();
     }
 
-    private void extractAndSetMetadata(BookEntity bookEntity) {
+    private void extractAndSetMetadata(BookEntity bookEntity, File cbxFile) {
         try {
-            BookMetadata extracted = cbxMetadataExtractor.extractMetadata(new File(FileUtils.getBookFullPath(bookEntity)));
+            BookMetadata extracted = cbxMetadataExtractor.extractMetadata(cbxFile);
             if (extracted == null) {
                 // Fallback to filename-derived title
                 setMetadata(bookEntity);

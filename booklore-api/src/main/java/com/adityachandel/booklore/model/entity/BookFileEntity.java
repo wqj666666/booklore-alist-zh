@@ -45,6 +45,26 @@ public class BookFileEntity {
     @Column(name = "file_size_kb")
     private Long fileSizeKb;
 
+    /**
+     * AList 存储路径
+     * 当文件存储在 AList 时，记录完整的 AList 路径
+     */
+    @Column(name = "alist_path", length = 1000)
+    private String alistPath;
+
+    /**
+     * AList 文件大小（字节）
+     * 从 AList API 获取的原始文件大小
+     */
+    @Column(name = "alist_file_size")
+    private Long alistFileSize;
+
+    /**
+     * 文件修改时间（ISO 8601 格式字符串），用于 AList 存储的虚拟哈希计算
+     */
+    @Column(name = "alist_modified_time", length = 64)
+    private String alistModifiedTime;
+
     @Column(name = "initial_hash", length = 128)
     private String initialHash;
 

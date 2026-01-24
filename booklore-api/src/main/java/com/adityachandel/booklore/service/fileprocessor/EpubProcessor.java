@@ -39,26 +39,58 @@ public class EpubProcessor extends AbstractFileProcessor implements BookFileProc
                          BookMapper bookMapper,
                          FileService fileService,
                          MetadataMatchService metadataMatchService,
+                         com.adityachandel.booklore.service.storage.StorageBackendSelector storageBackendSelector,
                          EpubMetadataExtractor epubMetadataExtractor) {
-        super(bookRepository, bookAdditionalFileRepository, bookCreatorService, bookMapper, fileService, metadataMatchService);
+        super(bookRepository, bookAdditionalFileRepository, bookCreatorService, bookMapper, fileService, metadataMatchService, storageBackendSelector);
         this.epubMetadataExtractor = epubMetadataExtractor;
     }
 
     @Override
     public BookEntity processNewFile(LibraryFile libraryFile) {
         BookEntity bookEntity = bookCreatorService.createShellBook(libraryFile, BookFileType.EPUB);
-        setBookMetadata(bookEntity);
-        if (generateCover(bookEntity)) {
-            FileService.setBookCoverPath(bookEntity.getMetadata());
-            bookEntity.setBookCoverHash(BookCoverUtils.generateCoverHash());
+        
+        // 获取文件用于处理（本地文件或从 AList 下载的临时文件）
+        FileAccessResult fileAccess = getBookFileForProcessing(bookEntity);
+        if (fileAccess == null) {
+            log.error("Failed to access EPUB file for processing: {}", libraryFile.getFileName());
+            return bookEntity;
         }
+        
+        try {
+            setBookMetadata(bookEntity, fileAccess.file());
+            if (generateCover(bookEntity, fileAccess.file())) {
+                FileService.setBookCoverPath(bookEntity.getMetadata());
+                bookEntity.setBookCoverHash(BookCoverUtils.generateCoverHash());
+            }
+        } finally {
+            // 清理临时文件
+            cleanupTempFile(fileAccess);
+        }
+        
         return bookEntity;
     }
 
     @Override
     public boolean generateCover(BookEntity bookEntity) {
+        // 获取文件用于处理
+        FileAccessResult fileAccess = getBookFileForProcessing(bookEntity);
+        if (fileAccess == null) {
+            log.error("Failed to access EPUB file for cover generation: {}", bookEntity.getPrimaryBookFile().getFileName());
+            return false;
+        }
+        
         try {
-            File epubFile = new File(FileUtils.getBookFullPath(bookEntity));
+            return generateCover(bookEntity, fileAccess.file());
+        } finally {
+            cleanupTempFile(fileAccess);
+        }
+    }
+    
+    /**
+     * 使用指定的文件生成封面
+     */
+    private boolean generateCover(BookEntity bookEntity, File epubFile) {
+        try {
             byte[] coverData = epubMetadataExtractor.extractCover(epubFile);
 
             if (coverData == null) {
@@ -90,8 +122,7 @@ public class EpubProcessor extends AbstractFileProcessor implements BookFileProc
         return List.of(BookFileType.EPUB);
     }
 
-    private void setBookMetadata(BookEntity bookEntity) {
-        File bookFile = new File(bookEntity.getFullFilePath().toUri());
+    private void setBookMetadata(BookEntity bookEntity, File bookFile) {
         BookMetadata epubMetadata = epubMetadataExtractor.extractMetadata(bookFile);
         if (epubMetadata == null) return;
 

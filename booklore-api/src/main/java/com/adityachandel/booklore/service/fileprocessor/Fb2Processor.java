@@ -39,26 +39,58 @@ public class Fb2Processor extends AbstractFileProcessor implements BookFileProce
                         BookMapper bookMapper,
                         FileService fileService,
                         MetadataMatchService metadataMatchService,
+                        com.adityachandel.booklore.service.storage.StorageBackendSelector storageBackendSelector,
                         Fb2MetadataExtractor fb2MetadataExtractor) {
-        super(bookRepository, bookAdditionalFileRepository, bookCreatorService, bookMapper, fileService, metadataMatchService);
+        super(bookRepository, bookAdditionalFileRepository, bookCreatorService, bookMapper, fileService, metadataMatchService, storageBackendSelector);
         this.fb2MetadataExtractor = fb2MetadataExtractor;
     }
 
     @Override
     public BookEntity processNewFile(LibraryFile libraryFile) {
         BookEntity bookEntity = bookCreatorService.createShellBook(libraryFile, BookFileType.FB2);
-        setBookMetadata(bookEntity);
-        if (generateCover(bookEntity)) {
-            FileService.setBookCoverPath(bookEntity.getMetadata());
-            bookEntity.setBookCoverHash(BookCoverUtils.generateCoverHash());
+        
+        // 获取文件用于处理（本地文件或从 AList 下载的临时文件）
+        FileAccessResult fileAccess = getBookFileForProcessing(bookEntity);
+        if (fileAccess == null) {
+            log.error("Failed to access FB2 file for processing: {}", libraryFile.getFileName());
+            return bookEntity;
         }
+        
+        try {
+            setBookMetadata(bookEntity, fileAccess.file());
+            if (generateCover(bookEntity, fileAccess.file())) {
+                FileService.setBookCoverPath(bookEntity.getMetadata());
+                bookEntity.setBookCoverHash(BookCoverUtils.generateCoverHash());
+            }
+        } finally {
+            // 清理临时文件
+            cleanupTempFile(fileAccess);
+        }
+        
         return bookEntity;
     }
 
     @Override
     public boolean generateCover(BookEntity bookEntity) {
+        // 获取文件用于处理
+        FileAccessResult fileAccess = getBookFileForProcessing(bookEntity);
+        if (fileAccess == null) {
+            log.error("Failed to access FB2 file for cover generation: {}", bookEntity.getPrimaryBookFile().getFileName());
+            return false;
+        }
+        
         try {
-            File fb2File = new File(FileUtils.getBookFullPath(bookEntity));
+            return generateCover(bookEntity, fileAccess.file());
+        } finally {
+            cleanupTempFile(fileAccess);
+        }
+    }
+    
+    /**
+     * 使用指定的文件生成封面
+     */
+    private boolean generateCover(BookEntity bookEntity, File fb2File) {
+        try {
             byte[] coverData = fb2MetadataExtractor.extractCover(fb2File);
 
             if (coverData == null || coverData.length == 0) {
@@ -80,8 +112,7 @@ public class Fb2Processor extends AbstractFileProcessor implements BookFileProce
         return List.of(BookFileType.FB2);
     }
 
-    private void setBookMetadata(BookEntity bookEntity) {
-        File bookFile = new File(bookEntity.getFullFilePath().toUri());
+    private void setBookMetadata(BookEntity bookEntity, File bookFile) {
         BookMetadata fb2Metadata = fb2MetadataExtractor.extractMetadata(bookFile);
         if (fb2Metadata == null) return;
 

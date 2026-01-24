@@ -417,6 +417,54 @@ public class AlistClient {
     }
 
     /**
+     * 列出目录内容（包括文件和目录）
+     *
+     * @param path 目录路径
+     * @return 文件和目录信息列表
+     */
+    public List<AlistFileInfo> listFiles(String path) {
+        return listFiles(path, null);
+    }
+
+    /**
+     * 列出目录内容（包括文件和目录）
+     *
+     * @param path 目录路径
+     * @param password 目录密码（可选）
+     * @return 文件和目录信息列表
+     */
+    public List<AlistFileInfo> listFiles(String path, String password) {
+        try {
+            AlistResponse<AlistFsListResponse> response = executeWithRetry(() -> {
+                AlistFsListRequest request = AlistFsListRequest.builder()
+                        .path(path)
+                        .password(password != null ? password : "")
+                        .perPage(0) // 获取所有
+                        .build();
+                
+                return doPost("/api/fs/list", request, new TypeReference<>() {});
+            });
+            
+            if (response.isSuccess() && response.getData() != null) {
+                List<AlistFileInfo> content = response.getData().getContent();
+                return content != null ? content : Collections.emptyList();
+            } else {
+                String msg = response.getMessage();
+                // 空目录或不存在不视为错误，返回空列表
+                if (msg != null && msg.contains("object not found")) {
+                    return Collections.emptyList();
+                }
+                throw new AlistException(response.getCode(), response.getMessage());
+            }
+        } catch (AlistException e) {
+            if (e.isNotFound()) {
+                return Collections.emptyList();
+            }
+            throw e;
+        }
+    }
+
+    /**
      * 检查文件是否存在
      *
      * @param path AList 路径

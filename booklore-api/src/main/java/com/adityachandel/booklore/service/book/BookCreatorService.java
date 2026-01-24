@@ -5,6 +5,8 @@ import com.adityachandel.booklore.model.entity.*;
 import com.adityachandel.booklore.model.enums.BookFileType;
 import com.adityachandel.booklore.repository.*;
 import com.adityachandel.booklore.service.file.FileFingerprint;
+import com.adityachandel.booklore.service.storage.StorageBackend;
+import com.adityachandel.booklore.service.storage.StorageBackendSelector;
 import com.adityachandel.booklore.util.FileUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,7 @@ public class BookCreatorService {
     private final CategoryRepository categoryRepository;
     private final BookRepository bookRepository;
     private final BookMetadataRepository bookMetadataRepository;
+    private final StorageBackendSelector storageBackendSelector;
 
     public BookEntity createShellBook(LibraryFile libraryFile, BookFileType bookFileType) {
         Optional<BookEntity> existingBookOpt = bookRepository.findByLibraryIdAndLibraryPathIdAndFileSubPathAndFileName(
@@ -30,20 +33,30 @@ public class BookCreatorService {
                 libraryFile.getFileSubPath(),
                 libraryFile.getFileName());
 
+        // 根据存储类型获取文件大小和哈希
+        StorageBackend backend = storageBackendSelector.getBackend(libraryFile.getLibraryPathEntity());
+        boolean isAlistStorage = backend.getType() == StorageBackend.StorageType.ALIST;
+        
         if (existingBookOpt.isPresent()) {
             log.warn("Book already exists for file: {}", libraryFile.getFileName());
-            String newHash = FileFingerprint.generateHash(libraryFile.getFullPath());
-            long fileSizeKb = FileUtils.getFileSizeInKb(libraryFile.getFullPath());
+            String newHash = computeFileHash(libraryFile, isAlistStorage);
+            long fileSizeKb = getFileSizeKb(libraryFile, isAlistStorage);
             BookEntity existingBook = existingBookOpt.get();
             BookFileEntity primaryFile = existingBook.getPrimaryBookFile();
             primaryFile.setCurrentHash(newHash);
             primaryFile.setInitialHash(newHash);
             primaryFile.setFileSizeKb(fileSizeKb);
+            // 为 AList 存储设置元数据
+            if (isAlistStorage) {
+                primaryFile.setAlistPath(libraryFile.getFullAlistPath());
+                primaryFile.setAlistFileSize(libraryFile.getFileSize());
+                primaryFile.setAlistModifiedTime(libraryFile.getModifiedTime());
+            }
             existingBook.setDeleted(false);
             return existingBook;
         }
 
-        long fileSizeKb = FileUtils.getFileSizeInKb(libraryFile.getFullPath());
+        long fileSizeKb = getFileSizeKb(libraryFile, isAlistStorage);
 
         BookEntity bookEntity = BookEntity.builder()
                 .library(libraryFile.getLibraryEntity())
@@ -61,6 +74,14 @@ public class BookCreatorService {
                 .fileSizeKb(fileSizeKb)
                 .addedOn(Instant.now())
                 .build();
+        
+        // 为 AList 存储设置元数据
+        if (isAlistStorage) {
+            bookFileEntity.setAlistPath(libraryFile.getFullAlistPath());
+            bookFileEntity.setAlistFileSize(libraryFile.getFileSize());
+            bookFileEntity.setAlistModifiedTime(libraryFile.getModifiedTime());
+        }
+        
         bookEntity.getBookFiles().add(bookFileEntity);
 
         BookMetadataEntity metadata = BookMetadataEntity.builder()
@@ -106,5 +127,41 @@ public class BookCreatorService {
         }
         bookRepository.save(bookEntity);
         bookMetadataRepository.save(bookEntity.getMetadata());
+    }
+    
+    /**
+     * 根据存储类型计算文件哈希
+     */
+    private String computeFileHash(LibraryFile libraryFile, boolean isAlistStorage) {
+        if (isAlistStorage) {
+            // AList 存储：使用文件元数据生成虚拟哈希
+            return FileFingerprint.generateVirtualHash(
+                    libraryFile.getFullAlistPath(),
+                    libraryFile.getFileSize(),
+                    libraryFile.getModifiedTime()
+            );
+        } else {
+            // 本地存储：直接计算文件哈希
+            return FileFingerprint.generateHash(libraryFile.getFullPath());
+        }
+    }
+    
+    /**
+     * 根据存储类型获取文件大小（KB）
+     */
+    private long getFileSizeKb(LibraryFile libraryFile, boolean isAlistStorage) {
+        if (isAlistStorage) {
+            // AList 存储：使用从 AList API 获取的文件大小
+            Long fileSize = libraryFile.getFileSize();
+            if (fileSize == null || fileSize <= 0) {
+                log.warn("AList file size is null or invalid for file: {}", libraryFile.getFileName());
+                return 0;
+            }
+            return fileSize / 1024; // 转换为 KB
+        } else {
+            // 本地存储：从本地文件系统获取
+            Long sizeKb = FileUtils.getFileSizeInKb(libraryFile.getFullPath());
+            return sizeKb != null ? sizeKb : 0;
+        }
     }
 }
