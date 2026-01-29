@@ -97,11 +97,14 @@ public class BookController {
         return ResponseEntity.ok(bookMetadataService.getComicInfoMetadata(bookId));
     }
 
-    @Operation(summary = "Get book content", description = "Retrieve the binary content of a book for reading.")
-    @ApiResponse(responseCode = "200", description = "Book content returned successfully")
+    @Operation(summary = "Get book content", description = "Retrieve the binary content of a book for reading. May return 302 redirect for AList storage.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Book content returned successfully"),
+            @ApiResponse(responseCode = "302", description = "Redirect to AList direct download URL")
+    })
     @GetMapping("/{bookId}/content")
     @CheckBookAccess(bookIdParam = "bookId")
-    public ResponseEntity<ByteArrayResource> getBookContent(
+    public ResponseEntity<?> getBookContent(
             @Parameter(description = "ID of the book") @PathVariable long bookId) {
         return bookService.getBookContent(bookId);
     }

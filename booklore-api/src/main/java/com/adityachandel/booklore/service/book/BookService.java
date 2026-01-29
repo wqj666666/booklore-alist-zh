@@ -311,18 +311,44 @@ public class BookService {
         return bookDownloadService.downloadBook(bookId);
     }
 
-    public ResponseEntity<ByteArrayResource> getBookContent(long bookId) {
+    public ResponseEntity<?> getBookContent(long bookId) {
         BookEntity bookEntity = bookRepository.findById(bookId).orElseThrow(() -> ApiError.BOOK_NOT_FOUND.createException(bookId));
         
-        // 使用存储后端获取文件内容
+        // 使用存储后端获取下载访问方式
         StorageBackend backend = storageBackendSelector.getBackend(bookEntity);
         String relativePath = storageBackendSelector.getRelativePath(bookEntity.getPrimaryBookFile());
+        StorageBackend.DownloadAccess downloadAccess = backend.getDownloadAccess(relativePath);
         
-        byte[] content = backend.read(relativePath);
-        
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(new ByteArrayResource(content));
+        // 根据下载方式返回不同响应
+        switch (downloadAccess) {
+            case StorageBackend.DownloadAccess.Redirect redirect -> {
+                // AList 启用了 302 重定向，直接返回重定向响应
+                log.debug("Redirecting content request for book {} to: {}", bookId, redirect.url());
+                return ResponseEntity.status(HttpStatus.FOUND)
+                        .location(java.net.URI.create(redirect.url()))
+                        .build();
+            }
+            case StorageBackend.DownloadAccess.LocalFile localFile -> {
+                // 本地文件，直接读取返回
+                try {
+                    byte[] content = java.nio.file.Files.readAllBytes(localFile.filePath());
+                    return ResponseEntity.ok()
+                            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                            .body(new ByteArrayResource(content));
+                } catch (java.io.IOException e) {
+                    log.error("Failed to read local file: {}", localFile.filePath(), e);
+                    throw ApiError.BOOK_NOT_FOUND.createException(bookId);
+                }
+            }
+            case StorageBackend.DownloadAccess.NotFound notFound -> {
+                // 文件不存在，尝试回退到直接读取
+                log.warn("Download access not found, falling back to direct read: {}", notFound.message());
+                byte[] content = backend.read(relativePath);
+                return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                        .body(new ByteArrayResource(content));
+            }
+        }
     }
 
 
