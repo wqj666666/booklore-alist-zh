@@ -148,7 +148,7 @@ jobs:
       # Environment setup
       # ----------------------------------------
       - name: Set Up QEMU for Multi-Arch Builds
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Set Up Docker Buildx
         uses: docker/setup-buildx-action@v3
